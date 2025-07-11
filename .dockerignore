@@ -1,0 +1,5 @@
+__pycache__          # Python cache files
+*.pyc               # Compiled Python files
+.git                # Git history
+.env                # Environment file (security)
+venv                # Virtual environment

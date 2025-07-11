@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/__init__.py": true,
+        "**/.idea": true,
+        "**/.pytest_cache": true,
+        "**/.venv": true
+    },
+    "liveServer.settings.port": 5501
+}
