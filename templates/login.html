@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha Edu Tech - Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/carbon-components/10.58.12/css/carbon-components.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@carbon/styles@1.32.0/css/styles.min.css">
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: #f4f4f4;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .page-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .left-panel {
+            flex: 0 0 45%;
+            background: var(--color-navy);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 4rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(249, 115, 22, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
+            background-size: 400px 400px, 350px 350px;
+            animation: subtleFloat 25s ease-in-out infinite;
+        }
+
+        @keyframes subtleFloat {
+            0%, 100% { 
+                background-position: 0% 0%, 100% 100%; 
+                opacity: 0.3;
+            }
+            50% { 
+                background-position: 50% 30%, 50% 70%; 
+                opacity: 0.4;
+            }
+        }
+
+        .brand-content {
+            z-index: 1;
+            color: white;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        .brand-tagline {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-item {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-item::before {
+            content: '■';
+            color: var(--color-orange);
+            font-weight: 600;
+            margin-right: 0.75rem;
+            font-size: 1.125rem;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 3rem;
+        }
+
+        .form-container {
+            max-width: 420px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+            position: relative;
+        }
+
+        .form-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--color-navy);
+        }
+
+        .tab-title {
+            color: var(--color-navy);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #161616;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .form-subtitle {
+            color: #6f6f6f;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .bx--form-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .submit-btn {
+            width: 90%;
+            background: var(--color-orange) !important;
+            margin-top: 1rem;
+            max-width: 30rem;
+            justify-content: center;
+			padding:0 !important;
+        }
+
+        .submit-btn:hover {
+            background: #ea580c !important;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1.5rem;
+			width: 90%;
+        }
+
+        .forgot-password .bx--link {
+            color: var(--color-navy);
+            font-size: 0.875rem;
+        }
+
+        .back-to-login {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-to-login .bx--link {
+            color: var(--color-navy);
+            font-size: 0.875rem;
+        }
+
+        .message-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-transition {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .form-hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            display: none !important;
+        }
+
+        .form-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        /* Phone input with country code dropdown - Carbon Design System */
+        .phone-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .country-dropdown {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            background: none;
+            border: none;
+            font-size: 0.875rem;
+            color: #161616;
+            cursor: pointer;
+            padding: 0.25rem 0.7rem 0.25rem 0;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23393939' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right center;
+            background-repeat: no-repeat;
+            background-size: 1rem;
+        }
+
+        .country-dropdown:focus {
+            cursor: pointer;
+        }
+
+        .phone-input {
+            width: 90%;
+            padding-left: 6.5rem;
+			height:3rem;
+        }
+
+        /* OTP input styling */
+        .otp-container {
+            position: relative;
+			width: 90%;
+        }
+
+        .phone-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: #f4f4f4;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .phone-number {
+            flex: 1;
+            font-size: 0.875rem;
+            color: #161616;
+        }
+
+        .edit-phone-btn {
+            background: none;
+            border: none;
+            color: var(--color-navy);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+
+        .edit-phone-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .otp-digit {
+            width: 3.5rem;
+            height: 3rem;
+            text-align: center;
+            border: 2px solid #8d8d8d;
+            border-radius: 4px;
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+		
+		.wide-button {
+            width: 80%;
+        }
+
+        .otp-digit:focus {
+            border-color: var(--color-navy);
+            outline: none;
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .resend-otp button {
+            background: none;
+            border: none;
+            color: var(--color-navy);
+            cursor: pointer;
+            font-size: 0.875rem;
+            text-decoration: underline;
+        }
+
+        .resend-otp button:disabled {
+            color: #8d8d8d;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 1024px) {
+            .left-panel {
+                flex: 0 0 40%;
+                padding: 3rem 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+            
+            body {
+                overflow: auto;
+            }
+            
+            .left-panel {
+                flex: none;
+                padding: 3rem 2rem;
+                min-height: 30vh;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .brand-content {
+                text-align: center;
+                max-width: 400px;
+            }
+            
+            .right-panel {
+                padding: 2rem;
+                flex: none;
+            }
+            
+            .feature-list {
+                display: none;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .form-title {
+                font-size: 1.75rem;
+            }
+
+            .country-select {
+                flex: 0 0 100px;
+            }
+
+            .otp-digit {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1.125rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-panel {
+                padding: 2rem 1rem;
+                min-height: 25vh;
+            }
+            
+            .right-panel {
+                padding: 2rem 0rem;
+				padding-left: 50px;
+            }
+            
+            .logo {
+                font-size: 1.75rem;
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+            }
+            
+            .form-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="left-panel">
+            <div class="brand-content">
+                <div class="logo">
+                    Medha<span class="logo-accent">EduTech</span>
+                </div>
+                <div class="brand-tagline">Educate, Elevate, Empower.</div>
+                <ul class="feature-list">
+                    <li class="feature-item">Comprehensive learning management</li>
+                    <li class="feature-item">Advanced analytics &amp; insights</li>
+                    <li class="feature-item">Seamless collaboration tools</li>
+                    <li class="feature-item">Mobile-first design</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="form-container">
+                <!-- Message Container -->
+                <div class="message-container" id="message-container">
+                    <div class="bx--inline-notification bx--inline-notification--success hidden" id="success-message">
+                        <div class="bx--inline-notification__details">
+                            <div class="bx--inline-notification__text-wrapper">
+                                <p class="bx--inline-notification__subtitle" id="success-text"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bx--inline-notification bx--inline-notification--error hidden" id="error-message">
+                        <div class="bx--inline-notification__details">
+                            <div class="bx--inline-notification__text-wrapper">
+                                <p class="bx--inline-notification__subtitle" id="error-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sign In Form -->
+                <div id="signin-form" class="form-transition form-visible">
+                    <h1 class="form-title">Welcome back</h1>
+                    <p class="form-subtitle">Sign in to your Medha Edu Tech account</p>
+
+                    <form id="phone-form">
+                        <!-- Phone Input Section -->
+                        <div class="bx--form-item" id="phone-section">
+                            <label for="phone" class="bx--label">Phone number</label>
+                            <div class="phone-input-wrapper">
+                                <select id="country-code" class="country-dropdown">
+                                    <option value="+91">🇮🇳 +91</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+86">🇨🇳 +86</option>
+                                    <option value="+49">🇩🇪 +49</option>
+                                    <option value="+33">🇫🇷 +33</option>
+                                    <option value="+81">🇯🇵 +81</option>
+                                    <option value="+55">🇧🇷 +55</option>
+                                    <option value="+61">🇦🇺 +61</option>
+                                    <option value="+7">🇷🇺 +7</option>
+                                </select>
+                                <input 
+                                    type="tel" 
+                                    id="phone" 
+                                    class="bx--text-input phone-input" 
+                                    placeholder="Enter your phone number" 
+                                    required
+                                    maxlength="15"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- OTP Input Section -->
+                        <div class="bx--form-item hidden" id="otp-section">
+                            <label class="bx--label">Enter OTP</label>
+                            <div class="otp-container">
+                                <div class="phone-display">
+                                    <span class="phone-number" id="display-phone"></span>
+                                    <button type="button" class="edit-phone-btn" id="edit-phone">
+                                        ✏️ Edit
+                                    </button>
+                                </div>
+                                <div class="otp-inputs">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="0">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="1">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="2">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="3">
+                                </div>
+                                <div class="resend-otp">
+                                    <button type="button" id="resend-btn" disabled>
+                                        Resend OTP in <span id="countdown">30</span>s
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="bx--btn bx--btn--primary submit-btn" id="submit-btn">
+                            Send OTP
+                        </button>
+                    </form>
+
+                    <div class="forgot-password">
+                        <a href="#" class="bx--link" id="forgot-link">
+                            Don't have account?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Forgot Password Form -->
+                <div id="forgot-form" class="form-transition form-hidden">
+                    <h1 class="form-title">Reset Password</h1>
+                    <p class="form-subtitle">Enter your phone number and we'll send you an OTP to reset your password</p>
+
+                    <form id="forgot-phone-form">
+                        <div class="bx--form-item">
+                            <label for="forgot-phone" class="bx--label">Phone number</label>
+                            <div class="phone-input-wrapper">
+                                <select id="forgot-country-code" class="country-dropdown">
+                                    <option value="+91">🇮🇳 +91</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+86">🇨🇳 +86</option>
+                                    <option value="+49">🇩🇪 +49</option>
+                                    <option value="+33">🇫🇷 +33</option>
+                                    <option value="+81">🇯🇵 +81</option>
+                                    <option value="+55">🇧🇷 +55</option>
+                                    <option value="+61">🇦🇺 +61</option>
+                                    <option value="+7">🇷🇺 +7</option>
+                                </select>
+                                <input 
+                                    type="tel" 
+                                    id="forgot-phone" 
+                                    class="bx--text-input phone-input" 
+                                    placeholder="Enter your phone number" 
+                                    required
+                                    maxlength="15"
+                                >
+                            </div>
+                        </div>
+
+                        <button type="submit" class="bx--btn bx--btn--primary submit-btn">Send Reset OTP</button>
+                    </form>
+
+                    <div class="back-to-login">
+                        <a href="#" class="bx--link" id="back-to-signin">
+                            ← Back to Sign In
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PhoneAuth {
+            constructor() {
+                this.currentView = 'signin';
+                this.otpSent = false;
+                this.resendTimer = null;
+                this.verificationId = null;
+                this.currentPhone = null;
+                this.currentCountryCode = null;
+                this.baseUrl = '/auth'; // Base URL for API endpoints
+                
+                this.initializeElements();
+                this.bindEvents();
+            }
+
+            initializeElements() {
+                // Forms
+                this.signinForm = document.getElementById('signin-form');
+                this.forgotForm = document.getElementById('forgot-form');
+                this.phoneForm = document.getElementById('phone-form');
+                
+                // Phone sections
+                this.phoneSection = document.getElementById('phone-section');
+                this.otpSection = document.getElementById('otp-section');
+                
+                // Inputs
+                this.phoneInput = document.getElementById('phone');
+                this.countryCode = document.getElementById('country-code');
+                this.otpInputs = document.querySelectorAll('.otp-digit');
+                
+                // Buttons
+                this.submitBtn = document.getElementById('submit-btn');
+                this.editPhoneBtn = document.getElementById('edit-phone');
+                this.resendBtn = document.getElementById('resend-btn');
+                this.forgotLink = document.getElementById('forgot-link');
+                this.backToSigninLink = document.getElementById('back-to-signin');
+                
+                // Display elements
+                this.displayPhone = document.getElementById('display-phone');
+                this.countdown = document.getElementById('countdown');
+                
+                // Messages
+                this.successMessage = document.getElementById('success-message');
+                this.errorMessage = document.getElementById('error-message');
+                this.successText = document.getElementById('success-text');
+                this.errorText = document.getElementById('error-text');
+            }
+
+            bindEvents() {
+                // Form submission
+                this.phoneForm.addEventListener('submit', (e) => this.handleSubmit(e));
+                
+                // Phone input validation
+                this.phoneInput.addEventListener('input', (e) => this.validatePhone(e));
+                
+                // OTP input handling
+                this.otpInputs.forEach((input, index) => {
+                    input.addEventListener('input', (e) => this.handleOtpInput(e, index));
+                    input.addEventListener('keydown', (e) => this.handleOtpKeydown(e, index));
+                    input.addEventListener('paste', (e) => this.handleOtpPaste(e));
+                });
+                
+                // Edit phone button
+                this.editPhoneBtn.addEventListener('click', () => this.editPhone());
+                
+                // Resend OTP
+                this.resendBtn.addEventListener('click', () => this.resendOtp());
+                
+                // Navigation
+                this.forgotLink.addEventListener('click', (e) => this.showForgotPassword(e));
+                this.backToSigninLink.addEventListener('click', (e) => this.showSignin(e));
+            }
+
+            validatePhone(e) {
+                // Remove non-numeric characters
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }
+
+            handleSubmit(e) {
+                e.preventDefault();
+                
+                if (!this.otpSent) {
+                    this.sendOtp();
+                } else {
+                    this.verifyOtpAndLogin();
+                }
+            }
+
+            async sendOtp() {
+                const phone = this.phoneInput.value.trim();
+                const countryCode = this.countryCode.value;
+                
+                if (!phone || phone.length < 10) {
+                    this.showMessage('Please enter a valid phone number', 'error');
+                    return;
+                }
+
+                try {
+                    this.submitBtn.textContent = 'Sending OTP...';
+                    this.submitBtn.disabled = true;
+                    
+                    // Extract country code without + symbol
+                    const cleanCountryCode = countryCode.replace('+', '');
+                    
+                    // Store current values for later use
+                    this.currentPhone = phone;
+                    this.currentCountryCode = cleanCountryCode;
+                    
+                    // Call send OTP API with separate country code and phone
+                    const response = await this.callSendOtpApi(cleanCountryCode, phone);
+                    
+                    if (response.responseCode === 200 && response.message === 'SUCCESS') {
+                        // Store verification ID from response
+                        this.verificationId = response.data.verificationId;
+                        
+                        this.displayPhone.textContent = `${countryCode} ${phone}`;
+                        this.phoneSection.classList.add('hidden');
+                        this.otpSection.classList.remove('hidden');
+                        this.submitBtn.textContent = 'Verify & Sign In';
+                        this.submitBtn.disabled = false;
+                        this.otpSent = true;
+                        
+                        // Use timeout from response if available, otherwise default to 30
+                        const timeoutSeconds = response.data.timeout ? Math.ceil(parseFloat(response.data.timeout)) : 30;
+                        this.startResendTimer(timeoutSeconds);
+                        this.showMessage('OTP sent successfully!', 'success');
+                        
+                        // Focus first OTP input
+                        this.otpInputs[0].focus();
+                    } else if (response.responseCode === 506 && response.message === 'REQUEST_ALREADY_EXISTS') {
+                        // Handle case where OTP was already sent within timeout period
+                        this.verificationId = response.data.verificationId;
+                        
+                        this.displayPhone.textContent = `${countryCode} ${phone}`;
+                        this.phoneSection.classList.add('hidden');
+                        this.otpSection.classList.remove('hidden');
+                        this.submitBtn.textContent = 'Verify & Sign In';
+                        this.submitBtn.disabled = false;
+                        this.otpSent = true;
+                        
+                        // Use timeout from response for timer
+                        const timeoutSeconds = Math.ceil(parseFloat(response.data.timeout || 60));
+                        this.startResendTimer(timeoutSeconds);
+                        
+                        this.showMessage(`OTP already sent. Please wait ${timeoutSeconds} seconds before requesting again.`, 'error');
+                        
+                        // Focus first OTP input
+                        this.otpInputs[0].focus();
+                    } else {
+                        throw new Error(response.errorMessage || 'Failed to send OTP');
+                    }
+                    
+                } catch (error) {
+                    console.error('Send OTP Error:', error);
+                    const userFriendlyMessage = this.getUserFriendlyErrorMessage(error.message, 'send');
+                    this.showMessage(userFriendlyMessage, 'error');
+                    this.submitBtn.textContent = 'Send OTP';
+                    this.submitBtn.disabled = false;
+                }
+            }
+
+            async verifyOtpAndLogin() {
+                const otp = Array.from(this.otpInputs).map(input => input.value).join('');
+                
+                if (otp.length !== 4) {
+                    this.showMessage('Please enter complete 4-digit OTP', 'error');
+                    return;
+                }
+
+                if (!this.verificationId) {
+                    this.showMessage('Verification ID missing. Please resend OTP.', 'error');
+                    return;
+                }
+
+                try {
+                    this.submitBtn.textContent = 'Verifying...';
+                    this.submitBtn.disabled = true;
+                    
+                    // Call verify OTP API
+                    const response = await this.callVerifyOtpApi(this.currentPhone, this.currentCountryCode, otp, this.verificationId);
+                    
+                    // Check if response indicates success (redirect case)
+                    if (response.success === true && response.redirect === true) {
+                        // Success - backend is redirecting internally
+                        this.showMessage('Login successful! Redirecting...', 'success');
+                        
+                        // Wait a moment then redirect to dashboard
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 1500);
+                        return;
+                    }
+                    
+                    // Check for API response with success data
+                    if (response.success === true && response.data) {
+                        this.showMessage('Login successful! Redirecting...', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 1500);
+                        return;
+                    }
+                    
+                    // Handle specific error responses
+                    if (response.message === 'VERIFICATION_EXPIRED' || (response.responseCode === 705)) {
+                        // Handle OTP expiration - stay in OTP form but enable resend
+                        this.showMessage('OTP has expired. Click "Send OTP" to request a new one.', 'error');
+                        
+                        // Enable send OTP functionality within the current form
+                        this.submitBtn.textContent = 'Send OTP';
+                        this.submitBtn.disabled = false;
+                        this.otpSent = false; // Reset to allow sending new OTP
+                        
+                        // Clear expired verification ID
+                        this.verificationId = null;
+                        
+                        // Clear OTP inputs but keep OTP section visible
+                        this.clearOtpInputs();
+                        
+                        // Stop any existing resend timer
+                        if (this.resendTimer) {
+                            clearInterval(this.resendTimer);
+                            this.resendBtn.disabled = false;
+                            this.resendBtn.innerHTML = 'Resend OTP';
+                        }
+                    } else {
+                        // Handle other API errors - check for various error formats
+                        let errorMessage = 'Invalid OTP. Please try again.';
+                        
+                        if (response.errorMessage) {
+                            errorMessage = response.errorMessage;
+                        } else if (response.message && response.message !== 'SUCCESS') {
+                            errorMessage = response.message;
+                        } else if (response.detail) {
+                            errorMessage = response.detail;
+                        }
+                        
+                        throw new Error(errorMessage);
+                    }
+                    
+                } catch (error) {
+                    console.error('Verify OTP Error:', error);
+                    const userFriendlyMessage = this.getUserFriendlyErrorMessage(error.message, 'verify');
+                    this.showMessage(userFriendlyMessage, 'error');
+                    this.submitBtn.textContent = 'Verify & Sign In';
+                    this.submitBtn.disabled = false;
+                    this.submitBtn.classList.add("wide-button");
+                    
+                    // Clear OTP inputs
+                    this.otpInputs.forEach(input => input.value = '');
+                    this.otpInputs[0].focus();
+                }
+            }
+
+            async callSendOtpApi(countryCode, phoneNumber) {
+                const response = await fetch(`${this.baseUrl}/send/phone_otp?country_code=${countryCode}&phone=${phoneNumber}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            }
+
+            async callVerifyOtpApi(phone, countryCode, otp, verificationId) {
+                try {
+                    const response = await fetch(`${this.baseUrl}/verify/phone_otp?phone=${phone}&country_code=${countryCode}&otp=${otp}&verification_id=${verificationId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        redirect: 'follow' // Changed from 'manual' to 'follow'
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    console.log('Response ok:', response.ok);
+                    console.log('Response url:', response.url);
+                    
+                    // Handle status 0 (network/CORS issues)
+                    if (response.status === 0) {
+                        throw new Error('Network connection failed. Please check your internet connection.');
+                    }
+                    
+                    // Check if we were redirected to dashboard (success case)
+                    if (response.url && response.url.includes('/dashboard')) {
+                        return { success: true, redirect: true };
+                    }
+                    
+                    // Check if backend is redirecting (success case)
+                    if (response.status === 302 || response.status === 301) {
+                        return { success: true, redirect: true };
+                    }
+                    
+                    // For 200 responses, try to parse JSON
+                    if (response.status === 200) {
+                        const contentType = response.headers.get('content-type');
+                        
+                        if (contentType && contentType.includes('application/json')) {
+                            try {
+                                const data = await response.json();
+                                console.log('JSON response:', data);
+                                
+                                // Check if it's an error response in JSON format
+                                if (data.message === 'VERIFICATION_EXPIRED' || data.responseCode) {
+                                    return data;
+                                }
+                                // If JSON parsed successfully but no error indicators, assume success
+                                return { success: true, data: data };
+                            } catch (parseError) {
+                                console.error('JSON parse error:', parseError);
+                                throw new Error('Invalid response format from server');
+                            }
+                        } else {
+                            // Non-JSON 200 response, likely HTML redirect page
+                            const text = await response.text();
+                            console.log('HTML response received, assuming redirect success');
+                            return { success: true, redirect: true };
+                        }
+                    }
+                    
+                    // For error status codes
+                    if (response.status >= 400) {
+                        try {
+                            const contentType = response.headers.get('content-type');
+                            if (contentType && contentType.includes('application/json')) {
+                                const errorData = await response.json();
+                                return errorData;
+                            } else {
+                                throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                            }
+                        } catch (parseError) {
+                            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                        }
+                    }
+                    
+                    // For other unexpected status codes
+                    if (response.status > 0) {
+                        throw new Error(`Unexpected response status: ${response.status}`);
+                    }
+                    
+                    // Should not reach here
+                    throw new Error('Unknown response error');
+                    
+                } catch (fetchError) {
+                    console.error('Fetch error:', fetchError);
+                    
+                    // Handle specific fetch errors
+                    if (fetchError.name === 'TypeError') {
+                        if (fetchError.message.includes('fetch') || fetchError.message.includes('Failed to fetch')) {
+                            throw new Error('Unable to connect to server. Please check your internet connection.');
+                        }
+                        if (fetchError.message.includes('CORS') || fetchError.message.includes('cross-origin')) {
+                            throw new Error('Connection blocked. Please contact support.');
+                        }
+                    }
+                    
+                    if (fetchError.name === 'AbortError') {
+                        throw new Error('Request timed out. Please try again.');
+                    }
+                    
+                    // Re-throw our custom errors
+                    throw fetchError;
+                }
+            }
+
+            handleOtpInput(e, index) {
+                const value = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = value;
+                
+                if (value && index < this.otpInputs.length - 1) {
+                    this.otpInputs[index + 1].focus();
+                }
+                
+                // Auto-submit if all fields are filled
+                const allFilled = Array.from(this.otpInputs).every(input => input.value);
+                if (allFilled) {
+                    this.submitBtn.focus();
+                }
+            }
+
+            handleOtpKeydown(e, index) {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    this.otpInputs[index - 1].focus();
+                } else if (e.key === 'ArrowLeft' && index > 0) {
+                    this.otpInputs[index - 1].focus();
+                } else if (e.key === 'ArrowRight' && index < this.otpInputs.length - 1) {
+                    this.otpInputs[index + 1].focus();
+                }
+            }
+
+            handleOtpPaste(e) {
+                e.preventDefault();
+                const paste = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
+                
+                for (let i = 0; i < Math.min(paste.length, this.otpInputs.length); i++) {
+                    this.otpInputs[i].value = paste[i];
+                }
+                
+                // Focus next empty input or last input
+                const nextEmpty = Array.from(this.otpInputs).findIndex(input => !input.value);
+                if (nextEmpty !== -1) {
+                    this.otpInputs[nextEmpty].focus();
+                } else {
+                    this.otpInputs[this.otpInputs.length - 1].focus();
+                }
+            }
+
+            editPhone() {
+                this.phoneSection.classList.remove('hidden');
+                this.otpSection.classList.add('hidden');
+                this.submitBtn.textContent = 'Send OTP';
+                this.otpSent = false;
+                this.verificationId = null;
+                this.currentPhone = null;
+                this.currentCountryCode = null;
+                this.clearOtpInputs();
+                this.hideMessage();
+                this.phoneInput.focus();
+                
+                if (this.resendTimer) {
+                    clearInterval(this.resendTimer);
+                }
+            }
+
+            async resendOtp() {
+                try {
+                    this.resendBtn.disabled = true;
+                    this.resendBtn.textContent = 'Sending...';
+                    
+                    // Call send OTP API again with stored parameters
+                    const response = await this.callSendOtpApi(this.currentCountryCode, this.currentPhone);
+                    
+                    if (response.responseCode === 200 && response.message === 'SUCCESS') {
+                        // Update verification ID
+                        this.verificationId = response.data.verificationId;
+                        
+                        // Use timeout from response if available, otherwise default to 30
+                        const timeoutSeconds = response.data.timeout ? Math.ceil(parseFloat(response.data.timeout)) : 30;
+                        this.startResendTimer(timeoutSeconds);
+                        
+                        this.showMessage('OTP resent successfully!', 'success');
+                        this.clearOtpInputs();
+                        this.otpInputs[0].focus();
+                    } else if (response.responseCode === 506 && response.message === 'REQUEST_ALREADY_EXISTS') {
+                        // Handle case where OTP was already sent within timeout period
+                        this.verificationId = response.data.verificationId;
+                        
+                        const timeoutSeconds = Math.ceil(parseFloat(response.data.timeout || 60));
+                        this.startResendTimer(timeoutSeconds);
+                        
+                        this.showMessage(`OTP already sent. Please wait ${timeoutSeconds} seconds before requesting again.`, 'error');
+                        this.clearOtpInputs();
+                        this.otpInputs[0].focus();
+                    } else {
+                        throw new Error(response.errorMessage || 'Failed to resend OTP');
+                    }
+                    
+                } catch (error) {
+                    console.error('Resend OTP Error:', error);
+                    const userFriendlyMessage = this.getUserFriendlyErrorMessage(error.message, 'resend');
+                    this.showMessage(userFriendlyMessage, 'error');
+                    this.resendBtn.disabled = false;
+                    this.resendBtn.textContent = 'Resend OTP';
+                }
+            }
+
+            startResendTimer(customTimeout = 30) {
+                let timeLeft = customTimeout;
+                this.resendBtn.disabled = true;
+                
+                // Clear any existing timer
+                if (this.resendTimer) {
+                    clearInterval(this.resendTimer);
+                }
+                
+                this.resendTimer = setInterval(() => {
+                    timeLeft--;
+                    this.countdown.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(this.resendTimer);
+                        this.resendBtn.disabled = false;
+                        this.resendBtn.innerHTML = 'Resend OTP';
+                    } else {
+                        this.resendBtn.innerHTML = `Resend OTP in <span id="countdown">${timeLeft}</span>s`;
+                    }
+                }, 1000);
+            }
+
+            clearOtpInputs() {
+                this.otpInputs.forEach(input => input.value = '');
+            }
+
+            showForgotPassword(e) {
+                e.preventDefault();
+                this.hideMessage();
+                this.currentView = 'forgot';
+                this.signinForm.classList.add('form-hidden');
+                this.forgotForm.classList.remove('form-hidden');
+                this.forgotForm.classList.add('form-visible');
+            }
+
+            showSignin(e) {
+                e.preventDefault();
+                this.hideMessage();
+                this.currentView = 'signin';
+                this.forgotForm.classList.add('form-hidden');
+                this.signinForm.classList.remove('form-hidden');
+                this.signinForm.classList.add('form-visible');
+                
+                // Reset signin form state
+                this.editPhone();
+            }
+
+            showMessage(text, type = 'error') {
+                this.hideMessage();
+                
+                if (type === 'success') {
+                    this.successText.textContent = text;
+                    this.successMessage.classList.remove('hidden');
+                } else {
+                    this.errorText.textContent = text;
+                    this.errorMessage.classList.remove('hidden');
+                }
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => this.hideMessage(), 5000);
+            }
+
+            getUserFriendlyErrorMessage(errorMessage, action) {
+                // Convert technical/server errors to user-friendly messages
+                if (!errorMessage) {
+                    return this.getDefaultErrorMessage(action);
+                }
+                
+                const lowerError = errorMessage.toLowerCase();
+                
+                // Network/Connection errors
+                if (lowerError.includes('fetch') || lowerError.includes('network') || lowerError.includes('connection')) {
+                    return 'Please check your internet connection and try again.';
+                }
+                
+                // HTTP errors
+                if (lowerError.includes('http error') || lowerError.includes('status: 500')) {
+                    return 'Service is temporarily unavailable. Please try again later.';
+                }
+                
+                if (lowerError.includes('status: 400')) {
+                    return 'Invalid request. Please check your phone number and try again.';
+                }
+                
+                if (lowerError.includes('status: 404')) {
+                    return 'Service not found. Please contact support.';
+                }
+                
+                // JSON/Parsing errors
+                if (lowerError.includes('json') || lowerError.includes('parse') || lowerError.includes('syntax')) {
+                    return 'Something went wrong. Please try again.';
+                }
+                
+                // Timeout errors
+                if (lowerError.includes('timeout') || lowerError.includes('timed out')) {
+                    return 'Request timed out. Please try again.';
+                }
+                
+                // Database/Server errors (don't show technical details)
+                if (lowerError.includes('database') || lowerError.includes('sql') || lowerError.includes('server')) {
+                    return 'Service is temporarily unavailable. Please try again later.';
+                }
+                
+                // API-specific errors that are user-friendly
+                if (lowerError.includes('invalid phone') || lowerError.includes('invalid mobile')) {
+                    return 'Please enter a valid phone number.';
+                }
+                
+                if (lowerError.includes('invalid otp') || lowerError.includes('wrong otp')) {
+                    return 'Invalid OTP. Please check and try again.';
+                }
+                
+                if (lowerError.includes('otp expired') || lowerError.includes('verification expired')) {
+                    return 'OTP has expired. Please request a new one.';
+                }
+                
+                if (lowerError.includes('too many attempts') || lowerError.includes('rate limit')) {
+                    return 'Too many attempts. Please wait and try again later.';
+                }
+                
+                // If it's a short, simple message that seems user-friendly, show it
+                if (errorMessage.length < 100 && !this.containsTechnicalTerms(errorMessage)) {
+                    return errorMessage;
+                }
+                
+                // Default fallback for unknown errors
+                return this.getDefaultErrorMessage(action);
+            }
+            
+            containsTechnicalTerms(message) {
+                const technicalTerms = [
+                    'exception', 'stack', 'trace', 'null pointer', 'undefined',
+                    'internal server', 'database error', 'sql', 'query',
+                    'failed to', 'error:', 'exception:', 'warning:'
+                ];
+                
+                const lowerMessage = message.toLowerCase();
+                return technicalTerms.some(term => lowerMessage.includes(term));
+            }
+            
+            getDefaultErrorMessage(action) {
+                switch (action) {
+                    case 'send':
+                        return 'Unable to send OTP. Please try again.';
+                    case 'verify':
+                        return 'Unable to verify OTP. Please try again.';
+                    case 'resend':
+                        return 'Unable to resend OTP. Please try again.';
+                    default:
+                        return 'Something went wrong. Please try again.';
+                }
+            }
+
+            hideMessage() {
+                this.successMessage.classList.add('hidden');
+                this.errorMessage.classList.add('hidden');
+            }
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new PhoneAuth();
+        });
+    </script>
+
+</body>
+</html>

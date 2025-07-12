@@ -1,21 +1,13 @@
-import aiohttp
+import requests
 
 headers = {'authToken': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLURCRTY0MEZEMDBEMjRGNSIsImlhdCI6MTc1MTk1NTQxMiwiZXhwIjoxOTA5NjM1NDEyfQ.2iQ_mlLRo19TZEu6cCXvj9QMNzcdQhEKwZ7QNrJFreK4FswenISgSKjtnhTWul2iYhh7pwB3_a6zceta6xccVg'}
 
-async def send_otp(phone):
-    url = f"https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&customerId=C-DBE640FD00D24F5&flowType=SMS&mobileNumber={phone}"
-    
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers) as response:
-            if response.status == 200:
-                return await response.text()
-            raise Exception(f"Send OTP Failed")
-        
-async def verify_otp(phone, verification_id, code):
-    url = f"https://cpaas.messagecentral.com/verification/v3/validateOtp?countryCode=91&mobileNumber={phone}&verificationId={verification_id}&customerId=C-DBE640FD00D24F5&code={code}"
-    
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers) as response:
-            if response.status == 200:
-                return await response.text()
-            raise Exception(f"Verify OTP Failed")
+def send_otp(country_code:str, phone: str):
+    url = f"https://cpaas.messagecentral.com/verification/v3/send?countryCode={country_code}&customerId=C-DBE640FD00D24F5&flowType=SMS&mobileNumber={phone}"
+    response = requests.request("POST", url, headers=headers, data={})
+    return response
+
+def verify_otp(country_code, phone, verification_id, code):
+    url = f"https://cpaas.messagecentral.com/verification/v3/validateOtp?countryCode={country_code}&mobileNumber={phone}&verificationId={verification_id}&customerId=C-DBE640FD00D24F5&code={code}"
+    response = requests.request("GET", url, headers=headers, data={})
+    return response

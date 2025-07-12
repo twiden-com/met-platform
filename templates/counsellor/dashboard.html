@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha Edu Tech - Sales Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/carbon-components/10.58.12/css/carbon-components.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@carbon/styles@1.32.0/css/styles.min.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+            --color-gray-bg: #f2f4f8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--color-gray-bg);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: var(--color-navy);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-icons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .notification-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+        }
+
+        .user-info h4 {
+            margin: 0;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .user-info p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #161616;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            color: #6f6f6f;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--color-orange);
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--color-orange);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .dashboard-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: var(--color-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: transform 0.2s ease;
+        }
+
+        .dashboard-card:hover .card-icon {
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #161616;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-description {
+            color: #6f6f6f;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 95vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+
+        .modal-title {
+            font-size: 1.375rem;
+            font-weight: 600;
+            color: #161616;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6f6f6f;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.15s ease;
+        }
+
+        .modal-close:hover {
+            background: #e0e0e0;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #161616;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        /* Phone Input Group */
+        .phone-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .country-code {
+            flex: 0 0 80px;
+        }
+
+        .phone-number {
+            flex: 1;
+        }
+
+        /* OTP Section */
+        .otp-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .otp-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        /* Multi-select Styles */
+        .bx--multi-select {
+            position: relative;
+        }
+
+        .bx--list-box {
+            background: white;
+            border: 1px solid #8d8d8d;
+            border-radius: 0;
+            min-height: 2.5rem;
+            cursor: pointer;
+        }
+
+        .bx--list-box--expanded {
+            border-color: #0f62fe;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .bx--list-box__field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            height: 2.5rem;
+        }
+
+        .bx--list-box__label {
+            flex: 1;
+            color: #161616;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bx--list-box__label.placeholder {
+            color: #a8a8a8;
+        }
+
+        .bx--list-box__menu-icon {
+            margin-left: 0.5rem;
+            transition: transform 0.15s ease;
+        }
+
+        .bx--list-box--expanded .bx--list-box__menu-icon {
+            transform: rotate(180deg);
+        }
+
+        .bx--list-box__menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #0f62fe;
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .bx--list-box__menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .bx--list-box__menu-item:hover {
+            background: #f4f4f4;
+        }
+
+        .bx--list-box__menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .bx--checkbox-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .bx--checkbox {
+            margin-right: 0.5rem;
+        }
+
+        .bx--checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .bx--checkbox-label-text {
+            color: #161616;
+        }
+
+        /* Coming Soon Overlay */
+        .coming-soon-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .dashboard-card.coming-soon:hover .coming-soon-overlay {
+            opacity: 1;
+        }
+
+        .coming-soon-text {
+            background: var(--color-navy);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Search Modal */
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-result {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid var(--color-orange);
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-container {
+                padding: 2rem 1rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                width: calc(100% - 2rem);
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .user-section {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .dashboard-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div x-data="salesDashboard()">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="brand-section">
+                <div class="logo">
+                    Medha<span class="logo-accent">EduTech</span>
+                </div>
+            </div>
+            <div class="user-section">
+                <div class="notification-icons">
+                    <button class="notification-btn" title="Messages">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                        </svg>
+                    </button>
+                    <button class="notification-btn" title="Notifications">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                        </svg>
+                    </button>
+                    <button class="notification-btn" title="Calendar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                        </svg>
+                    </button>
+                    <button class="notification-btn" title="Settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">RS</div>
+                    <div class="user-info">
+                        <h4>Ravi Sales</h4>
+                        <p>Sales Executive</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="main-container">
+            <div class="dashboard-header">
+			<!--
+                <h1 class="dashboard-title">Sales Dashboard</h1>
+                <p class="dashboard-subtitle">Manage enquiries, students, and course materials</p>
+            -->
+			</div>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid">
+                <!-- New Enquiry Card -->
+                <div class="dashboard-card" @click="showEnquiryForm = true">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">New Enquiry</h3>
+                    <p class="card-description">Create a new student enquiry with detailed information and course preferences</p>
+                </div>
+
+                <!-- Students Card -->
+                <div class="dashboard-card" @click="showStudentsModal = true">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-4h3v-3c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v3h3v4H4zm14-7.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Students</h3>
+                    <p class="card-description">Search and view student profiles, enquiry history, and contact details</p>
+                </div>
+
+                <!-- Brochures Card -->
+                <div class="dashboard-card coming-soon" @click="showComingSoon('Brochures')">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Brochures</h3>
+                    <p class="card-description">Access and share course brochures and marketing materials with students</p>
+                    <div class="coming-soon-overlay">
+                        <span class="coming-soon-text">Coming Soon</span>
+                    </div>
+                </div>
+
+                <!-- Schedules Card -->
+                <div class="dashboard-card coming-soon" @click="showComingSoon('Schedules')">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3H18V1M17,12H12V17H17V12Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Schedules</h3>
+                    <p class="card-description">View class schedules, follow-up reminders, and appointment calendar</p>
+                    <div class="coming-soon-overlay">
+                        <span class="coming-soon-text">Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Search Modal -->
+        <div x-show="showStudentsModal" class="modal-overlay" @click.self="showStudentsModal = false" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 0.5rem;">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        Search Students
+                    </h2>
+                    <button class="modal-close" @click="showStudentsModal = false">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form hx-post="/api/search-student" hx-target="#search-result" hx-swap="innerHTML" class="search-form">
+                        <div class="bx--form-item country-code">
+                            <label for="country-code" class="bx--label">Code</label>
+                            <select id="country-code" name="country_code" class="bx--select-input">
+                                <option value="+91">+91</option>
+                                <option value="+1">+1</option>
+                                <option value="+44">+44</option>
+                            </select>
+                        </div>
+                        <div class="bx--form-item" style="flex: 1;">
+                            <label for="search-phone" class="bx--label">Phone Number</label>
+                            <input type="tel" id="search-phone" name="phone" class="bx--text-input" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="bx--form-item" style="display: flex; align-items: end;">
+                            <button type="submit" class="bx--btn bx--btn--primary">Search</button>
+                        </div>
+                    </form>
+                    <div id="search-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Enquiry Modal -->
+        <div x-show="showEnquiryForm" class="modal-overlay" @click.self="showEnquiryForm = false" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 0.5rem;">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        New Student Enquiry
+                    </h2>
+                    <button class="modal-close" @click="showEnquiryForm = false">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form hx-post="/api/enquiries" hx-target="#enquiry-response" hx-swap="innerHTML">
+                        
+                        <!-- Basic Information -->
+                        <div class="form-section">
+                            <h3 class="section-title">Basic Information</h3>
+                            
+                            <div class="form-grid">
+                                <div class="bx--form-item">
+                                    <label for="student-name" class="bx--label">Student Name *</label>
+                                    <input type="text" id="student-name" name="student_name" class="bx--text-input" placeholder="Enter student name" required>
+                                </div>
+                                <div class="bx--form-item">
+                                    <label for="location" class="bx--label">Location</label>
+                                    <input type="text" id="location" name="location" class="bx--text-input" placeholder="Enter location">
+                                </div>
+                            </div>
+
+                            <!-- Phone with OTP -->
+                            <div class="bx--form-item form-grid-full">
+                                <label for="phone-input" class="bx--label">Phone Number *</label>
+                                <div class="phone-input-group">
+                                    <div class="bx--form-item country-code">
+                                        <select name="country_code" class="bx--select-input">
+                                            <option value="+91">+91</option>
+                                            <option value="+1">+1</option>
+                                            <option value="+44">+44</option>
+                                        </select>
+                                    </div>
+                                    <div class="bx--form-item phone-number">
+                                        <input type="tel" id="phone-input" name="phone" class="bx--text-input" placeholder="Enter phone number" required>
+                                    </div>
+                                </div>
+                                
+                                <!-- OTP Section -->
+                                <div class="otp-section">
+                                    <div class="bx--form-item">
+                                        <label for="otp" class="bx--label">OTP Verification</label>
+                                        <input type="text" id="otp" name="otp" class="bx--text-input" placeholder="Enter OTP" maxlength="6">
+                                    </div>
+                                    <div class="otp-controls">
+                                        <button type="button" class="bx--btn bx--btn--secondary bx--btn--sm">Send OTP</button>
+                                        <div class="bx--checkbox-wrapper">
+                                            <input type="checkbox" id="auto-confirm" name="auto_confirm" class="bx--checkbox">
+                                            <label for="auto-confirm" class="bx--checkbox-label">
+                                                <span class="bx--checkbox-label-text">Auto confirm (if OTP service fails)</span>
+                                            </label>
