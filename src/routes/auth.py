@@ -11,6 +11,18 @@ from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="templates", auto_reload=True)
 
+
+# =====================================================
+# GET LOGGEDIN USER
+# =====================================================
+def get_loggedin_user(request: Request, db:AsyncClient = Depends(get_db)):
+    token = request.cookies.get('user_session')
+    try:
+        user = db.auth.get_user(token)
+        return user
+    except Exception:
+        return None
+
 # =====================================================
 # SIGNUP USER
 # =====================================================
@@ -45,7 +57,7 @@ async def signup_submit(
 
 
 # =====================================================
-# SIGNIN USER
+# LOGIN USER WITH EMAIL & PASSWORD
 # =====================================================
 @router.get("/login", response_class=HTMLResponse)
 async def login(request: Request):
@@ -66,10 +78,10 @@ async def login_submit(request: Request, db = Depends(get_db)):
 
 
 # =====================================================
-# SEND OTP 
+# LOGIN USER WITH PHONE & OTP
 # =====================================================
 @router.post("/send/phone_otp")
-def trigger_otp(request: Request, country_code:str, phone: str): #Eg. country_code - 91, phone - 7013908751 
+def login_send_otp(country_code:str, phone: str): #Eg. country_code - 91, phone - 7013908751 
     try:
         res = send_otp(country_code=country_code, phone=phone)
         return json.loads(res.text)
@@ -77,15 +89,16 @@ def trigger_otp(request: Request, country_code:str, phone: str): #Eg. country_co
         raise HTTPException(status_code=500, detail="Failed to send OTP")
 
 @router.post("/verify/phone_otp")
-async def validate_otp(request: Request, phone:str, country_code:str, otp: str, verification_id: str, db = Depends(get_db)): #Eg. otp - 287976 
+async def validate_otp(phone:str, country_code:str, otp: str, verification_id: str, db:AsyncClient = Depends(get_db)): #Eg. otp - 287976 
     try:
         res = verify_otp(code=otp, verification_id=verification_id, country_code=country_code, phone=phone)
+        
         if res.status_code == 200:
             data = json.loads(res.text)
             if data.get("message") == 'VERIFICATION_EXPIRED':
                 return data
             elif data.get("message") == 'SUCCESS':
-                email = password = country_code + phone + "@met.com"
+                email = password = country_code + '-' + phone + "@met.com"
                 result = await db.auth.sign_in_with_password(
                     {
                         "email"   : email,
@@ -93,21 +106,41 @@ async def validate_otp(request: Request, phone:str, country_code:str, otp: str, 
                     }
                 )
 
-                response = RedirectResponse(
-                    url="/counsellor/dashboard",
-                    status_code=status.HTTP_303_SEE_OTHER
+                profile = await db.table("profiles").select("id", "phone_number", "role").eq("user_id", result.user.id).execute()
+
+                role = profile.data[0].get('role')
+
+                # Create JSONResponse
+                response = JSONResponse(
+                    content={
+                        "success": True,
+                        "redirect": True,
+                        "redirectUrl": f"/{role}/dashboard",
+                        "role": role
+                    }
+                )
+
+                # Use FastAPI's set_cookie on the JSONResponse
+                response.set_cookie(
+                    key="user_session",
+                    value=result.session.access_token,
+                    httponly=True,
+                    secure=True,
+                    samesite='lax',
+                    max_age=3600
                 )
 
                 response.set_cookie(
-                    key="user_session",
-                        value=result.session.access_token,
-                        httponly=True,
-                        secure=True,
-                        samesite='lax',
-                        max_age=3600
+                    key="user_role",
+                    value=role,
+                    httponly=True,
+                    secure=True,
+                    samesite='lax',
+                    max_age=3600
                 )
 
                 return response
+
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to verify OTP")
 

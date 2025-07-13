@@ -11,5 +11,5 @@ templates = Jinja2Templates(directory="templates", auto_reload=True)
 # SIGNUP USER
 # =====================================================
 @router.get("/dashboard", response_class=HTMLResponse)
-async def show_councellor_dashboard(request: Request):
-     return await templates.TemplateResponse("counsellor/dashboard.html", {"request": request})
+def show_councellor_dashboard(request: Request):
+     return templates.TemplateResponse("counsellor/dashboard.html", {"request": request})
