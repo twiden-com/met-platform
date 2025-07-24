@@ -13,7 +13,7 @@ class StudentEnquiryRequest(BaseModel):
     place: Optional[str] = Field(None, max_length=100)
     purpose: Optional[str] = None
     college_name: Optional[str] = Field(None, max_length=200)
-    passout_year: Optional[int] = Field(None, ge=1990, le=2030)
+    passout_year: Optional[int] = Field(None, le=2030)
     degree: Optional[str] = None
     lead_source: Optional[str] = None
     mode: Optional[str] = None

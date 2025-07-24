@@ -125,56 +125,102 @@ async def student_validate_otp(phone:str, country_code:str, otp: str, verificati
 
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to verify OTP")
- 
+    
+from fastapi import Request, Form, Depends, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
+from typing import Optional, List, Dict, Any
+
 @router.post("/new_enquiry/submit")
 @auth_required(['counsellor', 'admin'])
 async def create_student_enquiry(
     request: Request,
-    verified_phone: str = Form(...),
-    verification_id: Optional[str] = Form(None),
-    student_name: str = Form(...),
-    additional_people: Optional[int] = Form(0),
-    country: Optional[str] = Form("India"),
-    state: Optional[str] = Form(None),
-    place: Optional[str] = Form(None),
-    purpose: Optional[str] = Form(None),
-    college_name: Optional[str] = Form(None),
-    passout_year: Optional[int] = Form(None),
-    degree: Optional[str] = Form(None),
-    lead_source: Optional[str] = Form(None),
-    mode: Optional[str] = Form(None),
-    slot_preference: Optional[str] = Form(None),
-    counselled_by: Optional[str] = Form(None),
-    urgency: Optional[str] = Form(None),
-    interested_courses: List[str] = Form(...),
-    comments: Optional[str] = Form(None),
-    send_brochure: Optional[bool] = Form(False),
     db: AsyncClient = Depends(get_db)
 ):
     """Create a new student enquiry profile"""
     try:
-        # Create Pydantic model for validation
-        enquiry_data = StudentEnquiryRequest(
-            verified_phone=verified_phone,
-            verification_id=verification_id,
-            student_name=student_name,
-            additional_people=additional_people,
-            country=country,
-            state=state,
-            place=place,
-            purpose=purpose,
-            college_name=college_name,
-            passout_year=passout_year,
-            degree=degree,
-            lead_source=lead_source,
-            mode=mode,
-            slot_preference=slot_preference,
-            counselled_by=counselled_by,
-            urgency=urgency,
-            interested_courses=interested_courses,
-            comments=comments,
-            send_brochure=send_brochure
-        )
+        # Get form data manually to handle validation properly
+        form_data = await request.form()
+        
+        # Convert form data to dict, handling special cases
+        data_dict = {}
+        for key, value in form_data.items():
+            if key == 'interested_courses':
+                # Handle multiple values for checkboxes
+                if isinstance(value, list):
+                    data_dict[key] = value
+                else:
+                    # If single value, get all values for this key
+                    data_dict[key] = form_data.getlist(key)
+            elif key in ['additional_people', 'passout_year']:
+                # Handle integer fields - convert empty strings to None
+                data_dict[key] = int(value) if value != '' else None
+            elif key == 'send_brochure':
+                # Handle boolean fields
+                data_dict[key] = value == 'true' if isinstance(value, str) else bool(value)
+            else:
+                # Handle string fields - convert empty strings to None for optional fields
+                data_dict[key] = value if value != '' else None
+        
+        # Create Pydantic model for validation with our custom error handling
+        try:
+            enquiry_data = StudentEnquiryRequest(**data_dict)
+        except ValidationError as e:
+            # Custom Pydantic validation error formatting
+            error_messages = []
+            error_fields = []  # Track which fields have errors
+            
+            for error in e.errors():
+                field_name = error['loc'][0] if error['loc'] else 'unknown'
+                error_fields.append(field_name)  # Add to error fields list
+                
+                # Convert field name to readable format
+                field_display_names = {
+                    'verified_phone': 'Phone Number',
+                    'student_name': 'Student Name',
+                    'additional_people': 'Additional People',
+                    'college_name': 'College Name',
+                    'passout_year': 'Year of Passout',
+                    'lead_source': 'Lead Source',
+                    'slot_preference': 'Slot Preference',
+                    'counselled_by': 'Counselled By',
+                    'interested_courses': 'Interested Courses'
+                }
+                
+                readable_field = field_display_names.get(field_name, field_name.replace('_', ' ').title())
+                message = error['msg']
+                
+                # Clean up common pydantic error messages
+                if 'field required' in message.lower():
+                    message = "is required"
+                elif 'ensure this value has at least' in message.lower():
+                    message = "is required"
+                elif 'ensure this value is greater than or equal to' in message.lower():
+                    message = "must be a valid number (minimum value applies)"
+                elif 'ensure this value is less than or equal to' in message.lower():
+                    message = "exceeds maximum allowed value"
+                elif 'input should be a valid integer' in message.lower():
+                    message = "must be a valid year (numbers only)"
+                elif 'string too short' in message.lower():
+                    message = "is too short"
+                elif 'string too long' in message.lower():
+                    message = "is too long"
+                elif 'invalid' in message.lower() and 'course' in message.lower():
+                    message = "contains invalid course selection"
+                
+                error_messages.append(f"• {readable_field}: {message}")
+            
+            formatted_message = "Please fix the following errors:\n\n" + "\n".join(error_messages)
+            
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "success": False,
+                    "message": formatted_message,
+                    "error_fields": error_fields,  # Include field names for frontend highlighting
+                    "error_type": "validation"
+                }
+            )
         
         # Check if phone already exists
         existing = await db.table('profiles').select("user_id, student_name").eq('phone_number', enquiry_data.verified_phone).execute()
@@ -212,37 +258,12 @@ async def create_student_enquiry(
             }
         )
         
-    except ValidationError as e:
-        # Pydantic validation errors
-        error_messages = []
-        for error in e.errors():
-            field = error['loc'][0] if error['loc'] else 'unknown'
-            message = error['msg']
-            error_messages.append(f"{field}: {message}")
-        
-        return JSONResponse(
-            status_code=422,
-            content={
-                "success": False,
-                "message": f"Validation failed: {'; '.join(error_messages)}"
-            }
-        )
-        
-    except HTTPException as he:
-        return JSONResponse(
-            status_code=he.status_code,
-            content={
-                "success": False,
-                "message": he.detail
-            }
-        )
-        
     except Exception as e:
         print(f"Error creating enquiry: {str(e)}")
         return JSONResponse(
             status_code=500,
             content={
                 "success": False,
-                "message": "Failed to create student enquiry"
+                "message": "Failed to create student enquiry. Please try again."
             }
         )

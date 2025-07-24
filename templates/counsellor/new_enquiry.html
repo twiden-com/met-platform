@@ -552,6 +552,19 @@
             transform: rotate(-45deg);
         }
 
+        /* Error field highlighting */
+        .field-error {
+            border-bottom: 2px solid #da1e28 !important;
+            background-color: #fff1f1 !important;
+            transition: all 0.3s ease;
+        }
+
+        .field-error:focus {
+            border-bottom: 2px solid #da1e28 !important;
+            background-color: #fff1f1 !important;
+            box-shadow: 0 0 0 2px rgba(218, 30, 40, 0.2) !important;
+        }
+
         /* Disabled checkbox styling */
         .bx--checkbox:disabled + .bx--checkbox-label {
             color: #c6c6c6;
@@ -1765,63 +1778,181 @@
             }
 
             // Add new method to handle form submission
-            // Simple error handling - replace the complex submitFormData method
-async submitFormData(form, submitBtn, originalText) {
-    try {
-        const formData = new FormData(form);
-        
-        const response = await fetch('/student/new_enquiry/submit', {
-            method: 'POST',
-            body: formData
-        });
+            async submitFormData(form, submitBtn, originalText) {
+                try {
+                    const formData = new FormData(form);
+                    
+                    const response = await fetch('/student/new_enquiry/submit', {
+                        method: 'POST',
+                        body: formData
+                    });
 
-        const data = await response.json();
+                    const data = await response.json();
 
-        if (response.ok && data.success) {
-            // Show success modal
-            this.showSuccessModal(data.message);
-        } else {
-            // Show error message
-            this.showAlert(data.detail || 'Failed to create enquiry', 'error');
-        }
+                    if (response.status === 200 && data.success) {
+                        // Show success modal
+                        this.showSuccessModal(data.message);
+                    } else if (response.status === 422) {
+                        // Validation errors - highlight specific fields
+                        this.showAlert(data.message || 'Validation failed', 'error');
+                        this.highlightErrorFields(data.error_fields || []);
+                        this.scrollToError();
+                    } else if (response.status === 400) {
+                        // Business logic errors (duplicate phone, etc.)
+                        this.showAlert(data.message || 'Request failed', 'error');
+                        this.scrollToError();
+                    } else if (response.status === 500) {
+                        // Server errors
+                        this.showAlert(data.message || 'Server error occurred', 'error');
+                        this.scrollToError();
+                    } else {
+                        // Other errors
+                        this.showAlert(data.message || 'An unexpected error occurred', 'error');
+                        this.scrollToError();
+                    }
 
-    } catch (error) {
-        console.error('Network error:', error);
-        this.showAlert('Network error. Please check your connection and try again.', 'error');
-    } finally {
-        // Always reset button
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }
-}
-
-// Simple success modal (update existing method)
-showSuccessModal(message) {
-    const modal = document.getElementById('success-modal');
-    if (modal) {
-        const modalMessage = modal.querySelector('.modal-message');
-        if (modalMessage) {
-            modalMessage.textContent = message || 'Student details have been saved successfully.';
-        }
-        
-        modal.style.display = 'flex';
-        
-        // Redirect to dashboard after OK
-        modal.querySelector('.bx--btn--primary').onclick = () => {
-            window.location.href = '/counsellor/dashboard';
-        };
-        
-        modal.onclick = (e) => {
-            if (e.target === modal) {
-                window.location.href = '/counsellor/dashboard';
+                } catch (error) {
+                    console.error('Network error:', error);
+                    this.showAlert('Network error. Please check your connection and try again.', 'error');
+                    this.scrollToError();
+                } finally {
+                    // Always reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
             }
-        };
-    }
-}
+
+            // Add method to highlight error fields
+            highlightErrorFields(errorFields) {
+                // Clear previous error highlights
+                this.clearErrorHighlights();
+                
+                if (!errorFields || errorFields.length === 0) return;
+                
+                // Field name mapping (backend field name → frontend element ID)
+                const fieldMapping = {
+                    'verified_phone': 'phone-input',
+                    'student_name': 'student-name',
+                    'additional_people': 'cds-number-input[name="additional_people"]',
+                    'state': 'state',
+                    'place': 'place',
+                    'purpose': 'purpose',
+                    'college_name': 'college-name',
+                    'passout_year': 'passout-year',
+                    'degree': 'degree',
+                    'lead_source': 'lead-source',
+                    'mode': 'mode',
+                    'slot_preference': 'slot-preference',
+                    'counselled_by': 'counselled-by',
+                    'urgency': 'urgency',
+                    'interested_courses': '.courses-container'
+                };
+                
+                errorFields.forEach(fieldName => {
+                    const elementSelector = fieldMapping[fieldName];
+                    if (elementSelector) {
+                        let element;
+                        
+                        if (elementSelector.startsWith('.')) {
+                            // Class selector
+                            element = document.querySelector(elementSelector);
+                        } else if (elementSelector.includes('[')) {
+                            // Attribute selector (for Carbon components)
+                            element = document.querySelector(elementSelector);
+                        } else {
+                            // ID selector
+                            element = document.getElementById(elementSelector);
+                        }
+                        
+                        if (element) {
+                            element.classList.add('field-error');
+                            
+                            // Special handling for different field types
+                            if (fieldName === 'interested_courses') {
+                                // Highlight the entire courses container
+                                element.style.border = '2px solid #da1e28';
+                                element.style.borderRadius = '4px';
+                            }
+                        }
+                    }
+                });
+                
+                // Show field names in console for debugging
+                console.log('Highlighted error fields:', errorFields);
+            }
+
+            // Add method to clear error highlights
+            clearErrorHighlights() {
+                // Remove error class from all elements
+                document.querySelectorAll('.field-error').forEach(el => {
+                    el.classList.remove('field-error');
+                });
+                
+                // Remove border from courses container
+                const coursesContainer = document.querySelector('.courses-container');
+                if (coursesContainer) {
+                    coursesContainer.style.border = '';
+                    coursesContainer.style.borderRadius = '';
+                }
+            }
+
+            // Add scroll to error function
+            scrollToError() {
+                // Scroll to the alert message at the top of the form
+                const alertDiv = document.getElementById('form-response');
+                if (alertDiv) {
+                    alertDiv.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                } else {
+                    // Fallback: scroll to top of form
+                    const formContainer = document.querySelector('.form-container');
+                    if (formContainer) {
+                        formContainer.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }
+                }
+            }
+
+            // Add method to show success modal
+            showSuccessModal() {
+                const modal = document.getElementById('success-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    
+                    // Add click handler for OK button
+                    const okButton = modal.querySelector('.bx--btn--primary');
+                    if (okButton) {
+                        okButton.onclick = () => {
+                            window.location.href = '/counsellor/dashboard';
+                        };
+                    }
+                    
+                    // Add click handler for overlay (close modal)
+                    modal.onclick = (e) => {
+                        if (e.target === modal) {
+                            window.location.href = '/counsellor/dashboard';
+                        }
+                    };
+                }
+            }
 
             showAlert(message, type) {
                 const alertDiv = document.getElementById('form-response');
                 let alertClass, iconSvg;
+                
+                // Ensure message is a string
+                let displayMessage = '';
+                if (typeof message === 'string') {
+                    displayMessage = message;
+                } else if (typeof message === 'object') {
+                    displayMessage = JSON.stringify(message);
+                } else {
+                    displayMessage = String(message);
+                }
                 
                 if (type === 'success') {
                     alertClass = 'bx--inline-notification--success';
@@ -1847,17 +1978,17 @@ showSuccessModal(message) {
                         </div>
                         <div class="bx--inline-notification__details">
                             <div class="bx--inline-notification__text-wrapper">
-                                <p class="bx--inline-notification__subtitle" style="margin: 0; font-size: 0.875rem;">${message}</p>
+                                <p class="bx--inline-notification__subtitle" style="margin: 0; font-size: 0.875rem; white-space: pre-line;">${displayMessage}</p>
                             </div>
                         </div>
                     </div>
                 `;
                 
-                // Auto-hide after 5 seconds for success/info messages
+                // Auto-hide after 8 seconds for success/info messages
                 if (type === 'success' || type === 'info') {
                     setTimeout(() => {
                         alertDiv.innerHTML = '';
-                    }, 5000);
+                    }, 8000);
                 }
             }
         }
