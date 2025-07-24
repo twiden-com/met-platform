@@ -2,12 +2,13 @@ from functools import wraps
 from inspect import iscoroutinefunction
 from fastapi import APIRouter, Depends, Form, status, HTTPException,Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from src.config.database import get_admin_db, get_db
 from supabase import Client, AsyncClient
 from src.external.messagecentral import send_otp, verify_otp
 import json
 from typing import Optional, List, Callable, Any
+from src.schemas.new_enquiry_schema import StudentEnquiryRequest
 from src.utils.auth_utils import auth_required
 
 
@@ -124,8 +125,7 @@ async def student_validate_otp(phone:str, country_code:str, otp: str, verificati
 
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to verify OTP")
-    
-
+ 
 @router.post("/new_enquiry/submit")
 @auth_required(['counsellor', 'admin'])
 async def create_student_enquiry(
@@ -133,13 +133,17 @@ async def create_student_enquiry(
     verified_phone: str = Form(...),
     verification_id: Optional[str] = Form(None),
     student_name: str = Form(...),
-    additional_members: Optional[int] = Form(0),
-    location: Optional[str] = Form(None),
-    mode: Optional[str] = Form(None),
-    degree: Optional[str] = Form(None),
+    additional_people: Optional[int] = Form(0),
+    country: Optional[str] = Form("India"),
+    state: Optional[str] = Form(None),
+    place: Optional[str] = Form(None),
     purpose: Optional[str] = Form(None),
-    slot_preference: Optional[str] = Form(None),
+    college_name: Optional[str] = Form(None),
+    passout_year: Optional[int] = Form(None),
+    degree: Optional[str] = Form(None),
     lead_source: Optional[str] = Form(None),
+    mode: Optional[str] = Form(None),
+    slot_preference: Optional[str] = Form(None),
     counselled_by: Optional[str] = Form(None),
     urgency: Optional[str] = Form(None),
     interested_courses: List[str] = Form(...),
@@ -147,72 +151,98 @@ async def create_student_enquiry(
     send_brochure: Optional[bool] = Form(False),
     db: AsyncClient = Depends(get_db)
 ):
-    """
-    Create a new student enquiry profile
-    """
+    """Create a new student enquiry profile"""
     try:
-        # Validate required fields
-        if not student_name.strip():
-            raise HTTPException(status_code=400, detail="Student name is required")
+        # Create Pydantic model for validation
+        enquiry_data = StudentEnquiryRequest(
+            verified_phone=verified_phone,
+            verification_id=verification_id,
+            student_name=student_name,
+            additional_people=additional_people,
+            country=country,
+            state=state,
+            place=place,
+            purpose=purpose,
+            college_name=college_name,
+            passout_year=passout_year,
+            degree=degree,
+            lead_source=lead_source,
+            mode=mode,
+            slot_preference=slot_preference,
+            counselled_by=counselled_by,
+            urgency=urgency,
+            interested_courses=interested_courses,
+            comments=comments,
+            send_brochure=send_brochure
+        )
         
-        if not interested_courses:
-            raise HTTPException(status_code=400, detail="At least one interested course must be selected")
+        # Check if phone already exists
+        existing = await db.table('profiles').select("user_id, student_name").eq('phone_number', enquiry_data.verified_phone).execute()
         
-        # Check if phone number already exists
-        existing_profile = await db.table('profiles').select("*").eq('phone_number', verified_phone).execute()
+        # Get counsellor ID
+        counsellor_id = getattr(request.state.user_data.user, 'id', None) if hasattr(request.state, 'user_data') else None
         
-        if existing_profile.data and len(existing_profile.data) > 0:
-            raise HTTPException(
-                status_code=400, 
-                detail="A profile with this phone number already exists"
-            )
+        # Convert to database format
+        profile_data = enquiry_data.to_db_dict(counsellor_id)
         
-        # Get counsellor info from request state
-        counsellor_id = request.state.user_data.user.id if hasattr(request.state, 'user_data') else None
-        
-        # Prepare profile data
-        profile_data = {
-            "phone_number": verified_phone,
-            "verification_id": verification_id,
-            "student_name": student_name.strip(),
-            "additional_members": additional_members or 0,
-            "location": location.strip() if location else None,
-            "mode": mode,
-            "degree": degree,
-            "purpose": purpose,
-            "slot_preference": slot_preference,
-            "lead_source": lead_source,
-            "counselled_by": counselled_by,
-            "urgency": urgency,
-            "interested_courses": json.dumps(interested_courses),
-            "comments": comments.strip() if comments else None,
-            "send_brochure": bool(send_brochure),
-            "created_by": counsellor_id,
-            "is_verified": 1,
-            "created_at": "now()",
-            "updated_at": "now()"
-        }
-        
-        # Insert into database
-        result = await db.table('profiles').insert(profile_data).execute()
+        if existing.data:
+            # Update existing profile
+            result = await db.table('profiles').update(profile_data).eq('user_id', existing.data[0]['user_id']).execute()
+            action = "updated"
+        else:
+            # Insert new profile
+            result = await db.table('profiles').insert(profile_data).execute()
+            action = "created"
         
         if not result.data:
-            raise HTTPException(status_code=500, detail="Failed to create profile")
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "success": False,
+                    "message": "Failed to save profile"
+                }
+            )
         
-        # Return success response
         return JSONResponse(
-            status_code=200,
             content={
                 "success": True,
-                "message": "Student enquiry created successfully",
-                "profile_id": result.data[0].get('id') if result.data else None
+                "message": f"Student enquiry for {enquiry_data.student_name} {action} successfully!",
+                "user_id": result.data[0].get('user_id'),
+                "profile_id": result.data[0].get('id')
             }
         )
         
-    except HTTPException:
-        # Re-raise HTTP exceptions
-        raise
+    except ValidationError as e:
+        # Pydantic validation errors
+        error_messages = []
+        for error in e.errors():
+            field = error['loc'][0] if error['loc'] else 'unknown'
+            message = error['msg']
+            error_messages.append(f"{field}: {message}")
+        
+        return JSONResponse(
+            status_code=422,
+            content={
+                "success": False,
+                "message": f"Validation failed: {'; '.join(error_messages)}"
+            }
+        )
+        
+    except HTTPException as he:
+        return JSONResponse(
+            status_code=he.status_code,
+            content={
+                "success": False,
+                "message": he.detail
+            }
+        )
+        
     except Exception as e:
-        # Log the error for debugging
-        print(f"Error creating student enquiry: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to create student enquiry")
+        print(f"Error creating enquiry: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "message": "Failed to create student enquiry"
+            }
+        )

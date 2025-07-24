@@ -106,6 +106,13 @@
             line-height: 1.29;
         }
 
+        /* Required field indicator */
+        .bx--label.required::after {
+            content: ' *';
+            color: #da1e28;
+            font-weight: 400;
+        }
+
         .bx--text-input,
         .bx--text-area,
         .bx--select-input {
@@ -135,6 +142,15 @@
             background-color: white;
         }
 
+        /* Disabled field styling */
+        .bx--text-input:disabled,
+        .bx--select-input:disabled {
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #c6c6c6;
+            color: #8d8d8d;
+            cursor: not-allowed;
+        }
+
         .bx--select {
             position: relative;
         }
@@ -151,6 +167,13 @@
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid-three {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 2rem;
             margin-bottom: 1.5rem;
         }
@@ -529,9 +552,15 @@
             transform: rotate(-45deg);
         }
 
-        .bx--checkbox:focus + .bx--checkbox-label::before {
-            border-color: #0f62fe;
-            box-shadow: 0 0 0 2px #0f62fe;
+        /* Disabled checkbox styling */
+        .bx--checkbox:disabled + .bx--checkbox-label {
+            color: #c6c6c6;
+            cursor: not-allowed;
+        }
+
+        .bx--checkbox:disabled + .bx--checkbox-label::before {
+            background-color: #f4f4f4;
+            border-color: #c6c6c6;
         }
 
         /* Individual checkbox option */
@@ -614,6 +643,26 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Year input styling */
+        .year-input {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: #161616;
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        .year-input:focus {
+            border-bottom: 2px solid #0f62fe;
+            background-color: white;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .app-header {
@@ -635,7 +684,9 @@
                 padding: 2rem 1.5rem;
             }
             
-            .form-grid {
+            .form-grid,
+            .form-grid,
+            .form-grid-three {
                 grid-template-columns: 1fr;
                 gap: 0;
             }
@@ -728,7 +779,7 @@
                 
                 <!-- Phone Verification Section -->
                 <div class="bx--form-item form-grid-full">
-                    <label class="bx--label">Phone Number *</label>
+                    <label class="bx--label required">Phone Number</label>
                     
                     <div id="phone-verification-container" class="phone-verification-container">
                         <!-- Column 1: Country Code -->
@@ -784,20 +835,96 @@
                 <!-- Student and Form Details (Initially Disabled) -->
                 <div id="form-details" class="form-section">
                     
-                    <!-- Student Details -->
+                    <!-- Student Details Row 1: Name and Additional People -->
                     <div class="form-grid">
                         <div class="bx--form-item">
-                            <label for="student-name" class="bx--label">Student Name *</label>
+                            <label for="student-name" class="bx--label required">Student Name</label>
                             <input type="text" id="student-name" name="student_name" class="bx--text-input" placeholder="Enter full name" required>
                         </div>
                         <div class="bx--form-item">
-                            <label for="location" class="bx--label">Location</label>
-                            <input type="text" id="location" name="location" class="bx--text-input" placeholder="Enter city">
+                            <cds-form-item>
+                                <cds-number-input 
+                                    value="0" 
+                                    min="0" 
+                                    max="10" 
+                                    step="1" 
+                                    label="Additional People" 
+                                    helper-text="Number of additional people interested" 
+                                    size="md"
+                                    name="additional_people">
+                                </cds-number-input>
+                            </cds-form-item>
                         </div>
                     </div>
 
-                    <!-- Purpose and Additional People -->
+                    <!-- Location Details Row 1: Country and State -->
                     <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="country" class="bx--label">Country</label>
+                            <div class="bx--select">
+                                <select id="country" name="country" class="bx--select-input" disabled>
+                                    <option value="India" selected>India</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="state" class="bx--label">State</label>
+                            <div class="bx--select">
+                                <select id="state" name="state" class="bx--select-input">
+                                    <option value="">Select state</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana" selected>Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                    <option value="Chandigarh">Chandigarh</option>
+                                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                    <option value="Ladakh">Ladakh</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Puducherry">Puducherry</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location and Purpose Row 2: Place and Purpose -->
+                    <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="place" class="bx--label">Place</label>
+                            <input type="text" id="place" name="place" class="bx--text-input" placeholder="Enter city/place">
+                        </div>
                         <div class="bx--form-item">
                             <label for="purpose" class="bx--label">Purpose</label>
                             <div class="bx--select">
@@ -817,23 +944,21 @@
                                 </svg>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- College Details and Passout Year -->
+                    <div class="form-grid">
                         <div class="bx--form-item">
-                            <cds-form-item>
-                                <cds-number-input 
-                                    value="0" 
-                                    min="0" 
-                                    max="10" 
-                                    step="1" 
-                                    label="Additional People" 
-                                    helper-text="Number of additional people interested" 
-                                    size="md"
-                                    name="additional_people">
-                                </cds-number-input>
-                            </cds-form-item>
+                            <label for="college-name" class="bx--label">College Name</label>
+                            <input type="text" id="college-name" name="college_name" class="bx--text-input" placeholder="Enter college/institution name">
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="passout-year" class="bx--label">Year of Passout</label>
+                            <input type="number" id="passout-year" name="passout_year" class="year-input" placeholder="YYYY" min="1990" max="2030">
                         </div>
                     </div>
 
-                    <!-- Education & Lead Info -->
+                    <!-- Education & Lead Source -->
                     <div class="form-grid">
                         <div class="bx--form-item">
                             <label for="degree" class="bx--label">Education Level</label>
@@ -932,6 +1057,7 @@
                                     <option value="5pm-7pm">5:00 PM - 7:00 PM</option>
                                     <option value="7pm-9pm">7:00 PM - 9:00 PM</option>
                                     <option value="9pm-11pm">9:00 PM - 11:00 PM</option>
+                                    <option value="flexible">Flexible</option>
                                 </select>
                                 <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
                                     <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
@@ -946,7 +1072,7 @@
                             <label for="counselled-by" class="bx--label">Counselled by</label>
                             <div class="bx--select">
                                 <select id="counselled-by" name="counselled_by" class="bx--select-input">
-                                    <option value="">Select counsellor</option>
+                                    <option value="not_yet" selected>Not Yet</option>
                                     <option value="ushmika">Ushmika</option>
                                     <option value="pallavi">Pallavi</option>
                                     <option value="taniath">Taniath</option>
@@ -977,7 +1103,7 @@
 
                     <!-- Interested Courses -->
                     <div class="bx--form-item form-grid-full">
-                        <label class="bx--label">Interested Courses *</label>
+                        <label class="bx--label required">Interested Courses</label>
                         <fieldset class="bx--fieldset">
                             <div class="courses-container">
                                 <div class="courses-grid">
@@ -1012,9 +1138,33 @@
                                         </label>
                                     </div>
                                     <div class="bx--checkbox-wrapper">
-                                        <input type="checkbox" id="course-6" name="interested_courses" value="data_analytics_genai" class="bx--checkbox">
+                                        <input type="checkbox" id="course-6" name="interested_courses" value="data_analytics_ai" class="bx--checkbox">
                                         <label for="course-6" class="bx--checkbox-label">
-                                            <span class="bx--checkbox-label-text">Data Analytics & Gen AI</span>
+                                            <span class="bx--checkbox-label-text">Data Analytics with AI</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-7" name="interested_courses" value="generative_ai" class="bx--checkbox">
+                                        <label for="course-7" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Generative AI</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-8" name="interested_courses" value="video_editing_graphic_design" class="bx--checkbox">
+                                        <label for="course-8" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Video Editing & Graphic Design</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-9" name="interested_courses" value="multi_cloud_devops" class="bx--checkbox">
+                                        <label for="course-9" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Multi Cloud With DevOps</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-10" name="interested_courses" value="sap" class="bx--checkbox" disabled>
+                                        <label for="course-10" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">SAP (Coming Soon)</span>
                                         </label>
                                     </div>
                                 </div>
@@ -1437,12 +1587,6 @@
                 }
                 
                 // Show success indicator in input column
-                //<div class="success-indicator">
-                    //     <svg viewBox="0 0 16 16" fill="currentColor">
-                    //         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-                    //     </svg>
-                    //     Verified
-                    // </div>
                 this.inputColumn.innerHTML = `
                     <p></p>
                 `;
@@ -1621,62 +1765,59 @@
             }
 
             // Add new method to handle form submission
-            async submitFormData(form, submitBtn, originalText) {
-                try {
-                    const formData = new FormData(form);
-                    
-                    const response = await fetch('/student/new_enquiry/submit', {
-                        method: 'POST',
-                        body: formData
-                    });
+            // Simple error handling - replace the complex submitFormData method
+async submitFormData(form, submitBtn, originalText) {
+    try {
+        const formData = new FormData(form);
+        
+        const response = await fetch('/student/new_enquiry/submit', {
+            method: 'POST',
+            body: formData
+        });
 
-                    const data = await response.json();
+        const data = await response.json();
 
-                    if (response.ok && data.success) {
-                        // Show success modal
-                        this.showSuccessModal();
-                    } else {
-                        // Handle API errors
-                        const errorMessage = data.detail || data.message || 'Failed to create enquiry';
-                        this.showAlert(errorMessage, 'error');
-                        
-                        // Reset button state
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
+        if (response.ok && data.success) {
+            // Show success modal
+            this.showSuccessModal(data.message);
+        } else {
+            // Show error message
+            this.showAlert(data.detail || 'Failed to create enquiry', 'error');
+        }
 
-                } catch (error) {
-                    console.error('Form submission error:', error);
-                    this.showAlert('Network error. Please check your connection and try again.', 'error');
-                    
-                    // Reset button state
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }
+    } catch (error) {
+        console.error('Network error:', error);
+        this.showAlert('Network error. Please check your connection and try again.', 'error');
+    } finally {
+        // Always reset button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Simple success modal (update existing method)
+showSuccessModal(message) {
+    const modal = document.getElementById('success-modal');
+    if (modal) {
+        const modalMessage = modal.querySelector('.modal-message');
+        if (modalMessage) {
+            modalMessage.textContent = message || 'Student details have been saved successfully.';
+        }
+        
+        modal.style.display = 'flex';
+        
+        // Redirect to dashboard after OK
+        modal.querySelector('.bx--btn--primary').onclick = () => {
+            window.location.href = '/counsellor/dashboard';
+        };
+        
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                window.location.href = '/counsellor/dashboard';
             }
-
-            // Add method to show success modal
-            showSuccessModal() {
-                const modal = document.getElementById('success-modal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                    
-                    // Add click handler for OK button
-                    const okButton = modal.querySelector('.bx--btn--primary');
-                    if (okButton) {
-                        okButton.onclick = () => {
-                            window.location.href = '/counsellor/dashboard';
-                        };
-                    }
-                    
-                    // Add click handler for overlay (close modal)
-                    modal.onclick = (e) => {
-                        if (e.target === modal) {
-                            window.location.href = '/counsellor/dashboard';
-                        }
-                    };
-                }
-            }
+        };
+    }
+}
 
             showAlert(message, type) {
                 const alertDiv = document.getElementById('form-response');
