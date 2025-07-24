@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from src.routes.auth import auth_required
-router = APIRouter(prefix='/counsellor', tags=["Admin"])
+from src.utils.auth_utils import auth_required
 
+router    = APIRouter(prefix='/counsellor', tags=["Admin"])
 templates = Jinja2Templates(directory="templates", auto_reload=True)
 
 

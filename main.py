@@ -3,10 +3,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from src.routes.auth import router as auth_router
 from src.routes.counsellor import router as counsellor_router
+from src.routes.student import router as student_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from src.config.settings import settings
-from fastapi.responses import JSONResponse
+from fastapi.responses import RedirectResponse
 import uvicorn 
 import time
 
@@ -33,10 +34,11 @@ def health_check():
 
 @app.get("/")
 def root(request: Request):
-    return templates.TemplateResponse("medha/dashboard.html", {"request": request})
+    return RedirectResponse('/auth/login')
 
 app.include_router(auth_router)
 app.include_router(counsellor_router)
+app.include_router(student_router)
 
 if __name__ == "__main__":
     uvicorn.run(

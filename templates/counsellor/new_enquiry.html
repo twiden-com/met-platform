@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,8 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/carbon-components/10.58.12/css/carbon-components.min.css">
     <link rel="stylesheet" href="https://unpkg.com/@carbon/styles@1.32.0/css/styles.min.css">
+    <script type="module" src="https://1.www.s81c.com/common/carbon/web-components/tag/latest/inline-loading.min.js"></script>
+    <script type="module" src="https://1.www.s81c.com/common/carbon/web-components/version/v2.33.0/number-input.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/response-targets.js"></script>
     <style>
         :root {
             --color-navy: #1e3a8a;
@@ -37,7 +37,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            
         }
 
         .header-left {
@@ -160,109 +159,287 @@
             grid-column: 1 / -1;
         }
 
-        /* Phone Input Layout */
-        .phone-container {
-            display: flex;
-            gap: 0.5rem;
-            
-            width: 100%;
+        /* Enhanced Phone Input Layout */
+        .phone-verification-container {
+            display: grid;
+            grid-template-columns: 120px 1fr 120px;
+            gap: 1rem;
             align-items: end;
-			
-        }
-
-        .country-code {
-            flex: 0 0 90px;
-        }
-
-        .phone-input-field {
-            flex: 1;
-            min-width: 0; /* Allows flex item to shrink below content size */
-        }
-
-        .send-otp-container {
-            flex: 0 0 100px;
-        }
-
-        .send-otp-btn {
             width: 100%;
+        }
+
+        .country-code-container {
+            position: relative;
+        }
+
+        .phone-display {
+            background: #f4f4f4;
+            border-bottom: 1px solid #8d8d8d;
             height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0.75rem;
             font-size: 0.875rem;
-			padding:15px !important;
+            color: #161616;
+            border-radius: 0;
+            position: relative;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .phone-display.verified {
+            background: #e8f5e8;
+            border-bottom: 2px solid #24a148;
+            color: #24a148;
+            font-weight: 500;
+        }
+
+        .phone-display-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .edit-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 2px;
+            color: #0f62fe;
+            transition: background-color 0.15s ease;
+            flex-shrink: 0;
+            margin-left: 0.5rem;
+        }
+
+        .edit-icon-btn:hover {
+            background: rgba(15, 98, 254, 0.1);
+        }
+
+        .edit-icon-btn svg {
+            width: 14px;
+            height: 14px;
         }
 
         /* OTP Input Boxes */
-        .otp-container {
+        .otp-input-container {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .otp-boxes {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin: 1rem 0;
+            gap: 0.75rem;
+            justify-content: end;
+            align-items: center;
+            padding: 0 1rem;
         }
 
         .otp-box {
-            width: 3rem;
-            height: 3rem;
+            width: 2.5rem;
+            height: 2.5rem;
             text-align: center;
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 600;
-            border: 2px solid #8d8d8d;
-            border-radius: 4px;
+            border: none;
+            border-bottom: 2px solid #8d8d8d;
             background: #f4f4f4;
             outline: none;
-            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+            transition: all 0.15s cubic-bezier(0.2, 0, 0.38, 0.9);
         }
 
         .otp-box:focus {
-            border-color: #0f62fe;
+            border-bottom-color: #0f62fe;
             background: white;
+            box-shadow: 0 0 0 1px #0f62fe;
         }
 
-        .otp-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
+        .otp-box.filled {
+            border-bottom-color: #24a148;
+            background: #e8f5e8;
+            color: #24a148;
         }
 
-        .otp-timer {
+        /* Action Button States */
+        .action-btn {
+            height: 2.5rem;
             font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-radius: 0;
+            outline: none;
+        }
+
+        .action-btn.primary {
+            background: #0f62fe;
+            color: white;
+            width: 100%;
+        }
+
+        .action-btn.primary:hover:not(:disabled) {
+            background: #0353e9;
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            color: #0f62fe;
+            border: 1px solid #0f62fe;
+        }
+
+        .action-btn.secondary:hover:not(:disabled) {
+            background: #0f62fe;
+            color: white;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Verification Status and Controls */
+        .verification-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .status-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .status-icon.success {
+            background: #24a148;
+            color: white;
+        }
+
+        .status-icon.pending {
+            background: #f1c21b;
+            color: #161616;
+        }
+
+        .status-text.success {
+            color: #24a148;
+            font-weight: 500;
+        }
+
+        .status-text.pending {
             color: #6f6f6f;
         }
 
-        .edit-phone-link {
+        /* Timer and Resend */
+        .timer-resend-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .timer-text {
+            color: #6f6f6f;
+            font-weight: 400;
+        }
+
+        .resend-link {
             color: #0f62fe;
             text-decoration: none;
-            font-size: 0.875rem;
             cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s ease;
         }
 
-        .edit-phone-link:hover {
+        .resend-link:hover:not(.disabled) {
             text-decoration: underline;
+            color: #0353e9;
         }
 
-        .verified-status {
+        .resend-link.disabled {
+            color: #c6c6c6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Loading State Integration */
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            font-size: 0.875rem;
+            color: #24a148;
+            font-weight: 500;
+        }
+
+        .success-indicator {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             color: #24a148;
             font-weight: 500;
-            margin-top: 0.5rem;
+            font-size: 0.875rem;
         }
 
-        .verified-icon {
-            width: 20px;
-            height: 20px;
-            background: #24a148;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        .success-indicator svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Carbon Components Integration */
+        cds-form-item {
+            width: 100%;
+        }
+
+        cds-number-input {
+            width: 100%;
+        }
+
+        cds-number-input::part(input) {
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.875rem;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        cds-number-input::part(input):focus {
+            border-bottom: 2px solid #0f62fe;
+            background-color: white;
+        }
+
+        cds-number-input::part(label) {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #161616;
+        }
+
+        cds-number-input::part(helper-text) {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.75rem;
+            color: #6f6f6f;
+        }
+
+        /* Form Section Styling */
+        .form-section {
+            opacity: 0.5;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-section.enabled {
+            opacity: 1;
+            pointer-events: all;
         }
 
         /* Checkbox Fieldset */
@@ -421,34 +598,20 @@
             border-top: 1px solid #e0e0e0;
         }
 
-        /* Loading State */
-        .htmx-indicator {
-            display: none;
-        }
-
-        .htmx-request .htmx-indicator {
-            display: inline-flex;
-            align-items: center;
-            margin-left: 0.5rem;
-        }
-
-        .loading-spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--color-orange);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         /* Alert Messages */
         .alert-message {
             margin-bottom: 2rem;
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* CSS animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Responsive */
@@ -477,20 +640,24 @@
                 gap: 0;
             }
 
-            .phone-container {
-                gap: 0.5rem;
+            .phone-verification-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
-            .country-code {
-                flex: 0 0 75px;
+            .phone-display {
+                font-size: 0.875rem;
             }
 
-            .send-otp-container {
-                flex: 0 0 85px;
+            .otp-input-container {
+                justify-content: space-between;
+                padding: 0;
             }
 
-            .send-otp-btn {
-                font-size: 0.75rem;
+            .otp-box {
+                width: 2.25rem;
+                height: 2.25rem;
+                font-size: 1rem;
             }
 
             .courses-grid {
@@ -501,21 +668,10 @@
                 flex-direction: column;
             }
 
-            .otp-boxes {
-                gap: 0.25rem;
-                justify-content: space-between;
-            }
-
-            .otp-box {
-                width: 2.5rem;
-                height: 2.5rem;
-                font-size: 1rem;
-            }
-
-            .otp-controls {
+            .timer-resend-container {
                 flex-direction: column;
-                gap: 0.5rem;
-                align-items: center;
+                gap: 0.75rem;
+                align-items: flex-start;
             }
         }
 
@@ -524,12 +680,13 @@
                 padding: 1.5rem 1rem;
             }
 
-            .country-code {
-                flex: 0 0 65px;
+            .phone-verification-container {
+                gap: 0.75rem;
             }
 
-            .phone-container {
-                gap: 0.25rem;
+            .phone-display {
+                font-size: 0.8125rem;
+                padding: 0 0.5rem;
             }
 
             .otp-box {
@@ -538,9 +695,9 @@
                 font-size: 0.875rem;
             }
 
-            .send-otp-btn {
-                width: 100%;
-                margin-top: 0.75rem;
+            .action-btn {
+                font-size: 0.8125rem;
+                padding: 0 0.75rem;
             }
         }
     </style>
@@ -567,203 +724,332 @@
         <div class="form-container">
             <div id="form-response" class="alert-message"></div>
 
-            <form hx-post="/api/enquiry/create" 
-                  hx-target="#form-response" 
-                  hx-swap="innerHTML" 
-                  hx-ext="response-targets"
-                  hx-indicator="#submit-loading">
+            <form id="enquiry-form" method="POST" action="/student/new_enquiry/submit">
                 
-                <!-- Student Details -->
-                <div class="form-grid">
-                    <div class="bx--form-item">
-                        <label for="student-name" class="bx--label">Student Name *</label>
-                        <input type="text" id="student-name" name="student_name" class="bx--text-input" placeholder="Enter full name" required>
-                    </div>
-                    <div class="bx--form-item">
-                        <label for="location" class="bx--label">Location</label>
-                        <input type="text" id="location" name="location" class="bx--text-input" placeholder="Enter city">
-                    </div>
-                </div>
-
-                <!-- Phone with OTP Flow -->
+                <!-- Phone Verification Section -->
                 <div class="bx--form-item form-grid-full">
                     <label class="bx--label">Phone Number *</label>
                     
-                    <!-- Initial Phone Input State -->
-                    <div id="phone-input-section" style="width:100%">
-                        <div class="phone-container">
-                            <div class="bx--form-item country-code">
-                                <div class="bx--select">
-                                    <select name="country_code" class="bx--select-input" id="country-code">
-                                        <option value="+91" selected>+91</option>
-                                        <option value="+1">+1</option>
-                                        <option value="+44">+44</option>
-                                    </select>
-                                    <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
-                                        <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="bx--form-item phone-input-field">
-                                <input type="tel" id="phone-input" name="phone" class="bx--text-input" placeholder="10-digit number" required pattern="[0-9]{10}" maxlength="10">
-                            </div>
-                            <div class="bx--form-item send-otp-container">
-                                <button type="button" class="bx--btn bx--btn--tertiary bx--btn--sm send-otp-btn" 
-                                        hx-post="/api/send-otp" 
-                                        hx-include="#phone-input, #country-code"
-                                        hx-target="#phone-input-section"
-                                        hx-swap="outerHTML">
-                                    Send OTP
-                                </button>
+                    <div id="phone-verification-container" class="phone-verification-container">
+                        <!-- Column 1: Country Code -->
+                        <div class="country-code-container">
+                            <div class="bx--select" id="country-select-wrapper">
+                                <select name="country_code" class="bx--select-input" id="country-code">
+                                    <option value="+91" selected>+91</option>
+                                    <option value="+1">+1</option>
+                                    <option value="+44">+44</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Education & Lead Info -->
-                <div class="form-grid">
-                    <div class="bx--form-item">
-                        <label for="degree" class="bx--label">Education Level</label>
-                        <div class="bx--select">
-                            <select id="degree" name="degree" class="bx--select-input">
-                                <option value="">Select education level</option>
-                                <option value="below_10th">< 10th</option>
-                                <option value="inter_completed">Inter Completed</option>
-                                <option value="btech_passout">B. Tech Pass out</option>
-                                <option value="btech_studying">B. Tech Studying</option>
-                                <option value="masters">Masters</option>
-                                <option value="other">Other</option>
-                            </select>
-                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
-                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
-                            </svg>
+                        <!-- Column 2: Phone Input / OTP Input -->
+                        <div id="input-column">
+                            <input type="tel" id="phone-input" name="phone" class="bx--text-input" placeholder="10-digit number" required pattern="[0-9]{10}" maxlength="10">
+                        </div>
+
+                        <!-- Column 3: Action Button -->
+                        <div>
+                            <button type="button" class="action-btn primary" id="action-btn">
+                                Send OTP
+                            </button>
                         </div>
                     </div>
-                    <div class="bx--form-item">
-                        <label for="lead-source" class="bx--label">Lead Source</label>
-                        <div class="bx--select">
-                            <select id="lead-source" name="lead_source" class="bx--select-input">
-                                <option value="">Select lead source</option>
-                                <option value="social_media">Social Media</option>
-                                <option value="marketing_ravi">Marketing - Ravi</option>
-                                <option value="marketing_ashok">Marketing - Ashok</option>
-                                <option value="student_referral">Student Referral</option>
-                                <option value="direct_walkin">Direct Walk-in</option>
-                            </select>
-                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
-                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
-                            </svg>
+
+                    <!-- Auto Confirm Checkbox -->
+                    <div class="bx--checkbox-wrapper single-checkbox" style="margin-top: 1rem;">
+                        <input type="checkbox" id="auto-confirm" name="auto_confirm" class="bx--checkbox" value="true">
+                        <label for="auto-confirm" class="bx--checkbox-label">
+                            <span class="bx--checkbox-label-text">Auto Confirm (Intended Only for direct call leads)</span>
+                        </label>
+                    </div>
+
+                    <!-- Verification Status and Controls -->
+                    <div id="verification-controls" class="hidden">
+                        <div class="verification-status">
+                            <div class="status-icon pending" id="status-icon">
+                                <span>!</span>
+                            </div>
+                            <span class="status-text pending" id="status-text">Enter verification code sent to your phone</span>
+                        </div>
+                        <div class="timer-resend-container">
+                            <span class="timer-text" id="timer-text">Resend in 30s</span>
+                            <a href="#" class="resend-link disabled" id="resend-link">Resend OTP</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-grid">
-                    <div class="bx--form-item">
-                        <label for="counselled-by" class="bx--label">Counselled by</label>
-                        <div class="bx--select">
-                            <select id="counselled-by" name="counselled_by" class="bx--select-input">
-                                <option value="">Select counsellor</option>
-                                <option value="ushmika">Ushmika</option>
-                                <option value="pallavi">Pallavi</option>
-                                <option value="taniath">Taniath</option>
-                                <option value="other">Other</option>
-                            </select>
-                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
-                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
-                            </svg>
+                <!-- Student and Form Details (Initially Disabled) -->
+                <div id="form-details" class="form-section">
+                    
+                    <!-- Student Details -->
+                    <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="student-name" class="bx--label">Student Name *</label>
+                            <input type="text" id="student-name" name="student_name" class="bx--text-input" placeholder="Enter full name" required>
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="location" class="bx--label">Location</label>
+                            <input type="text" id="location" name="location" class="bx--text-input" placeholder="Enter city">
                         </div>
                     </div>
-                    <div class="bx--form-item">
-                        <label for="urgency" class="bx--label">Timeline</label>
-                        <div class="bx--select">
-                            <select id="urgency" name="urgency" class="bx--select-input">
-                                <option value="">Select timeline</option>
-                                <option value="immediately">Immediately</option>
-                                <option value="one_week">One week</option>
-                                <option value="2_3_weeks">2 - 3 weeks</option>
-                                <option value="one_month">One month</option>
-                                <option value="two_months">2 months</option>
-                            </select>
-                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
-                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Interested Courses -->
-                <div class="bx--form-item form-grid-full">
-                    <label class="bx--label">Interested Courses *</label>
-                    <fieldset class="bx--fieldset">
-                        <div class="courses-container">
-                            <div class="courses-grid">
-                                <div class="bx--checkbox-wrapper">
-                                    <input type="checkbox" id="course-1" name="interested_courses" value="data_science_ai" class="bx--checkbox">
-                                    <label for="course-1" class="bx--checkbox-label">
-                                        <span class="bx--checkbox-label-text">Data Science with AI</span>
-                                    </label>
-                                </div>
-                                <div class="bx--checkbox-wrapper">
-                                    <input type="checkbox" id="course-2" name="interested_courses" value="python_fullstack_ai" class="bx--checkbox">
-                                    <label for="course-2" class="bx--checkbox-label">
-                                        <span class="bx--checkbox-label-text">Python Full Stack with AI</span>
-                                    </label>
-                                </div>
-                                <div class="bx--checkbox-wrapper">
-                                    <input type="checkbox" id="course-3" name="interested_courses" value="digital_marketing_ai" class="bx--checkbox">
-                                    <label for="course-3" class="bx--checkbox-label">
-                                        <span class="bx--checkbox-label-text">Digital Marketing with AI</span>
-                                    </label>
-                                </div>
-                                <div class="bx--checkbox-wrapper">
-                                    <input type="checkbox" id="course-4" name="interested_courses" value="cybersecurity" class="bx--checkbox">
-                                    <label for="course-4" class="bx--checkbox-label">
-                                        <span class="bx--checkbox-label-text">Cybersecurity</span>
-                                    </label>
-                                </div>
-                                <div class="bx--checkbox-wrapper">
-                                    <input type="checkbox" id="course-5" name="interested_courses" value="java_fullstack_ai" class="bx--checkbox">
-                                    <label for="course-5" class="bx--checkbox-label">
-                                        <span class="bx--checkbox-label-text">Java Full Stack with AI</span>
-                                    </label>
-                                </div>
-                                <div class="bx--checkbox-wrapper">
-                                    <input type="checkbox" id="course-6" name="interested_courses" value="data_analytics_genai" class="bx--checkbox">
-                                    <label for="course-6" class="bx--checkbox-label">
-                                        <span class="bx--checkbox-label-text">Data Analytics & Gen AI</span>
-                                    </label>
-                                </div>
+                    <!-- Purpose and Additional People -->
+                    <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="purpose" class="bx--label">Purpose</label>
+                            <div class="bx--select">
+                                <select id="purpose" name="purpose" class="bx--select-input">
+                                    <option value="">Select purpose</option>
+                                    <option value="job_placement">Job Placement</option>
+                                    <option value="career_switch">Career Switch</option>
+                                    <option value="skill_upgrade">Skill Upgrade</option>
+                                    <option value="knowledge_enhancement">Knowledge Enhancement</option>
+                                    <option value="entrepreneurship">Entrepreneurship</option>
+                                    <option value="certification">Certification</option>
+                                    <option value="fresher_training">Fresher Training</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
                             </div>
                         </div>
-                    </fieldset>
+                        <div class="bx--form-item">
+                            <cds-form-item>
+                                <cds-number-input 
+                                    value="0" 
+                                    min="0" 
+                                    max="10" 
+                                    step="1" 
+                                    label="Additional People" 
+                                    helper-text="Number of additional people interested" 
+                                    size="md"
+                                    name="additional_people">
+                                </cds-number-input>
+                            </cds-form-item>
+                        </div>
+                    </div>
+
+                    <!-- Education & Lead Info -->
+                    <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="degree" class="bx--label">Education Level</label>
+                            <div class="bx--select">
+                                <select id="degree" name="degree" class="bx--select-input">
+                                    <option value="">Select education level</option>
+                                    <optgroup label="School Level">
+                                        <option value="below_10th">Below 10th Standard</option>
+                                        <option value="10th_completed">10th Standard Completed</option>
+                                        <option value="12th_pursuing">12th Standard Pursuing</option>
+                                        <option value="12th_completed">12th Standard Completed</option>
+                                    </optgroup>
+                                    <optgroup label="Undergraduate">
+                                        <option value="diploma_pursuing">Diploma Pursuing</option>
+                                        <option value="diploma_completed">Diploma Completed</option>
+                                        <option value="btech_pursuing">B.Tech Pursuing</option>
+                                        <option value="btech_completed">B.Tech Completed</option>
+                                        <option value="bsc_pursuing">B.Sc Pursuing</option>
+                                        <option value="bsc_completed">B.Sc Completed</option>
+                                        <option value="bcom_pursuing">B.Com Pursuing</option>
+                                        <option value="bcom_completed">B.Com Completed</option>
+                                        <option value="ba_pursuing">B.A Pursuing</option>
+                                        <option value="ba_completed">B.A Completed</option>
+                                        <option value="other_ug_pursuing">Other UG Pursuing</option>
+                                        <option value="other_ug_completed">Other UG Completed</option>
+                                    </optgroup>
+                                    <optgroup label="Postgraduate">
+                                        <option value="mtech_pursuing">M.Tech Pursuing</option>
+                                        <option value="mtech_completed">M.Tech Completed</option>
+                                        <option value="msc_pursuing">M.Sc Pursuing</option>
+                                        <option value="msc_completed">M.Sc Completed</option>
+                                        <option value="mba_pursuing">MBA Pursuing</option>
+                                        <option value="mba_completed">MBA Completed</option>
+                                        <option value="other_pg_pursuing">Other PG Pursuing</option>
+                                        <option value="other_pg_completed">Other PG Completed</option>
+                                    </optgroup>
+                                    <optgroup label="Other">
+                                        <option value="working_professional">Working Professional</option>
+                                        <option value="career_gap">Career Gap</option>
+                                        <option value="other">Other</option>
+                                    </optgroup>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="lead-source" class="bx--label">Lead Source</label>
+                            <div class="bx--select">
+                                <select id="lead-source" name="lead_source" class="bx--select-input">
+                                    <option value="">Select lead source</option>
+                                    <option value="marketing_ravi">Marketing - Ravi</option>
+                                    <option value="marketing_ashok">Marketing - Ashok</option>
+                                    <option value="google_maps">Google Maps (GMB)</option>
+                                    <option value="social_media">Social Media</option>
+                                    <option value="referral">Referral</option>
+                                    <option value="direct_walkin">Direct Walk-in</option>
+                                    <option value="website">Website</option>
+                                    <option value="google_ads">Google Ads</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mode and Slot Preferences -->
+                    <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="mode" class="bx--label">Mode Preference</label>
+                            <div class="bx--select">
+                                <select id="mode" name="mode" class="bx--select-input">
+                                    <option value="">Select mode</option>
+                                    <option value="online">Online</option>
+                                    <option value="offline">Offline</option>
+                                    <option value="hybrid">Hybrid</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="slot-preference" class="bx--label">Slot Preference</label>
+                            <div class="bx--select">
+                                <select id="slot-preference" name="slot_preference" class="bx--select-input">
+                                    <option value="">Select preferred time slot</option>
+                                    <option value="6am-8am">6:00 AM - 8:00 AM</option>
+                                    <option value="8am-11am">8:00 AM - 11:00 AM</option>
+                                    <option value="11am-1pm">11:00 AM - 1:00 PM</option>
+                                    <option value="1pm-3pm">1:00 PM - 3:00 PM</option>
+                                    <option value="3pm-5pm">3:00 PM - 5:00 PM</option>
+                                    <option value="5pm-7pm">5:00 PM - 7:00 PM</option>
+                                    <option value="7pm-9pm">7:00 PM - 9:00 PM</option>
+                                    <option value="9pm-11pm">9:00 PM - 11:00 PM</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Counsellor and Timeline -->
+                    <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="counselled-by" class="bx--label">Counselled by</label>
+                            <div class="bx--select">
+                                <select id="counselled-by" name="counselled_by" class="bx--select-input">
+                                    <option value="">Select counsellor</option>
+                                    <option value="ushmika">Ushmika</option>
+                                    <option value="pallavi">Pallavi</option>
+                                    <option value="taniath">Taniath</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="urgency" class="bx--label">Timeline</label>
+                            <div class="bx--select">
+                                <select id="urgency" name="urgency" class="bx--select-input">
+                                    <option value="">Select timeline</option>
+                                    <option value="immediately">Immediately</option>
+                                    <option value="one_week">One week</option>
+                                    <option value="2_3_weeks">2 - 3 weeks</option>
+                                    <option value="one_month">One month</option>
+                                    <option value="two_months">2 months</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interested Courses -->
+                    <div class="bx--form-item form-grid-full">
+                        <label class="bx--label">Interested Courses *</label>
+                        <fieldset class="bx--fieldset">
+                            <div class="courses-container">
+                                <div class="courses-grid">
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-1" name="interested_courses" value="data_science_ai" class="bx--checkbox">
+                                        <label for="course-1" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Data Science with AI</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-2" name="interested_courses" value="python_fullstack_ai" class="bx--checkbox">
+                                        <label for="course-2" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Python Full Stack with AI</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-3" name="interested_courses" value="digital_marketing_ai" class="bx--checkbox">
+                                        <label for="course-3" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Digital Marketing with AI</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-4" name="interested_courses" value="cybersecurity" class="bx--checkbox">
+                                        <label for="course-4" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Cybersecurity</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-5" name="interested_courses" value="java_fullstack_ai" class="bx--checkbox">
+                                        <label for="course-5" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Java Full Stack with AI</span>
+                                        </label>
+                                    </div>
+                                    <div class="bx--checkbox-wrapper">
+                                        <input type="checkbox" id="course-6" name="interested_courses" value="data_analytics_genai" class="bx--checkbox">
+                                        <label for="course-6" class="bx--checkbox-label">
+                                            <span class="bx--checkbox-label-text">Data Analytics & Gen AI</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Comments -->
+                    <div class="bx--form-item">
+                        <label for="comments" class="bx--label">Comments</label>
+                        <textarea id="comments" name="comments" class="bx--text-area" rows="3" placeholder="Additional notes or requirements..."></textarea>
+                    </div>
+
+                    <!-- Send Brochure -->
+                    <div class="bx--checkbox-wrapper single-checkbox">
+                        <input type="checkbox" id="send-brochure" name="send_brochure" class="bx--checkbox" value="true" checked>
+                        <label for="send-brochure" class="bx--checkbox-label">
+                            <span class="bx--checkbox-label-text">Send brochure via WhatsApp</span>
+                        </label>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="bx--btn bx--btn--secondary" onclick="window.history.back()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bx--btn bx--btn--primary">
+                            Create Enquiry
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Comments -->
-                <div class="bx--form-item">
-                    <label for="comments" class="bx--label">Comments</label>
-                    <textarea id="comments" name="comments" class="bx--text-area" rows="3" placeholder="Additional notes or requirements..."></textarea>
-                </div>
-
-                <!-- Send Brochure -->
-                <div class="bx--checkbox-wrapper single-checkbox">
-                    <input type="checkbox" id="send-brochure" name="send_brochure" class="bx--checkbox" value="true" checked>
-                    <label for="send-brochure" class="bx--checkbox-label">
-                        <span class="bx--checkbox-label-text">Send brochure via WhatsApp</span>
-                    </label>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <button type="button" class="bx--btn bx--btn--secondary" onclick="window.history.back()">
-                        Cancel
-                    </button>
-                    <button type="submit" class="bx--btn bx--btn--primary">
-                        Create Enquiry
-                        <span id="submit-loading" class="htmx-indicator">
-                            <div class="loading-spinner"></div>
-                        </span>
-                    </button>
-                </div>
+                <!-- Hidden fields for phone verification -->
+                <input type="hidden" name="verified_phone" id="verified-phone">
+                <input type="hidden" name="verification_id" id="verification-id">
             </form>
         </div>
     </div>
@@ -785,43 +1071,660 @@
     </div>
 
     <script>
-        // Phone number validation only
-        document.getElementById('phone-input').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
-        });
+        class EnhancedOTPForm {
+            constructor() {
+                this.currentState = 'initial'; // initial, otp-sent, verified
+                this.phoneVerified = false;
+                this.verificationId = null;
+                this.timerInterval = null;
+                this.resendTimer = 30;
+                
+                this.initializeElements();
+                this.bindEvents();
+            }
 
-        // Handle HTMX responses
-        document.addEventListener('htmx:afterRequest', function(event) {
-            if (event.detail.xhr.responseURL.includes('/api/enquiry/create')) {
-                if (event.detail.xhr.status === 200) {
-                    document.getElementById('success-modal').style.display = 'flex';
+            initializeElements() {
+                this.phoneInput = document.getElementById('phone-input');
+                this.countryCode = document.getElementById('country-code');
+                this.actionBtn = document.getElementById('action-btn');
+                this.inputColumn = document.getElementById('input-column');
+                this.countrySelectWrapper = document.getElementById('country-select-wrapper');
+                this.verificationControls = document.getElementById('verification-controls');
+                this.formDetails = document.getElementById('form-details');
+                this.enquiryForm = document.getElementById('enquiry-form');
+                this.verifiedPhoneInput = document.getElementById('verified-phone');
+                this.verificationIdInput = document.getElementById('verification-id');
+                this.statusIcon = document.getElementById('status-icon');
+                this.statusText = document.getElementById('status-text');
+                this.timerText = document.getElementById('timer-text');
+                this.resendLink = document.getElementById('resend-link');
+                this.autoConfirmCheckbox = document.getElementById('auto-confirm');
+            }
+
+            bindEvents() {
+                this.phoneInput.addEventListener('input', (e) => this.validatePhone(e));
+                this.actionBtn.addEventListener('click', () => this.handleActionClick());
+                this.resendLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.resendOtp();
+                });
+                this.enquiryForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                this.autoConfirmCheckbox.addEventListener('change', (e) => this.handleAutoConfirm(e));
+            }
+
+            validatePhone(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                
+                // Enable/disable send button based on phone length
+                if (this.currentState === 'initial') {
+                    const phoneLength = e.target.value.length;
+                    this.actionBtn.disabled = phoneLength !== 10;
+                    
+                    // If auto-confirm is checked and phone is valid, auto-verify
+                    if (this.autoConfirmCheckbox && this.autoConfirmCheckbox.checked && phoneLength === 10) {
+                        setTimeout(() => this.autoVerifyPhone(), 300);
+                    }
                 }
             }
-        });
 
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const studentName = document.getElementById('student-name').value.trim();
-            const phone = document.querySelector('input[name="phone"]').value.trim();
-            const courses = document.querySelectorAll('input[name="interested_courses"]:checked');
-            
-            if (!studentName) {
-                alert('Please enter student name');
-                e.preventDefault();
-                return;
+            async handleActionClick() {
+                if (this.currentState === 'initial') {
+                    if (this.autoConfirmCheckbox && this.autoConfirmCheckbox.checked) {
+                        this.autoVerifyPhone();
+                    } else {
+                        await this.sendOtp();
+                    }
+                } else if (this.currentState === 'otp-sent') {
+                    await this.verifyOtp();
+                }
             }
-            
-            if (!phone || phone.length !== 10) {
-                alert('Please enter a valid 10-digit phone number');
-                e.preventDefault();
-                return;
+
+            handleAutoConfirm(e) {
+                if (e.target.checked) {
+                    const phone = this.phoneInput.value.trim();
+                    if (phone && phone.length === 10) {
+                        this.autoVerifyPhone();
+                    } else if (phone.length > 0 && phone.length < 10) {
+                        this.showAlert('Please complete the 10-digit phone number', 'error');
+                        e.target.checked = false;
+                    } else {
+                        this.showAlert('Please enter a valid 10-digit phone number first', 'error');
+                        e.target.checked = false;
+                    }
+                } else {
+                    // If unchecked and currently verified via auto-confirm, reset
+                    if (this.phoneVerified && this.verificationIdInput.value === 'auto-confirmed') {
+                        this.editPhone();
+                    }
+                }
             }
-            
-            if (courses.length === 0) {
-                alert('Please select at least one interested course');
-                e.preventDefault();
-                return;
+
+            async autoVerifyPhone() {
+                const phone = this.phoneInput.value.trim();
+                const countryCode = this.countryCode.value.replace('+', '');
+
+                if (!phone || phone.length !== 10) {
+                    this.showAlert('Please enter a valid 10-digit phone number', 'error');
+                    this.autoConfirmCheckbox.checked = false;
+                    return;
+                }
+
+                try {
+                    // Show loading state
+                    this.setButtonLoading('Checking...');
+
+                    const response = await fetch(`/student/create/skip_otp?country_code=${countryCode}&phone=${phone}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.message === 'EXISTING_USER') {
+                        this.showAlert('User Already Exists, Opening Details...', 'success');
+                        this.resetButtonState('Send OTP');
+                        setTimeout(() => {
+                            window.location.href = data.redirectUrl;
+                        }, 2000);
+                        return;
+                    }
+                    else if (data.success === true) {
+                        // Set verification data
+                        this.phoneVerified = true;
+                        this.verifiedPhoneInput.value = `${countryCode}-${phone}`;
+                        this.verificationIdInput.value = 'auto-confirmed';
+
+                        // Switch to verified mode without OTP
+                        this.switchToVerifiedMode();
+                        this.enableForm();
+                        this.showAlert('Successfully Auto Confirmed', 'success');
+                    } else {
+                        throw new Error(data.message || 'Failed to create profile');
+                    }
+
+                } catch (error) {
+                    console.error('Auto-verify error:', error);
+                    this.showAlert('Unable to verify phone automatically. Please try manual verification.', 'error');
+                    this.autoConfirmCheckbox.checked = false;
+                    this.resetButtonState('Send OTP');
+                }
             }
+
+            async sendOtp() {
+                const phone = this.phoneInput.value.trim();
+                const countryCode = this.countryCode.value.replace('+', '');
+
+                if (!phone || phone.length !== 10) {
+                    this.showAlert('Please enter a valid 10-digit phone number', 'error');
+                    return;
+                }
+
+                try {
+                    this.setButtonLoading('Sending...');
+
+                    const response = await fetch(`/student/send/phone_otp?country_code=${countryCode}&phone=${phone}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.message === 'EXISTING_USER') {
+                        this.showAlert('User Already Exists, Opening Details..', 'success');
+                         this.resetButtonState('Send OTP');
+                        setTimeout(() => {
+                            window.location.href = data.redirectUrl;
+                        }, 2000);
+                        return;
+                    }
+                    else if (data.responseCode === 200 && data.message === 'SUCCESS') {
+                        this.verificationId = data.data.verificationId;
+                        this.switchToOtpMode();
+                        this.showAlert('OTP sent successfully!', 'success');
+                    } else if (data.responseCode === 506 && data.message === 'REQUEST_ALREADY_EXISTS') {
+                        this.verificationId = data.data.verificationId;
+                        this.switchToOtpMode();
+                        this.showAlert('OTP already sent. Please enter the code.', 'info');
+                    } else {
+                        throw new Error(data.errorMessage || 'Failed to send OTP');
+                    }
+
+                } catch (error) {
+                    this.showAlert('Unable to send OTP. Please try again.', 'error');
+                    this.resetButtonState('Send OTP');
+                }
+            }
+
+            switchToOtpMode() {
+                this.currentState = 'otp-sent';
+                const phone = this.phoneInput.value;
+                const countryCode = this.countryCode.value;
+                
+                // Transform country code column to display phone
+                this.countrySelectWrapper.innerHTML = `
+                    <div class="phone-display">
+                        <span class="phone-display-text">${countryCode} ${phone}</span>
+                        <button type="button" class="edit-icon-btn" onclick="otpForm.editPhone()">
+                            <svg viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                // Transform input column to OTP boxes
+                this.inputColumn.innerHTML = `
+                    <div class="otp-input-container">
+                        <input type="text" class="otp-box" maxlength="1" data-index="0">
+                        <input type="text" class="otp-box" maxlength="1" data-index="1">
+                        <input type="text" class="otp-box" maxlength="1" data-index="2">
+                        <input type="text" class="otp-box" maxlength="1" data-index="3">
+                    </div>
+                `;
+                
+                // Update action button
+                this.actionBtn.textContent = 'Verify OTP';
+                this.actionBtn.disabled = true;
+                
+                // Show verification controls
+                this.verificationControls.classList.remove('hidden');
+                
+                // Bind OTP events
+                this.bindOtpEvents();
+                
+                // Start timer
+                this.startResendTimer();
+            }
+
+            bindOtpEvents() {
+                const otpBoxes = document.querySelectorAll('.otp-box');
+                
+                otpBoxes.forEach((box, index) => {
+                    box.addEventListener('input', (e) => this.handleOtpInput(e, index, otpBoxes));
+                    box.addEventListener('keydown', (e) => this.handleOtpKeydown(e, index, otpBoxes));
+                    box.addEventListener('paste', (e) => this.handleOtpPaste(e, otpBoxes));
+                });
+                
+                // Focus first box
+                otpBoxes[0].focus();
+            }
+
+            handleOtpInput(e, index, otpBoxes) {
+                const value = e.target.value.replace(/[^0-9]/g, '');
+                e.target.value = value;
+                
+                // Add filled class for visual feedback
+                if (value) {
+                    e.target.classList.add('filled');
+                } else {
+                    e.target.classList.remove('filled');
+                }
+                
+                // Auto-advance to next box
+                if (value && index < otpBoxes.length - 1) {
+                    otpBoxes[index + 1].focus();
+                }
+                
+                // Check if all boxes are filled
+                this.checkOtpComplete(otpBoxes);
+            }
+
+            handleOtpKeydown(e, index, otpBoxes) {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpBoxes[index - 1].focus();
+                } else if (e.key === 'ArrowLeft' && index > 0) {
+                    otpBoxes[index - 1].focus();
+                } else if (e.key === 'ArrowRight' && index < otpBoxes.length - 1) {
+                    otpBoxes[index + 1].focus();
+                }
+            }
+
+            handleOtpPaste(e, otpBoxes) {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text');
+                const otpDigits = paste.replace(/[^0-9]/g, '').slice(0, 4);
+                
+                otpDigits.split('').forEach((digit, index) => {
+                    if (otpBoxes[index]) {
+                        otpBoxes[index].value = digit;
+                        otpBoxes[index].classList.add('filled');
+                    }
+                });
+                
+                this.checkOtpComplete(otpBoxes);
+            }
+
+            checkOtpComplete(otpBoxes) {
+                const allFilled = Array.from(otpBoxes).every(box => box.value);
+                this.actionBtn.disabled = !allFilled;
+                
+                if (allFilled) {
+                    // Auto-verify after a short delay
+                    setTimeout(() => this.verifyOtp(), 500);
+                }
+            }
+
+            async verifyOtp() {
+                const otpBoxes = document.querySelectorAll('.otp-box');
+                const otp = Array.from(otpBoxes).map(box => box.value).join('');
+                
+                if (otp.length !== 4) {
+                    this.showAlert('Please enter complete 4-digit OTP', 'error');
+                    return;
+                }
+
+                const phone = this.phoneInput.value;
+                const countryCode = this.countryCode.value.replace('+', '');
+
+                try {
+                    this.setButtonLoading('Verifying...');
+
+                    const response = await fetch(`/student/verify/phone_otp?phone=${phone}&country_code=${countryCode}&otp=${otp}&verification_id=${this.verificationId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success === true || data.message === 'SUCCESS') {
+                        this.phoneVerified = true;
+                        this.verifiedPhoneInput.value = `${countryCode}-${phone}`;
+                        this.verificationIdInput.value = this.verificationId;
+                        this.switchToVerifiedMode();
+                        this.enableForm();
+                        this.showAlert('Phone verified successfully!', 'success');
+                    } else if (data.message === 'VERIFICATION_EXPIRED') {
+                        this.showAlert('OTP has expired. Please request a new one.', 'error');
+                        this.editPhone();
+                    } else {
+                        this.showAlert('Invalid OTP. Please try again.', 'error');
+                        this.clearOtpBoxes();
+                    }
+
+                } catch (error) {
+                    this.showAlert('Unable to verify OTP. Please try again.', 'error');
+                    this.resetButtonState('Verify OTP');
+                }
+            }
+
+            switchToVerifiedMode() {
+                this.currentState = 'verified';
+                const phone = this.phoneInput.value;
+                const countryCode = this.countryCode.value;
+                
+                // Update phone display to verified state
+                const phoneDisplay = this.countrySelectWrapper.querySelector('.phone-display');
+                if (phoneDisplay) {
+                    phoneDisplay.classList.add('verified');
+                } else {
+                    // If no phone display exists, create verified phone display
+                    this.countrySelectWrapper.innerHTML = `
+                        <div class="phone-display verified">
+                            <span class="phone-display-text">${countryCode} ${phone}</span>
+                            <button type="button" class="edit-icon-btn" onclick="otpForm.editPhone()">
+                                <svg viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                // Show success indicator in input column
+                //<div class="success-indicator">
+                    //     <svg viewBox="0 0 16 16" fill="currentColor">
+                    //         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                    //     </svg>
+                    //     Verified
+                    // </div>
+                this.inputColumn.innerHTML = `
+                    <p></p>
+                `;
+                
+                // Hide action button
+                this.actionBtn.style.display = 'none';
+                
+                // Update verification status
+                this.statusIcon.innerHTML = '✓';
+                this.statusIcon.className = 'status-icon success';
+                this.statusText.textContent = 'Phone number verified successfully';
+                this.statusText.className = 'status-text success';
+                
+                // Show verification controls if hidden
+                this.verificationControls.classList.remove('hidden');
+                
+                // Clear timer
+                this.clearResendTimer();
+                this.timerText.style.display = 'none';
+                this.resendLink.style.display = 'none';
+            }
+
+            editPhone() {
+                this.currentState = 'initial';
+                this.phoneVerified = false;
+                this.verificationId = null;
+                this.verifiedPhoneInput.value = '';
+                this.verificationIdInput.value = '';
+                
+                // Reset auto confirm checkbox
+                if (this.autoConfirmCheckbox) {
+                    this.autoConfirmCheckbox.checked = false;
+                }
+                
+                // Reset country code column
+                this.countrySelectWrapper.innerHTML = `
+                    <div class="bx--select">
+                        <select name="country_code" class="bx--select-input" id="country-code">
+                            <option value="+91" selected>+91</option>
+                            <option value="+1">+1</option>
+                            <option value="+44">+44</option>
+                        </select>
+                        <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                        </svg>
+                    </div>
+                `;
+                
+                // Reset input column
+                this.inputColumn.innerHTML = `
+                    <input type="tel" id="phone-input" name="phone" class="bx--text-input" placeholder="10-digit number" required pattern="[0-9]{10}" maxlength="10" value="${this.phoneInput ? this.phoneInput.value : ''}">
+                `;
+                
+                // Reset action button
+                this.actionBtn.textContent = 'Send OTP';
+                this.actionBtn.style.display = 'block';
+                this.actionBtn.disabled = true;
+                
+                // Hide verification controls
+                this.verificationControls.classList.add('hidden');
+                
+                // Clear timer
+                this.clearResendTimer();
+                
+                // Reinitialize elements and events
+                this.initializeElements();
+                this.bindEvents();
+                this.disableForm();
+            }
+
+            async resendOtp() {
+                if (this.resendLink.classList.contains('disabled')) return;
+                
+                this.clearOtpBoxes();
+                await this.sendOtp();
+            }
+
+            clearOtpBoxes() {
+                const otpBoxes = document.querySelectorAll('.otp-box');
+                otpBoxes.forEach(box => {
+                    box.value = '';
+                    box.classList.remove('filled');
+                });
+                if (otpBoxes.length > 0) {
+                    otpBoxes[0].focus();
+                }
+                this.actionBtn.disabled = true;
+            }
+
+            startResendTimer() {
+                this.resendTimer = 30;
+                this.resendLink.classList.add('disabled');
+                
+                this.timerInterval = setInterval(() => {
+                    this.resendTimer--;
+                    this.timerText.textContent = `Resend in ${this.resendTimer}s`;
+                    
+                    if (this.resendTimer <= 0) {
+                        this.clearResendTimer();
+                        this.timerText.textContent = '';
+                        this.resendLink.classList.remove('disabled');
+                    }
+                }, 1000);
+            }
+
+            clearResendTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            setButtonLoading(text) {
+                this.actionBtn.innerHTML = `
+                    <div class="loading-container">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="animation: spin 1s linear infinite;">
+                            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm0-2A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" opacity="0.3"/>
+                            <path d="M8 0a8 8 0 0 1 8 8h-2A6 6 0 0 0 8 2V0z"/>
+                        </svg>
+                        <span>${text}</span>
+                    </div>
+                `;
+                this.actionBtn.disabled = true;
+            }
+
+            resetButtonState(text) {
+                this.actionBtn.textContent = text;
+                this.actionBtn.disabled = false;
+            }
+
+            enableForm() {
+                this.formDetails.classList.add('enabled');
+            }
+
+            disableForm() {
+                this.formDetails.classList.remove('enabled');
+            }
+
+            handleFormSubmit(e) {
+                e.preventDefault(); // Always prevent default form submission
+                
+                if (!this.phoneVerified) {
+                    this.showAlert('Please verify your phone number first', 'error');
+                    return;
+                }
+
+                const studentName = document.getElementById('student-name').value.trim();
+                const courses = document.querySelectorAll('input[name="interested_courses"]:checked');
+                
+                if (!studentName) {
+                    this.showAlert('Please enter student name', 'error');
+                    return;
+                }
+                
+                if (courses.length === 0) {
+                    this.showAlert('Please select at least one interested course', 'error');
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = `
+                    <div class="loading-container">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="animation: spin 1s linear infinite;">
+                            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm0-2A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" opacity="0.3"/>
+                            <path d="M8 0a8 8 0 0 1 8 8h-2A6 6 0 0 0 8 2V0z"/>
+                        </svg>
+                        <span>Creating...</span>
+                    </div>
+                `;
+                submitBtn.disabled = true;
+
+                // Submit form via fetch
+                this.submitFormData(e.target, submitBtn, originalText);
+            }
+
+            // Add new method to handle form submission
+            async submitFormData(form, submitBtn, originalText) {
+                try {
+                    const formData = new FormData(form);
+                    
+                    const response = await fetch('/student/new_enquiry/submit', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Show success modal
+                        this.showSuccessModal();
+                    } else {
+                        // Handle API errors
+                        const errorMessage = data.detail || data.message || 'Failed to create enquiry';
+                        this.showAlert(errorMessage, 'error');
+                        
+                        // Reset button state
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                    this.showAlert('Network error. Please check your connection and try again.', 'error');
+                    
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+
+            // Add method to show success modal
+            showSuccessModal() {
+                const modal = document.getElementById('success-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    
+                    // Add click handler for OK button
+                    const okButton = modal.querySelector('.bx--btn--primary');
+                    if (okButton) {
+                        okButton.onclick = () => {
+                            window.location.href = '/counsellor/dashboard';
+                        };
+                    }
+                    
+                    // Add click handler for overlay (close modal)
+                    modal.onclick = (e) => {
+                        if (e.target === modal) {
+                            window.location.href = '/counsellor/dashboard';
+                        }
+                    };
+                }
+            }
+
+            showAlert(message, type) {
+                const alertDiv = document.getElementById('form-response');
+                let alertClass, iconSvg;
+                
+                if (type === 'success') {
+                    alertClass = 'bx--inline-notification--success';
+                    iconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                    </svg>`;
+                } else if (type === 'info') {
+                    alertClass = 'bx--inline-notification--info';
+                    iconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
+                    </svg>`;
+                } else {
+                    alertClass = 'bx--inline-notification--error';
+                    iconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                    </svg>`;
+                }
+                
+                alertDiv.innerHTML = `
+                    <div class="bx--inline-notification ${alertClass}" style="margin-bottom: 1rem; padding: 1rem; border-radius: 4px; display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="bx--inline-notification__icon">
+                            ${iconSvg}
+                        </div>
+                        <div class="bx--inline-notification__details">
+                            <div class="bx--inline-notification__text-wrapper">
+                                <p class="bx--inline-notification__subtitle" style="margin: 0; font-size: 0.875rem;">${message}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Auto-hide after 5 seconds for success/info messages
+                if (type === 'success' || type === 'info') {
+                    setTimeout(() => {
+                        alertDiv.innerHTML = '';
+                    }, 5000);
+                }
+            }
+        }
+
+        // Initialize the enhanced OTP form
+        let otpForm;
+        document.addEventListener('DOMContentLoaded', () => {
+            otpForm = new EnhancedOTPForm();
         });
     </script>
 </body>
