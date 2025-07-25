@@ -63,7 +63,7 @@
         }
 
         .page-title {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             color: white;
             margin: 0;
@@ -399,7 +399,7 @@
             gap: 0.5rem;
             height: 2.5rem;
             font-size: 0.875rem;
-            color: #24a148;
+            color: white;
             font-weight: 500;
         }
 
@@ -676,8 +676,8 @@
             background-color: white;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Responsive - Only for very narrow mobile screens */
+        @media (max-width: 600px) {
             .app-header {
                 padding: 1rem;
                 flex-direction: column;
@@ -697,7 +697,6 @@
                 padding: 2rem 1.5rem;
             }
             
-            .form-grid,
             .form-grid,
             .form-grid-three {
                 grid-template-columns: 1fr;
@@ -737,6 +736,10 @@
                 gap: 0.75rem;
                 align-items: flex-start;
             }
+
+             .logo {
+            display: none;
+        }
         }
 
         @media (max-width: 480px) {
@@ -764,6 +767,34 @@
                 padding: 0 0.75rem;
             }
         }
+
+
+        /* Mobile phone verification layout - side by side country code and phone, button below full width */
+@media (max-width: 600px) {
+    .phone-verification-container {
+        display: grid;
+        grid-template-columns: 80px 1fr; /* Country code smaller, phone takes remaining space */
+        grid-template-rows: auto auto; /* Two rows */
+        gap: 0.75rem;
+        align-items: end;
+        width: 100%;
+    }
+
+    .country-code-container {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    #input-column {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .phone-verification-container > div:last-child {
+        grid-column: 1 / -1; /* Button spans full width across both columns */
+        grid-row: 2;
+    }
+}
     </style>
 </head>
 <body>
@@ -1991,7 +2022,7 @@
                 if (type === 'success' || type === 'info') {
                     setTimeout(() => {
                         alertDiv.innerHTML = '';
-                    }, 8000);
+                    }, 5000);
                 }
             }
         }
