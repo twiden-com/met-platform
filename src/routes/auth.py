@@ -13,61 +13,6 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 templates = Jinja2Templates(directory="templates", auto_reload=True)
 
-
-# =====================================================
-# SIGNUP USER
-# =====================================================
-@router.get("/signup", response_class=HTMLResponse)
-async def signup(request: Request):
-     return await templates.TemplateResponse("medha/login.html", {"request": request})
-
-@router.post("/signup")
-async def signup_submit(
-        request  : Request, 
-        db       : AsyncClient = Depends(get_db), 
-        admin_db : AsyncClient = Depends(get_admin_db)
-    ):
-    try:
-        auth_result = await admin_db.auth.sign_up({
-            "email"   : request.email,
-            "password": request.password,
-        })
-        
-        profile = await db.table("profiles").insert({
-            "id"       : auth_result.user.id,
-            "email"    : request.email,
-            "full_name": request.full_name,
-        }).execute()
-        
-        return {
-            "user"    : auth_result.user,
-            "profile" : profile.data[0],
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# =====================================================
-# LOGIN USER WITH EMAIL & PASSWORD
-# =====================================================
-@router.get("/login", response_class=HTMLResponse)
-async def login(request: Request):
-     return templates.TemplateResponse("login.html", {"request": request})
-
-@router.post("/login")
-async def login_submit(request: Request, db = Depends(get_db)):
-    try:
-        result = await db.auth.sign_in_with_password({
-            "email"   : request.email,
-            "password": request.password
-        })
-        
-        return {"user": result.user, "session": result.session}
-
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=str(e))
-
-
 # =====================================================
 # LOGIN USER WITH PHONE & OTP
 # =====================================================
@@ -80,7 +25,7 @@ def login_send_otp(country_code:str, phone: str): #Eg. country_code - 91, phone 
         raise HTTPException(status_code=500, detail="Failed to send OTP")
 
 @router.post("/verify/phone_otp")
-async def validate_otp(phone:str, country_code:str, otp: str, verification_id: str, db:AsyncClient = Depends(get_db)): #Eg. otp - 287976 
+async def login_validate_otp(phone:str, country_code:str, otp: str, verification_id: str, db:AsyncClient = Depends(get_db)): #Eg. otp - 287976 
     try:
         res = verify_otp(code=otp, verification_id=verification_id, country_code=country_code, phone=phone)
         

@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha Edu Tech - Student Leads</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/carbon-components/10.58.12/css/carbon-components.min.css">
+    
+    <!-- ag-Grid CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.2/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.2/styles/ag-theme-alpine.css">
+    
+    <!-- ag-Grid JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.2/dist/ag-grid-community.min.js"></script>
+    
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+            --color-gray-bg: #f2f4f8;
+            --color-border: #e0e0e0;
+            --color-text-primary: #161616;
+            --color-text-secondary: #6f6f6f;
+            --color-blue: #0f62fe;
+            --color-green: #24a148;
+            --color-red: #da1e28;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--color-gray-bg);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: var(--color-navy);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        /* Main Layout - Three Columns */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1.7fr 5fr 2fr;
+            height: calc(100vh - 72px);
+            overflow: hidden;
+        }
+
+        /* Column 1: Filters Form */
+        .filters-column {
+            background: white;
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .filters-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .filters-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .filters-form {
+            flex: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .bx--label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-primary);
+            line-height: 1.29;
+        }
+
+        .bx--multi-select {
+            position: relative;
+        }
+
+        .bx--multi-select__wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bx--multi-select__input {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0 2.5rem 0 1rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: var(--color-text-primary);
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        .bx--multi-select__input:focus {
+            border-bottom: 2px solid var(--color-blue);
+            background-color: white;
+        }
+
+        .bx--multi-select__menu-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            fill: var(--color-text-secondary);
+            transition: transform 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+            pointer-events: none;
+        }
+
+        .bx--multi-select--expanded .bx--multi-select__menu-icon {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .bx--multi-select__menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .bx--multi-select--expanded .bx--multi-select__menu {
+            display: block;
+        }
+
+        .bx--multi-select__option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .bx--multi-select__option:hover {
+            background: #f4f4f4;
+        }
+
+        .bx--multi-select__option input[type="checkbox"] {
+            margin-right: 0.75rem;
+        }
+
+        .selected-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .selected-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: #e8f4fd;
+            color: var(--color-blue);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .remove-tag {
+            cursor: pointer;
+            padding: 0.125rem;
+            border-radius: 2px;
+            transition: background 0.15s ease;
+        }
+
+        .remove-tag:hover {
+            background: rgba(15, 98, 254, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .bx--btn {
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-radius: 0;
+            outline: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .bx--btn--primary {
+            background: var(--color-blue);
+            color: white;
+        }
+
+        .bx--btn--primary:hover:not(:disabled) {
+            background: #0353e9;
+        }
+
+        .bx--btn--secondary {
+            background: transparent;
+            color: var(--color-blue);
+            border: 1px solid var(--color-blue);
+        }
+
+        .bx--btn--secondary:hover:not(:disabled) {
+            background: var(--color-blue);
+            color: white;
+        }
+
+        /* Column 2: Data Grid */
+        .grid-column {
+            background: white;
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .grid-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .grid-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .bx--search {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .bx--search-input {
+            width: 250px;
+            height: 2rem;
+            padding: 0 2.5rem 0 1rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: var(--color-text-primary);
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        .bx--search-input:focus {
+            border-bottom: 2px solid var(--color-blue);
+            background-color: white;
+        }
+
+        .bx--search-magnifier {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            fill: var(--color-text-secondary);
+        }
+
+        .grid-container {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ag-Grid Styling */
+        .ag-theme-alpine {
+            --ag-background-color: white;
+            --ag-header-background-color: #f4f4f4;
+            --ag-odd-row-background-color: #fafafa;
+            --ag-row-hover-color: #e8f4fd;
+            --ag-selected-row-background-color: #0f62fe20;
+            --ag-font-family: 'IBM Plex Sans', sans-serif;
+            --ag-font-size: 0.875rem;
+            --ag-header-font-size: 0.75rem;
+            --ag-border-color: var(--color-border);
+        }
+
+        /* Column 3: Details Panel */
+        .details-column {
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .details-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .details-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        /* Tabs */
+        .bx--tabs {
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .bx--tabs__nav {
+            display: flex;
+            margin: 0;
+            padding: 0 1.5rem;
+            list-style: none;
+        }
+
+        .bx--tabs__nav-item {
+            position: relative;
+        }
+
+        .bx--tabs__nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s ease;
+        }
+
+        .bx--tabs__nav-item--selected .bx--tabs__nav-link {
+            color: var(--color-blue);
+            border-bottom-color: var(--color-blue);
+        }
+
+        .bx--tabs__nav-link:hover {
+            color: var(--color-blue);
+        }
+
+        /* Tab Content */
+        .details-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            padding-bottom: 120px; /* Space for floating comment box */
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--color-text-secondary);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Floating Comment Box */
+        .floating-comment-box {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--color-border);
+            padding: 1rem 1.5rem;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .bx--text-area {
+            width: 100%;
+            min-height: 60px;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: var(--color-text-primary);
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+            resize: vertical;
+        }
+
+        .bx--text-area:focus {
+            border-bottom: 2px solid var(--color-blue);
+            background-color: white;
+        }
+
+        .comment-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comment-info {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .status-new { background: #e8f4fd; color: #0f62fe; }
+        .status-contacted { background: #fff8e1; color: #f1c21b; }
+        .status-qualified { background: #e8f5e8; color: #24a148; }
+        .status-converted { background: #e8f5e8; color: #24a148; }
+        .status-rejected { background: #fff1f1; color: #da1e28; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr 4fr 2fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .filters-column,
+            .details-column {
+                display: none;
+            }
+            
+            .grid-column {
+                border-right: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="header-left">
+            <a href="/counsellor/dashboard" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Dashboard
+            </a>
+            <h1 class="page-title">Student Leads</h1>
+        </div>
+        <div class="logo">
+            Medha<span class="logo-accent">EduTech</span>
+        </div>
+    </div>
+
+    <!-- Main Container - Three Columns -->
+    <div class="main-container">
+        <!-- Column 1: Filters Form -->
+        <div class="filters-column">
+            <div class="filters-header">
+                <h2 class="filters-title">Filters</h2>
+            </div>
+            <form class="filters-form" id="filters-form">
+                <!-- Status Filter -->
+                <div class="form-group">
+                    <label class="bx--label" for="status-select">Status</label>
+                    <div class="bx--multi-select" data-field="status">
+                        <div class="bx--multi-select__wrapper">
+                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select status...">
+                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                            </svg>
+                            <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="status-new" value="new">
+                                    <label for="status-new">New</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="status-contacted" value="contacted">
+                                    <label for="status-contacted">Contacted</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="status-qualified" value="qualified">
+                                    <label for="status-qualified">Qualified</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="status-converted" value="converted">
+                                    <label for="status-converted">Converted</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="status-rejected" value="rejected">
+                                    <label for="status-rejected">Rejected</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="status-selected"></div>
+                    </div>
+                </div>
+
+                <!-- Courses Filter -->
+                <div class="form-group">
+                    <label class="bx--label" for="courses-select">Interested Courses</label>
+                    <div class="bx--multi-select" data-field="courses">
+                        <div class="bx--multi-select__wrapper">
+                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select courses...">
+                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                            </svg>
+                            <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="course-1" value="1">
+                                    <label for="course-1">Data Science with AI</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="course-2" value="2">
+                                    <label for="course-2">Python Full Stack with AI</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="course-3" value="3">
+                                    <label for="course-3">Digital Marketing with AI</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="course-4" value="4">
+                                    <label for="course-4">Cybersecurity</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="course-5" value="5">
+                                    <label for="course-5">Java Full Stack with AI</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="course-6" value="6">
+                                    <label for="course-6">Data Analytics & Gen AI</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="courses-selected"></div>
+                    </div>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="form-group">
+                    <label class="bx--label" for="location-select">Location</label>
+                    <div class="bx--multi-select" data-field="location">
+                        <div class="bx--multi-select__wrapper">
+                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select locations...">
+                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                            </svg>
+                            <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="location-hyderabad" value="Hyderabad">
+                                    <label for="location-hyderabad">Hyderabad</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="location-bangalore" value="Bangalore">
+                                    <label for="location-bangalore">Bangalore</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="location-chennai" value="Chennai">
+                                    <label for="location-chennai">Chennai</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="location-mumbai" value="Mumbai">
+                                    <label for="location-mumbai">Mumbai</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="location-delhi" value="Delhi">
+                                    <label for="location-delhi">Delhi</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="location-selected"></div>
+                    </div>
+                </div>
+
+                <!-- Counsellor Filter -->
+                <div class="form-group">
+                    <label class="bx--label" for="counsellor-select">Counsellor</label>
+                    <div class="bx--multi-select" data-field="counsellor">
+                        <div class="bx--multi-select__wrapper">
+                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select counsellors...">
+                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                            </svg>
+                            <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="counsellor-ushmika" value="Ushmika">
+                                    <label for="counsellor-ushmika">Ushmika</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="counsellor-pallavi" value="Pallavi">
+                                    <label for="counsellor-pallavi">Pallavi</label>
+                                </div>
+                                <div class="bx--multi-select__option">
+                                    <input type="checkbox" id="counsellor-taniath" value="Taniath">
+                                    <label for="counsellor-taniath">Taniath</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="counsellor-selected"></div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="bx--btn bx--btn--primary">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M15 14.5l-3.5-3.5C12.4 9.9 13 8.5 13 7c0-3.3-2.7-6-6-6S1 3.7 1 7s2.7 6 6 6c1.5 0 2.9-.6 4-1.5l3.5 3.5.5-.5zM2 7c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5z"/>
+                        </svg>
+                        Search
+                    </button>
+                    <button type="button" class="bx--btn bx--btn--secondary" id="reset-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Column 2: Data Grid -->
+        <div class="grid-column">
+            <div class="grid-header">
+                <h2 class="grid-title">All Leads</h2>
+                <div class="grid-actions">
+                    <div class="bx--search">
+                        <input type="text" class="bx--search-input" id="search-input" placeholder="Search leads...">
+                        <svg class="bx--search-magnifier" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M15 14.5l-3.5-3.5C12.4 9.9 13 8.5 13 7c0-3.3-2.7-6-6-6S1 3.7 1 7s2.7 6 6 6c1.5 0 2.9-.6 4-1.5l3.5 3.5.5-.5zM2 7c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5z"/>
+                        </svg>
+                    </div>
+                    <a href="/student/new_enquiry" class="bx--btn bx--btn--primary">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 1a.5.5 0 0 1 .5.5v6h6a.5.5 0 0 1 0 1h-6v6a.5.5 0 0 1-1 0v-6h-6a.5.5 0 0 1 0-1h6v-6A.5.5 0 0 1 8 1z"/>
+                        </svg>
+                        New Lead
+                    </a>
+                </div>
+            </div>
+            <div class="grid-container">
+                <div id="leads-grid" class="ag-theme-alpine" style="height: 100%; width: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Column 3: Details Panel -->
+        <div class="details-column">
+            <div class="details-header">
+                <h3 class="details-title">Lead Details</h3>
+            </div>
+
+            <!-- Tabs -->
+            <div class="bx--tabs">
+                <ul class="bx--tabs__nav" role="tablist">
+                    <li class="bx--tabs__nav-item bx--tabs__nav-item--selected">
+                        <a class="bx--tabs__nav-link" href="#details-tab" onclick="switchTab(event, 'details-tab')">Details</a>
+                    </li>
+                    <li class="bx--tabs__nav-item">
+                        <a class="bx--tabs__nav-link" href="#timeline-tab" onclick="switchTab(event, 'timeline-tab')">Timeline</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="details-content">
+                <!-- Details Tab -->
+                <div id="details-tab" class="tab-panel active">
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h4>Select a Lead</h4>
+                        <p>Choose a lead from the table to view detailed information</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Tab -->
+                <div id="timeline-tab" class="tab-panel">
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h4>No Timeline Available</h4>
+                        <p>Select a lead to view its timeline and journey</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Comment Box -->
+            <div class="floating-comment-box">
+                <form class="comment-form" id="comment-form">
+                    <textarea class="bx--text-area" id="comment-textarea" placeholder="Add a comment about this lead..." rows="3"></textarea>
+                    <div class="comment-actions">
+                        <span class="comment-info">Comments are saved automatically</span>
+                        <button type="submit" class="bx--btn bx--btn--primary" id="save-comment-btn">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM7 3.5A.5.5 0 0 1 7.5 3h1a.5.5 0 0 1 0 1H8v6.5a.5.5 0 0 1-1 0V4H7.5a.5.5 0 0 1-.5-.5z"/>
+                            </svg>
+                            Save Comment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class LeadsDashboard {
+            constructor() {
+                this.gridApi = null;
+                this.selectedLead = null;
+                
+                this.initializeGrid();
+                this.initializeMultiSelects();
+                this.bindEvents();
+                this.loadSampleData();
+            }
+
+            initializeGrid() {
+                const columnDefs = [
+                    {
+                        headerName: "Name",
+                        field: "student_name",
+                        flex: 2,
+                        minWidth: 150,
+                        cellRenderer: (params) => {
+                            const initials = params.value ? params.value.split(' ').map(n => n[0]).join('').toUpperCase() : '';
+                            return `
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #f4f4f4; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #6f6f6f; border: 1px solid #e0e0e0;">
+                                        ${initials}
+                                    </div>
+                                    <span style="font-weight: 500;">${params.value || ''}</span>
+                                </div>
+                            `;
+                        }
+                    },
+                    {
+                        headerName: "Phone",
+                        field: "phone_number",
+                        width: 120,
+                        cellStyle: { fontFamily: 'monospace' }
+                    },
+                    {
+                        headerName: "Status",
+                        field: "status",
+                        width: 100,
+                        cellRenderer: (params) => {
+                            const status = params.value || 'new';
+                            const statusClass = `status-${status.toLowerCase()}`;
+                            return `<span class="status-badge ${statusClass}">${status}</span>`;
+                        }
+                    },
+                    {
+                        headerName: "Location",
+                        field: "location",
+                        width: 100
+                    },
+                    {
+                        headerName: "Date",
+                        field: "created_at",
+                        width: 100,
+                        cellRenderer: (params) => {
+                            if (!params.value) return '';
+                            const date = new Date(params.value);
+                            return date.toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric'
+                            });
+                        }
+                    }
+                ];
+
+                const gridOptions = {
+                    columnDefs: columnDefs,
+                    rowData: [],
+                    defaultColDef: {
+                        sortable: true,
+                        resizable: true
+                    },
+                    rowSelection: 'single',
+                    onSelectionChanged: (event) => {
+                        const selectedRows = event.api.getSelectedRows();
+                        if (selectedRows.length > 0) {
+                            this.onRowSelected(selectedRows[0]);
+                        }
+                    },
+                    suppressRowClickSelection: false,
+                    rowHeight: 48,
+                    headerHeight: 40,
+                    animateRows: true
+                };
+
+                const gridDiv = document.querySelector('#leads-grid');
+                this.gridApi = agGrid.createGrid(gridDiv, gridOptions);
+            }
+
+            initializeMultiSelects() {
+                const multiSelects = document.querySelectorAll('.bx--multi-select');
+                
+                multiSelects.forEach(select => {
+                    const input = select.querySelector('.bx--multi-select__input');
+                    const menu = select.querySelector('.bx--multi-select__menu');
+                    const selectedContainer = select.querySelector('.selected-items');
+                    const field = select.getAttribute('data-field');
+                    
+                    // Toggle dropdown
+                    input.addEventListener('click', () => {
+                        // Close other dropdowns
+                        multiSelects.forEach(other => {
+                            if (other !== select) {
+                                other.classList.remove('bx--multi-select--expanded');
+                            }
+                        });
+                        
+                        select.classList.toggle('bx--multi-select--expanded');
+                    });
+                    
+                    // Handle checkbox changes
+                    const checkboxes = select.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', () => {
+                            this.updateSelectedItems(select, field);
+                        });
+                    });
+                });
+                
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.bx--multi-select')) {
+                        multiSelects.forEach(select => {
+                            select.classList.remove('bx--multi-select--expanded');
+                        });
+                    }
+                });
+            }
+
+            updateSelectedItems(selectElement, field) {
+                const checkboxes = selectElement.querySelectorAll('input[type="checkbox"]:checked');
+                const selectedContainer = selectElement.querySelector('.selected-items');
+                const input = selectElement.querySelector('.bx--multi-select__input');
+                
+                selectedContainer.innerHTML = '';
+                
+                if (checkboxes.length === 0) {
+                    input.placeholder = `Select ${field}...`;
+                } else {
+                    input.placeholder = `${checkboxes.length} selected`;
+                    
+                    checkboxes.forEach(checkbox => {
+                        const label = selectElement.querySelector(`label[for="${checkbox.id}"]`);
+                        const tag = document.createElement('span');
+                        tag.className = 'selected-tag';
+                        tag.innerHTML = `
+                            ${label.textContent}
+                            <span class="remove-tag" onclick="this.removeTag('${checkbox.id}')">
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </span>
+                        `;
+                        
+                        tag.querySelector('.remove-tag').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            checkbox.checked = false;
+                            this.updateSelectedItems(selectElement, field);
+                        });
+                        
+                        selectedContainer.appendChild(tag);
+                    });
+                }
+            }
+
+            bindEvents() {
+                // Filter form submission
+                document.getElementById('filters-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleFilterSubmit();
+                });
+                
+                // Reset button
+                document.getElementById('reset-btn').addEventListener('click', () => {
+                    this.resetFilters();
+                });
+                
+                // Comment form
+                document.getElementById('comment-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveComment();
+                });
+            }
+
+            handleFilterSubmit() {
+                const formData = this.getFilterFormData();
+                const queryParams = new URLSearchParams();
+                
+                // Build query parameters
+                Object.keys(formData).forEach(key => {
+                    if (formData[key].length > 0) {
+                        queryParams.append(key, formData[key].join(','));
+                    }
+                });
+                
+                // Add search query if present
+                const searchQuery = document.getElementById('search-input').value.trim();
+                if (searchQuery) {
+                    queryParams.append('search', searchQuery);
+                }
+                
+                // Here you would make the API call to your FastAPI backend
+                console.log('Filter query:', queryParams.toString());
+                
+                // For now, just update the URL and filter the sample data
+                const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
+                window.history.replaceState({}, '', newUrl);
+                
+                // Filter sample data (replace with actual API call)
+                this.filterSampleData(formData, searchQuery);
+            }
+
+            getFilterFormData() {
+                const formData = {
+                    status: [],
+                    courses: [],
+                    location: [],
+                    counsellor: []
+                };
+                
+                // Get selected values from each multiselect
+                document.querySelectorAll('.bx--multi-select').forEach(select => {
+                    const field = select.getAttribute('data-field');
+                    const checkboxes = select.querySelectorAll('input[type="checkbox"]:checked');
+                    
+                    checkboxes.forEach(checkbox => {
+                        formData[field].push(checkbox.value);
+                    });
+                });
+                
+                return formData;
+            }
+
+            resetFilters() {
+                // Uncheck all checkboxes
+                document.querySelectorAll('.bx--multi-select input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Update all multiselect displays
+                document.querySelectorAll('.bx--multi-select').forEach(select => {
+                    const field = select.getAttribute('data-field');
+                    this.updateSelectedItems(select, field);
+                });
+                
+                // Clear search input
+                document.getElementById('search-input').value = '';
+                
+                // Reset URL
+                window.history.replaceState({}, '', window.location.pathname);
+                
+                // Reload all data
+                this.loadSampleData();
+            }
+
+            onRowSelected(lead) {
+                this.selectedLead = lead;
+                console.log('Selected lead:', lead);
+                // Here you would load detailed lead information and timeline
+            }
+
+            saveComment() {
+                const comment = document.getElementById('comment-textarea').value.trim();
+                if (!comment || !this.selectedLead) return;
+                
+                console.log('Saving comment for lead:', this.selectedLead.id, 'Comment:', comment);
+                
+                // Here you would make API call to save comment
+                // For now, just show success
+                const saveBtn = document.getElementById('save-comment-btn');
+                const originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = 'Saved!';
+                saveBtn.disabled = true;
+                
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
+                }, 2000);
+            }
+
+            loadSampleData() {
+                // Sample data for demonstration
+                const sampleData = [
+                    {
+                        id: 1,
+                        student_name: "Rahul Sharma",
+                        phone_number: "+91 9876543210",
+                        status: "new",
+                        location: "Hyderabad",
+                        created_at: "2024-01-15T10:30:00Z"
+                    },
+                    {
+                        id: 2,
+                        student_name: "Priya Patel",
+                        phone_number: "+91 9876543211",
+                        status: "contacted",
+                        location: "Bangalore",
+                        created_at: "2024-01-14T14:20:00Z"
+                    },
+                    {
+                        id: 3,
+                        student_name: "Amit Kumar",
+                        phone_number: "+91 9876543212",
+                        status: "qualified",
+                        location: "Chennai",
+                        created_at: "2024-01-13T09:15:00Z"
+                    },
+                    {
+                        id: 4,
+                        student_name: "Sneha Reddy",
+                        phone_number: "+91 9876543213",
+                        status: "converted",
+                        location: "Mumbai",
+                        created_at: "2024-01-12T16:45:00Z"
+                    }
+                ];
+                
+                this.gridApi.setGridOption('rowData', sampleData);
+            }
+
+            filterSampleData(filters, searchQuery) {
+                // This is a placeholder - replace with actual API call
+                console.log('Filtering data with:', filters, searchQuery);
+                // For now, just reload sample data
+                this.loadSampleData();
+            }
+        }
+
+        // Tab switching function
+        function switchTab(event, tabId) {
+            event.preventDefault();
+            
+            // Update tab navigation
+            document.querySelectorAll('.bx--tabs__nav-item').forEach(item => {
+                item.classList.remove('bx--tabs__nav-item--selected');
+            });
+            event.target.parentElement.classList.add('bx--tabs__nav-item--selected');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            window.leadsDashboard = new LeadsDashboard();
+        });
+    </script>
+</body>
+</html>
