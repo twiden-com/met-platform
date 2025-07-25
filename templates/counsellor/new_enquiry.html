@@ -990,6 +990,28 @@
                         </div>
                     </div>
 
+                    <!-- Lead Quality and Fee Quoted -->
+                    <div class="form-grid">
+                        <div class="bx--form-item">
+                            <label for="lead-quality" class="bx--label">Lead Quality</label>
+                            <div class="bx--select">
+                                <select id="lead-quality" name="lead_quality" class="bx--select-input">
+                                    <option value="">Select lead quality</option>
+                                    <option value="potential">Potential</option>
+                                    <option value="semi_potential">Semi Potential</option>
+                                    <option value="junk">Junk</option>
+                                </select>
+                                <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="fee-quoted" class="bx--label">Fee Quoted</label>
+                            <input type="text" id="fee-quoted" name="fee_quoted" class="bx--text-input" placeholder="e.g., ₹25,000">
+                        </div>
+                    </div>
+
                     <!-- College Details and Passout Year -->
                     <div class="form-grid">
                         <div class="bx--form-item">
@@ -1879,7 +1901,9 @@
                     'slot_preference': 'slot-preference',
                     'counselled_by': 'counselled-by',
                     'urgency': 'urgency',
-                    'interested_courses': '.courses-container'
+                    'interested_courses': '.courses-container',
+                    'lead_quality': 'lead-quality',        
+                    'fee_quoted': 'fee-quoted'
                 };
                 
                 errorFields.forEach(fieldName => {

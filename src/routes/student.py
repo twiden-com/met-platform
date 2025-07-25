@@ -184,7 +184,9 @@ async def create_student_enquiry(
                     'lead_source': 'Lead Source',
                     'slot_preference': 'Slot Preference',
                     'counselled_by': 'Counselled By',
-                    'interested_courses': 'Interested Courses'
+                    'interested_courses': 'Interested Courses',
+                    'lead_quality': 'Lead Quality',
+                    'fee_quoted': 'Fee Quoted'
                 }
                 
                 readable_field = field_display_names.get(field_name, field_name.replace('_', ' ').title())

@@ -23,6 +23,8 @@ class StudentEnquiryRequest(BaseModel):
     interested_courses: List[str] = Field(..., min_length=1)
     comments: Optional[str] = Field(None, max_length=1000)
     send_brochure: Optional[bool] = Field(default=False)
+    lead_quality: Optional[str] = Field(None)
+    fee_quoted: Optional[int] = Field(0)
 
     @field_validator('name')
     @classmethod
@@ -161,7 +163,8 @@ class StudentEnquiryRequest(BaseModel):
             "comments": self.comments,
             "send_brochure": self.send_brochure,
             "created_by": counsellor_id,
-            # "is_verified": 1,
             "is_active": 1,
-            "role": "student"
+            "role": "student",
+            "fee_quoted": self.fee_quoted,
+            "lead_quality": self.lead_quality
         }
