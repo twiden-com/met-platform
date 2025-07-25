@@ -6,7 +6,7 @@ import json
 class StudentEnquiryRequest(BaseModel):
     verified_phone: str = Field(..., description="Verified phone number")
     verification_id: Optional[str] = None
-    student_name: str = Field(..., min_length=2, max_length=100)
+    name: str = Field(..., min_length=2, max_length=100)
     additional_people: Optional[int] = Field(default=0, ge=0, le=10)
     country: Optional[str] = Field(default="India", max_length=50)
     state: Optional[str] = Field(None, max_length=50)
@@ -24,7 +24,7 @@ class StudentEnquiryRequest(BaseModel):
     comments: Optional[str] = Field(None, max_length=1000)
     send_brochure: Optional[bool] = Field(default=False)
 
-    @field_validator('student_name')
+    @field_validator('name')
     @classmethod
     def validate_student_name(cls, v):
         if not v or not v.strip():
@@ -143,7 +143,7 @@ class StudentEnquiryRequest(BaseModel):
             "email": self.verified_phone + '@met.com',
             "phone_number": self.verified_phone,
             "verification_id": self.verification_id,
-            "student_name": self.student_name,
+            "name": self.name,
             "additional_people": self.additional_people,
             "country": self.country,
             "state": self.state,

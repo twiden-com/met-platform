@@ -60,7 +60,7 @@ def auth_required(roles: List[str] = None):
             except Exception as e:
                 # Log error and redirect on any other failure
                 print(f"Auth error: {e}")  # Replace with proper logging
-                # return _redirect_to_login()
+                return _redirect_to_login()
         
         return wrapper
     return decorator

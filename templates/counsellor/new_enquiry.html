@@ -852,7 +852,7 @@
                     <div class="form-grid">
                         <div class="bx--form-item">
                             <label for="student-name" class="bx--label required">Student Name</label>
-                            <input type="text" id="student-name" name="student_name" class="bx--text-input" placeholder="Enter full name" required>
+                            <input type="text" id="student-name" name="name" class="bx--text-input" placeholder="Enter full name" required>
                         </div>
                         <div class="bx--form-item">
                             <cds-form-item>
@@ -1743,6 +1743,7 @@
                 
                 if (!this.phoneVerified) {
                     this.showAlert('Please verify your phone number first', 'error');
+                    this.scrollToError();
                     return;
                 }
 
@@ -1751,11 +1752,13 @@
                 
                 if (!studentName) {
                     this.showAlert('Please enter student name', 'error');
+                    this.scrollToError();
                     return;
                 }
                 
                 if (courses.length === 0) {
                     this.showAlert('Please select at least one interested course', 'error');
+                    this.scrollToError();
                     return;
                 }
 
@@ -1832,7 +1835,7 @@
                 // Field name mapping (backend field name → frontend element ID)
                 const fieldMapping = {
                     'verified_phone': 'phone-input',
-                    'student_name': 'student-name',
+                    'name': 'student-name',
                     'additional_people': 'cds-number-input[name="additional_people"]',
                     'state': 'state',
                     'place': 'place',

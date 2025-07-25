@@ -13,7 +13,8 @@ templates = Jinja2Templates(directory="templates", auto_reload=True)
 @router.get("/dashboard", response_class=HTMLResponse)
 @auth_required(['counsellor'])
 async def show_councellor_dashboard(request: Request):
-     return templates.TemplateResponse("counsellor/dashboard.html", {"request": request})
+     profile = request.state.user_data.profile
+     return templates.TemplateResponse("counsellor/dashboard.html", {"request": request, "profile":profile})
 
 @router.get("/new-enquiry", response_class=HTMLResponse)
 @auth_required(['counsellor'])

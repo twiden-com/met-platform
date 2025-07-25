@@ -131,7 +131,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -239,8 +239,24 @@
             opacity: 0.8;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Responsive - Tablet */
+        @media (max-width: 1024px) and (min-width: 601px) {
+            .main-container {
+                padding: 2rem;
+            }
+            
+            .cards-grid {
+                gap: 1.5rem;
+                max-width: 800px;
+            }
+
+            .dashboard-card {
+                padding: 2rem;
+            }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 600px) {
             .app-header {
                 padding: 1rem;
                 flex-direction: column;
@@ -254,6 +270,11 @@
             .cards-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+                max-width: 400px;
+            }
+
+            .dashboard-card {
+                padding: 2rem 1.5rem;
             }
 
             .user-section {
@@ -302,8 +323,8 @@
             <div class="user-profile">
                 <div class="user-avatar">RS</div>
                 <div class="user-info">
-                    <h4>Ravi Sales</h4>
-                    <p>Sales Executive</p>
+                    <h4>{{ profile.name }}</h4>
+                    <p>( {{ profile.role }} )</p>
                 </div>
             </div>
         </div>

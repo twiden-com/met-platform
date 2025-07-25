@@ -177,7 +177,7 @@ async def create_student_enquiry(
                 # Convert field name to readable format
                 field_display_names = {
                     'verified_phone': 'Phone Number',
-                    'student_name': 'Student Name',
+                    'name': 'Student Name',
                     'additional_people': 'Additional People',
                     'college_name': 'College Name',
                     'passout_year': 'Year of Passout',
@@ -223,7 +223,7 @@ async def create_student_enquiry(
             )
         
         # Check if phone already exists
-        existing = await db.table('profiles').select("user_id, student_name").eq('phone_number', enquiry_data.verified_phone).execute()
+        existing = await db.table('profiles').select("user_id, name").eq('phone_number', enquiry_data.verified_phone).execute()
         
         # Get counsellor ID
         counsellor_id = getattr(request.state.user_data.user, 'id', None) if hasattr(request.state, 'user_data') else None
@@ -252,7 +252,7 @@ async def create_student_enquiry(
         return JSONResponse(
             content={
                 "success": True,
-                "message": f"Student enquiry for {enquiry_data.student_name} {action} successfully!",
+                "message": f"Student enquiry for {enquiry_data.name} {action} successfully!",
                 "user_id": result.data[0].get('user_id'),
                 "profile_id": result.data[0].get('id')
             }
