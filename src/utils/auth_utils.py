@@ -9,8 +9,7 @@ from src.config.database import get_admin_db, get_db
 class UserData(BaseModel):
     user: Any
     profile: Any
-
-def auth_required(roles: List[str] = None):
+def auth_required(roles: List[str] = None, signup_flow: bool = False):
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def wrapper(request: Request, *args: Any, **kwargs: Any) -> Any:
@@ -55,11 +54,29 @@ def auth_required(roles: List[str] = None):
                         detail=f"Access denied. Required roles: {roles}"
                     )
                 
+                # SIGNUP FLOW HANDLING: Store current session before calling function
+                stored_session = None
+                if signup_flow:
+                    try:
+                        current_session = await db.auth.get_session()
+                        if current_session:
+                            stored_session = {
+                                'access_token': current_session.access_token,
+                                'refresh_token': current_session.refresh_token
+                            }
+                            print(f"[SIGNUP_FLOW] Stored session for user: {user_result.user.email}")
+                    except Exception as e:
+                        print(f"[SIGNUP_FLOW] Error storing session: {e}")
+                
                 # Set all data in request state
                 request.state.user_data = UserData(
                     user=user_result.user,
                     profile=user_profile.data
                 )
+                
+                # Add stored session to request state for signup flows
+                if signup_flow and stored_session:
+                    request.state.stored_session = stored_session
                 
                 # Call the original function
                 response = None
@@ -68,31 +85,62 @@ def auth_required(roles: List[str] = None):
                 else:
                     response = func(request, *args, **kwargs)
                 
-                # Check if session was refreshed and update cookies
-                current_session = await db.auth.get_session()
-                if (current_session and 
-                    hasattr(current_session, 'access_token') and 
-                    current_session.access_token != session_token):
-                    
-                    if hasattr(response, 'set_cookie'):
-                        response.set_cookie(
-                            key="user_session",
-                            value=current_session.access_token,
-                            httponly=True,
-                            secure=True,
-                            samesite='lax',
-                            max_age=86400
+                # SIGNUP FLOW HANDLING: Restore original session after function execution
+                if signup_flow and stored_session:
+                    try:
+                        await db.auth.set_session(
+                            access_token=stored_session['access_token'],
+                            refresh_token=stored_session['refresh_token']
                         )
+                        print(f"[SIGNUP_FLOW] Restored session for user: {user_result.user.email}")
                         
-                        if hasattr(current_session, 'refresh_token'):
+                        # Update response cookies with restored session
+                        if hasattr(response, 'set_cookie'):
+                            response.set_cookie(
+                                key="user_session",
+                                value=stored_session['access_token'],
+                                httponly=True,
+                                secure=True,
+                                samesite='lax',
+                                max_age=86400
+                            )
                             response.set_cookie(
                                 key="refresh_token",
-                                value=current_session.refresh_token,
+                                value=stored_session['refresh_token'],
                                 httponly=True,
                                 secure=True,
                                 samesite='lax',
                                 max_age=604800
                             )
+                    except Exception as e:
+                        print(f"[SIGNUP_FLOW] Error restoring session: {e}")
+                        # Don't fail the request, but log the error
+                else:
+                    # Normal flow: Check if session was refreshed and update cookies
+                    current_session = await db.auth.get_session()
+                    if (current_session and 
+                        hasattr(current_session, 'access_token') and 
+                        current_session.access_token != session_token):
+                        
+                        if hasattr(response, 'set_cookie'):
+                            response.set_cookie(
+                                key="user_session",
+                                value=current_session.access_token,
+                                httponly=True,
+                                secure=True,
+                                samesite='lax',
+                                max_age=86400
+                            )
+                            
+                            if hasattr(current_session, 'refresh_token'):
+                                response.set_cookie(
+                                    key="refresh_token",
+                                    value=current_session.refresh_token,
+                                    httponly=True,
+                                    secure=True,
+                                    samesite='lax',
+                                    max_age=604800
+                                )
                 
                 return response
                 

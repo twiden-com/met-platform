@@ -163,7 +163,7 @@ class StudentEnquiryRequest(BaseModel):
             "comments": self.comments,
             "send_brochure": self.send_brochure,
             "created_by": counsellor_id,
-            "is_active": 1,
+            "is_active": 0,
             "role": "student",
             "fee_quoted": self.fee_quoted,
             "lead_quality": self.lead_quality

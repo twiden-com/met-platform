@@ -13,6 +13,10 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 templates = Jinja2Templates(directory="templates", auto_reload=True)
 
+@router.get("/login", response_class=HTMLResponse)
+async def login(request: Request):
+     return templates.TemplateResponse("login.html", {"request": request})
+
 # =====================================================
 # LOGIN USER WITH PHONE & OTP
 # =====================================================

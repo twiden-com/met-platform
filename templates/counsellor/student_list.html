@@ -14,6 +14,10 @@
     <!-- ag-Grid JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.2/dist/ag-grid-community.min.js"></script>
     
+    <!-- Flatpickr for Date Range Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
     <style>
         :root {
             --color-navy: #1e3a8a;
@@ -96,7 +100,7 @@
         /* Main Layout - Three Columns */
         .main-container {
             display: grid;
-            grid-template-columns: 1.7fr 5fr 2fr;
+            grid-template-columns: 1.2fr 5fr;
             height: calc(100vh - 72px);
             overflow: hidden;
         }
@@ -219,6 +223,92 @@
 
         .bx--multi-select__option input[type="checkbox"] {
             margin-right: 0.75rem;
+            cursor: pointer;
+        }
+
+        .bx--multi-select__option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Single Select Styling */
+        .bx--select {
+            position: relative;
+        }
+
+        .bx--select__wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bx--select__input {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0 2.5rem 0 1rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: var(--color-text-primary);
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+            appearance: none;
+        }
+
+        .bx--select__input:focus {
+            border-bottom: 2px solid var(--color-blue);
+            background-color: white;
+        }
+
+        .bx--select__menu-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            fill: var(--color-text-secondary);
+            pointer-events: none;
+        }
+
+        /* Date Picker Styling */
+        .bx--date-picker {
+            position: relative;
+        }
+
+        .bx--date-picker__input {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0 2.5rem 0 1rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: var(--color-text-primary);
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        .bx--date-picker__input:focus {
+            border-bottom: 2px solid var(--color-blue);
+            background-color: white;
+        }
+
+        .bx--date-picker__icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            fill: var(--color-text-secondary);
+            pointer-events: none;
+        }
+
+        /* Flatpickr Custom Styling */
+        .flatpickr-calendar {
+            font-family: 'IBM Plex Sans', sans-serif;
         }
 
         .selected-items {
@@ -381,7 +471,8 @@
         /* Column 3: Details Panel */
         .details-column {
             background: white;
-            display: flex;
+            /* display: flex; */
+            display: none;
             flex-direction: column;
             overflow: hidden;
             position: relative;
@@ -519,7 +610,7 @@
             color: var(--color-text-secondary);
         }
 
-        /* Status badges */
+        /* Status badges for new statuses */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -532,11 +623,124 @@
             width: fit-content;
         }
 
-        .status-new { background: #e8f4fd; color: #0f62fe; }
-        .status-contacted { background: #fff8e1; color: #f1c21b; }
-        .status-qualified { background: #e8f5e8; color: #24a148; }
-        .status-converted { background: #e8f5e8; color: #24a148; }
-        .status-rejected { background: #fff1f1; color: #da1e28; }
+        .status-potential { background: #e8f4fd; color: #0f62fe; }
+        .status-semi-potential { background: #fff8e1; color: #f1c21b; }
+        .status-junk { background: #fff1f1; color: #da1e28; }
+        .status-enrolled { background: #e8f5e8; color: #24a148; }
+
+        /* Verification status badges */
+        .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .verification-otp { background: #e8f5e8; color: #24a148; }
+        .verification-auto { background: #e8f4fd; color: #0f62fe; }
+
+        /* Brochure status styling */
+        .brochure-sent { color: #24a148; font-weight: 500; }
+        .brochure-not-sent { color: #da1e28; font-weight: 500; }
+
+        /* Details Tab Content */
+        .student-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--color-gray-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            border: 2px solid var(--color-border);
+            margin-bottom: 1rem;
+        }
+
+        .student-info h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 0.5rem;
+        }
+
+        .student-meta {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .details-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            font-weight: 400;
+        }
+
+        .courses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .course-tag {
+            background: #f4f4f4;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            border-left: 3px solid var(--color-orange);
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         /* Responsive */
         @media (max-width: 1200px) {
@@ -587,121 +791,36 @@
                 <h2 class="filters-title">Filters</h2>
             </div>
             <form class="filters-form" id="filters-form">
-                <!-- Status Filter -->
+                <!-- Date Range Filter -->
                 <div class="form-group">
-                    <label class="bx--label" for="status-select">Status</label>
-                    <div class="bx--multi-select" data-field="status">
-                        <div class="bx--multi-select__wrapper">
-                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select status...">
-                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
-                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
-                            </svg>
-                            <div class="bx--multi-select__menu">
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="status-new" value="new">
-                                    <label for="status-new">New</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="status-contacted" value="contacted">
-                                    <label for="status-contacted">Contacted</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="status-qualified" value="qualified">
-                                    <label for="status-qualified">Qualified</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="status-converted" value="converted">
-                                    <label for="status-converted">Converted</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="status-rejected" value="rejected">
-                                    <label for="status-rejected">Rejected</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="selected-items" id="status-selected"></div>
+                    <div class="bx--date-picker">
+                        <input type="text" class="bx--date-picker__input" id="date-range-picker" placeholder="Select date range..." readonly>
+                        <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M12 1V0h1v1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h2V0h1v1h8zM1 3v11h14V3H1zm2-1h8v1H3V2zm0 3h1v1H3V5zm2 0h1v1H5V5zm2 0h1v1H7V5zm2 0h1v1H9V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zM3 7h1v1H3V7zm2 0h1v1H5V7zm2 0h1v1H7V7zm2 0h1v1H9V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM3 9h1v1H3V9zm2 0h1v1H5V9zm2 0h1v1H7V9zm2 0h1v1H9V9zm2 0h1v1h-1V9zm2 0h1v1h-1V9z"/>
+                        </svg>
                     </div>
                 </div>
 
-                <!-- Courses Filter -->
+                <!-- Course Filter (Single Select) -->
                 <div class="form-group">
-                    <label class="bx--label" for="courses-select">Interested Courses</label>
-                    <div class="bx--multi-select" data-field="courses">
-                        <div class="bx--multi-select__wrapper">
-                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select courses...">
-                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
-                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
-                            </svg>
-                            <div class="bx--multi-select__menu">
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="course-1" value="1">
-                                    <label for="course-1">Data Science with AI</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="course-2" value="2">
-                                    <label for="course-2">Python Full Stack with AI</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="course-3" value="3">
-                                    <label for="course-3">Digital Marketing with AI</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="course-4" value="4">
-                                    <label for="course-4">Cybersecurity</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="course-5" value="5">
-                                    <label for="course-5">Java Full Stack with AI</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="course-6" value="6">
-                                    <label for="course-6">Data Analytics & Gen AI</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="selected-items" id="courses-selected"></div>
+                    <div class="bx--select">
+                        <select class="bx--select__input" id="course-select">
+                            <option value="">All courses</option>
+                            <option value="Data Science with AI">Data Science with AI</option>
+                            <option value="Python Full Stack with AI">Python Full Stack with AI</option>
+                            <option value="Digital Marketing with AI">Digital Marketing with AI</option>
+                            <option value="Cybersecurity">Cybersecurity</option>
+                            <option value="Java Full Stack with AI">Java Full Stack with AI</option>
+                            <option value="Data Analytics & Gen AI">Data Analytics & Gen AI</option>
+                        </select>
+                        <svg class="bx--select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                        </svg>
                     </div>
                 </div>
 
-                <!-- Location Filter -->
+                <!-- Counsellor Filter (Multi Select) -->
                 <div class="form-group">
-                    <label class="bx--label" for="location-select">Location</label>
-                    <div class="bx--multi-select" data-field="location">
-                        <div class="bx--multi-select__wrapper">
-                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select locations...">
-                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
-                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
-                            </svg>
-                            <div class="bx--multi-select__menu">
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="location-hyderabad" value="Hyderabad">
-                                    <label for="location-hyderabad">Hyderabad</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="location-bangalore" value="Bangalore">
-                                    <label for="location-bangalore">Bangalore</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="location-chennai" value="Chennai">
-                                    <label for="location-chennai">Chennai</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="location-mumbai" value="Mumbai">
-                                    <label for="location-mumbai">Mumbai</label>
-                                </div>
-                                <div class="bx--multi-select__option">
-                                    <input type="checkbox" id="location-delhi" value="Delhi">
-                                    <label for="location-delhi">Delhi</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="selected-items" id="location-selected"></div>
-                    </div>
-                </div>
-
-                <!-- Counsellor Filter -->
-                <div class="form-group">
-                    <label class="bx--label" for="counsellor-select">Counsellor</label>
                     <div class="bx--multi-select" data-field="counsellor">
                         <div class="bx--multi-select__wrapper">
                             <input type="text" class="bx--multi-select__input" readonly placeholder="Select counsellors...">
@@ -709,21 +828,87 @@
                                 <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                             </svg>
                             <div class="bx--multi-select__menu">
-                                <div class="bx--multi-select__option">
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-ushmika">
                                     <input type="checkbox" id="counsellor-ushmika" value="Ushmika">
                                     <label for="counsellor-ushmika">Ushmika</label>
                                 </div>
-                                <div class="bx--multi-select__option">
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-pallavi">
                                     <input type="checkbox" id="counsellor-pallavi" value="Pallavi">
                                     <label for="counsellor-pallavi">Pallavi</label>
                                 </div>
-                                <div class="bx--multi-select__option">
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-taniath">
                                     <input type="checkbox" id="counsellor-taniath" value="Taniath">
                                     <label for="counsellor-taniath">Taniath</label>
                                 </div>
                             </div>
                         </div>
                         <div class="selected-items" id="counsellor-selected"></div>
+                    </div>
+                </div>
+
+                <!-- Lead Source Filter (Multi Select) -->
+                <div class="form-group">
+                    <div class="bx--multi-select" data-field="lead_source">
+                        <div class="bx--multi-select__wrapper">
+                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select lead sources...">
+                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                            </svg>
+                            <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option" data-checkbox="source-website">
+                                    <input type="checkbox" id="source-website" value="Website">
+                                    <label for="source-website">Website</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-social">
+                                    <input type="checkbox" id="source-social" value="Social Media">
+                                    <label for="source-social">Social Media</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-referral">
+                                    <input type="checkbox" id="source-referral" value="Referral">
+                                    <label for="source-referral">Referral</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-ad">
+                                    <input type="checkbox" id="source-ad" value="Advertisement">
+                                    <label for="source-ad">Advertisement</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-walkin">
+                                    <input type="checkbox" id="source-walkin" value="Walk-in">
+                                    <label for="source-walkin">Walk-in</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-coldcall">
+                                    <input type="checkbox" id="source-coldcall" value="Cold Call">
+                                    <label for="source-coldcall">Cold Call</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="lead_source-selected"></div>
+                    </div>
+                </div>
+
+                <!-- Slot Preference Filter (Multi Select) -->
+                <div class="form-group">
+                    <div class="bx--multi-select" data-field="slot_preference">
+                        <div class="bx--multi-select__wrapper">
+                            <input type="text" class="bx--multi-select__input" readonly placeholder="Select slot preferences...">
+                            <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                            </svg>
+                            <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option" data-checkbox="slot-morning">
+                                    <input type="checkbox" id="slot-morning" value="Morning">
+                                    <label for="slot-morning">Morning</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="slot-afternoon">
+                                    <input type="checkbox" id="slot-afternoon" value="Afternoon">
+                                    <label for="slot-afternoon">Afternoon</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="slot-evening">
+                                    <input type="checkbox" id="slot-evening" value="Evening">
+                                    <label for="slot-evening">Evening</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="slot_preference-selected"></div>
                     </div>
                 </div>
 
@@ -835,11 +1020,29 @@
             constructor() {
                 this.gridApi = null;
                 this.selectedLead = null;
+                this.dateRangePicker = null;
                 
                 this.initializeGrid();
+                this.initializeDatePicker();
                 this.initializeMultiSelects();
                 this.bindEvents();
                 this.loadSampleData();
+            }
+
+            initializeDatePicker() {
+                // Initialize Flatpickr for date range picker
+                this.dateRangePicker = flatpickr("#date-range-picker", {
+                    mode: "range",
+                    dateFormat: "Y-m-d",
+                    defaultDate: [
+                        new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+                        new Date() // today
+                    ],
+                    onChange: (selectedDates, dateStr, instance) => {
+                        // Auto-submit form when date changes
+                        this.handleFilterSubmit();
+                    }
+                });
             }
 
             initializeGrid() {
@@ -847,40 +1050,42 @@
                     {
                         headerName: "Name",
                         field: "student_name",
-                        flex: 2,
-                        minWidth: 150,
+                        width: 180,
+                        pinned: 'left',
                         cellRenderer: (params) => {
                             const initials = params.value ? params.value.split(' ').map(n => n[0]).join('').toUpperCase() : '';
+                            const additionalPeople = params.data.additional_people || 0;
+                            const additionalLabel = additionalPeople > 0 ? `+${additionalPeople}` : '';
+                            
                             return `
-                                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #f4f4f4; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #6f6f6f; border: 1px solid #e0e0e0;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #f4f4f4; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: #6f6f6f; border: 1px solid #e0e0e0;">
                                         ${initials}
                                     </div>
-                                    <span style="font-weight: 500;">${params.value || ''}</span>
+                                    <div style="display: flex; flex-direction: column;">
+                                        <span style="font-weight: 500; font-size: 0.875rem;">${params.value || ''}</span>
+                                        ${additionalLabel ? `<span style="font-size: 0.75rem; color: #0f62fe; font-weight: 500;">${additionalLabel}</span>` : ''}
+                                    </div>
                                 </div>
                             `;
                         }
                     },
                     {
-                        headerName: "Phone",
-                        field: "phone_number",
-                        width: 120,
-                        cellStyle: { fontFamily: 'monospace' }
-                    },
-                    {
-                        headerName: "Status",
-                        field: "status",
-                        width: 100,
+                        headerName: "Courses",
+                        field: "interested_courses",
+                        width: 150,
                         cellRenderer: (params) => {
-                            const status = params.value || 'new';
-                            const statusClass = `status-${status.toLowerCase()}`;
-                            return `<span class="status-badge ${statusClass}">${status}</span>`;
+                            if (!params.value || params.value.length === 0) return 'None';
+                            const courses = Array.isArray(params.value) ? params.value : [params.value];
+                            const firstCourse = courses[0];
+                            const moreCount = courses.length > 1 ? `+${courses.length - 1}` : '';
+                            return `
+                                <div title="${courses.join(', ')}">
+                                    <span>${firstCourse}</span>
+                                    ${moreCount ? `<span style="color: #0f62fe; font-weight: 500; margin-left: 0.25rem;">${moreCount}</span>` : ''}
+                                </div>
+                            `;
                         }
-                    },
-                    {
-                        headerName: "Location",
-                        field: "location",
-                        width: 100
                     },
                     {
                         headerName: "Date",
@@ -893,6 +1098,50 @@
                                 month: 'short', 
                                 day: 'numeric'
                             });
+                        }
+                    },
+                    {
+                        headerName: "Counselled By",
+                        field: "counselled_by",
+                        width: 120
+                    },
+                    {
+                        headerName: "Lead Source",
+                        field: "lead_source",
+                        width: 120
+                    },
+                    {
+                        headerName: "Verification",
+                        field: "is_verified",
+                        width: 110,
+                        cellRenderer: (params) => {
+                            const verification = params.value;
+                            if (verification === 1) {
+                                return '<span class="verification-badge verification-otp">OTP Verified</span>';
+                            } else if (verification === 3) {
+                                return '<span class="verification-badge verification-auto">Auto Confirmed</span>';
+                            }
+                            return '<span style="color: #6f6f6f;">Not Verified</span>';
+                        }
+                    },
+                    {
+                        headerName: "Place",
+                        field: "place",
+                        width: 100
+                    },
+                    {
+                        headerName: "Mode",
+                        field: "mode",
+                        width: 100
+                    },
+                    {
+                        headerName: "Brochure",
+                        field: "send_brochure",
+                        width: 100,
+                        cellRenderer: (params) => {
+                            return params.value ? 
+                                '<span class="brochure-sent">Sent</span>' : 
+                                '<span class="brochure-not-sent">Not Sent</span>';
                         }
                     }
                 ];
@@ -912,7 +1161,7 @@
                         }
                     },
                     suppressRowClickSelection: false,
-                    rowHeight: 48,
+                    rowHeight: 52,
                     headerHeight: 40,
                     animateRows: true
                 };
@@ -942,11 +1191,33 @@
                         select.classList.toggle('bx--multi-select--expanded');
                     });
                     
-                    // Handle checkbox changes
+                    // Handle option clicks (both checkbox and label)
+                    const options = select.querySelectorAll('.bx--multi-select__option');
+                    options.forEach(option => {
+                        option.addEventListener('click', (e) => {
+                            // Get the checkbox ID from data attribute
+                            const checkboxId = option.getAttribute('data-checkbox');
+                            const checkbox = document.getElementById(checkboxId);
+                            
+                            if (checkbox && e.target !== checkbox) {
+                                // Only toggle if click wasn't on checkbox itself
+                                checkbox.checked = !checkbox.checked;
+                            }
+                            
+                            // Update selected items display
+                            this.updateSelectedItems(select, field);
+                            
+                            // Auto-submit form when multiselect changes
+                            this.handleFilterSubmit();
+                        });
+                    });
+                    
+                    // Handle direct checkbox changes
                     const checkboxes = select.querySelectorAll('input[type="checkbox"]');
                     checkboxes.forEach(checkbox => {
                         checkbox.addEventListener('change', () => {
                             this.updateSelectedItems(select, field);
+                            this.handleFilterSubmit();
                         });
                     });
                 });
@@ -969,7 +1240,7 @@
                 selectedContainer.innerHTML = '';
                 
                 if (checkboxes.length === 0) {
-                    input.placeholder = `Select ${field}...`;
+                    input.placeholder = `Select ${field.replace('_', ' ')}...`;
                 } else {
                     input.placeholder = `${checkboxes.length} selected`;
                     
@@ -979,7 +1250,7 @@
                         tag.className = 'selected-tag';
                         tag.innerHTML = `
                             ${label.textContent}
-                            <span class="remove-tag" onclick="this.removeTag('${checkbox.id}')">
+                            <span class="remove-tag">
                                 <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                 </svg>
@@ -990,6 +1261,7 @@
                             e.stopPropagation();
                             checkbox.checked = false;
                             this.updateSelectedItems(selectElement, field);
+                            this.handleFilterSubmit();
                         });
                         
                         selectedContainer.appendChild(tag);
@@ -1014,6 +1286,11 @@
                     e.preventDefault();
                     this.saveComment();
                 });
+
+                // Auto-submit on course select change
+                document.getElementById('course-select').addEventListener('change', () => {
+                    this.handleFilterSubmit();
+                });
             }
 
             handleFilterSubmit() {
@@ -1033,15 +1310,37 @@
                     queryParams.append('search', searchQuery);
                 }
                 
-                // Here you would make the API call to your FastAPI backend
+                // Make API call to FastAPI backend
                 console.log('Filter query:', queryParams.toString());
+                this.loadLeadsFromAPI(queryParams.toString());
                 
-                // For now, just update the URL and filter the sample data
+                // Update URL
                 const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
                 window.history.replaceState({}, '', newUrl);
-                
-                // Filter sample data (replace with actual API call)
-                this.filterSampleData(formData, searchQuery);
+            }
+
+            async loadLeadsFromAPI(queryString = '') {
+                try {
+                    const response = await fetch(`/student/leads?${queryString}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.gridApi.setGridOption('rowData', data.data);
+                        console.log('Loaded leads:', data.data.length);
+                    } else {
+                        console.error('API Error:', data.message);
+                        this.gridApi.setGridOption('rowData', []);
+                    }
+                } catch (error) {
+                    console.error('Error loading leads:', error);
+                    // Fallback to sample data on error
+                    this.loadSampleData();
+                }
             }
 
             getFilterFormData() {
@@ -1084,79 +1383,267 @@
                 window.history.replaceState({}, '', window.location.pathname);
                 
                 // Reload all data
-                this.loadSampleData();
+                this.loadLeadsFromAPI();
             }
 
-            onRowSelected(lead) {
-                this.selectedLead = lead;
-                console.log('Selected lead:', lead);
-                // Here you would load detailed lead information and timeline
+            async onRowSelected(lead) {
+                try {
+                    // Fetch detailed lead information
+                    const response = await fetch(`/student/leads/${lead.id}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.selectedLead = data.data;
+                        this.showLeadDetails(this.selectedLead);
+                        console.log('Selected lead details:', this.selectedLead);
+                    } else {
+                        console.error('Failed to load lead details:', data.message);
+                    }
+
+                } catch (error) {
+                    console.error('Error loading lead details:', error);
+                    // Don't show details if API fails
+                    this.showEmptyDetails();
+                }
             }
 
-            saveComment() {
+            showEmptyDetails() {
+                const detailsTab = document.getElementById('details-tab');
+                detailsTab.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h4>Unable to Load Details</h4>
+                        <p>Please check your connection or try again later</p>
+                    </div>
+                `;
+            }
+
+            showEmptyDetails() {
+                const detailsTab = document.getElementById('details-tab');
+                detailsTab.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h4>Unable to Load Details</h4>
+                        <p>Please check your connection or try again later</p>
+                    </div>
+                `;
+            }
+
+            showLeadDetails(lead) {
+                const detailsTab = document.getElementById('details-tab');
+                const initials = lead.student_name ? lead.student_name.split(' ').map(n => n[0]).join('').toUpperCase() : '';
+                const statusClass = `status-${(lead.status || 'new').toLowerCase()}`;
+
+                // Format courses
+                const coursesHtml = (lead.interested_courses || []).map(course => 
+                    `<span class="course-tag">${course}</span>`
+                ).join('');
+
+                detailsTab.innerHTML = `
+                    <div class="student-header">
+                        <div class="student-avatar">${initials}</div>
+                        <div class="student-info">
+                            <h2>${lead.student_name || 'Unknown'}</h2>
+                            <p class="student-meta">${lead.phone_number || ''} • ${lead.location || 'Unknown location'}</p>
+                        </div>
+                    </div>
+
+                    <div class="details-section">
+                        <h3 class="section-title">Contact Information</h3>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone Number</span>
+                            <span class="detail-value">${lead.phone_number || 'Not provided'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">${lead.email || 'Not provided'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Location</span>
+                            <span class="detail-value">${lead.location || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">State</span>
+                            <span class="detail-value">${lead.state || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Lead Source</span>
+                            <span class="detail-value">${lead.lead_source || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value">
+                                <span class="status-badge ${statusClass}">${lead.status || 'New'}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="details-section">
+                        <h3 class="section-title">Academic & Professional</h3>
+                        <div class="detail-item">
+                            <span class="detail-label">Education Level</span>
+                            <span class="detail-value">${lead.degree || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">College Name</span>
+                            <span class="detail-value">${lead.college_name || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Passout Year</span>
+                            <span class="detail-value">${lead.passout_year || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Purpose</span>
+                            <span class="detail-value">${lead.purpose || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Timeline</span>
+                            <span class="detail-value">${lead.urgency || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Additional People</span>
+                            <span class="detail-value">${lead.additional_people || 0}</span>
+                        </div>
+                    </div>
+
+                    <div class="details-section">
+                        <h3 class="section-title">Course Preferences</h3>
+                        <div class="detail-item">
+                            <span class="detail-label">Interested Courses</span>
+                            <div class="courses-list">
+                                ${coursesHtml || '<span class="course-tag">No courses selected</span>'}
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Mode</span>
+                            <span class="detail-value">${lead.mode || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Slot Preference</span>
+                            <span class="detail-value">${lead.slot_preference || 'Not specified'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Fee Quoted</span>
+                            <span class="detail-value">${lead.fee_quoted ? '₹' + lead.fee_quoted.toLocaleString() : 'Not quoted'}</span>
+                        </div>
+                    </div>
+
+                    <div class="details-section">
+                        <h3 class="section-title">Counselling Details</h3>
+                        <div class="detail-item">
+                            <span class="detail-label">Counselled By</span>
+                            <span class="detail-value">${lead.counselled_by || 'Not assigned'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Lead Quality</span>
+                            <span class="detail-value">${lead.lead_quality || 'Not assessed'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Created Date</span>
+                            <span class="detail-value">${lead.created_at ? new Date(lead.created_at).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            }) : 'Unknown'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Send Brochure</span>
+                            <span class="detail-value">${lead.send_brochure ? 'Yes' : 'No'}</span>
+                        </div>
+                    </div>
+
+                    ${lead.comments ? `
+                    <div class="details-section">
+                        <h3 class="section-title">Previous Comments</h3>
+                        <div class="detail-item">
+                            <span class="detail-value">${lead.comments}</span>
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+
+                // Load existing comment in textarea
+                const commentTextarea = document.getElementById('comment-textarea');
+                if (commentTextarea) {
+                    commentTextarea.value = lead.comments || '';
+                }
+            }
+
+            async saveComment() {
                 const comment = document.getElementById('comment-textarea').value.trim();
-                if (!comment || !this.selectedLead) return;
+                if (!this.selectedLead) {
+                    console.error('No lead selected');
+                    return;
+                }
                 
-                console.log('Saving comment for lead:', this.selectedLead.id, 'Comment:', comment);
-                
-                // Here you would make API call to save comment
-                // For now, just show success
                 const saveBtn = document.getElementById('save-comment-btn');
                 const originalText = saveBtn.innerHTML;
-                saveBtn.innerHTML = 'Saved!';
-                saveBtn.disabled = true;
                 
-                setTimeout(() => {
-                    saveBtn.innerHTML = originalText;
+                try {
+                    // Show loading state
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="animation: spin 1s linear infinite;">
+                            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm0-2A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" opacity="0.3"/>
+                            <path d="M8 0a8 8 0 0 1 8 8h-2A6 6 0 0 0 8 2V0z"/>
+                        </svg>
+                        Saving...
+                    `;
+                    
+                    const response = await fetch(`/student/leads/${this.selectedLead.id}/comment`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ comment: comment })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Update local data
+                        this.selectedLead.comments = comment;
+                        
+                        // Show success state
+                        saveBtn.innerHTML = 'Saved!';
+                        setTimeout(() => {
+                            saveBtn.innerHTML = originalText;
+                            saveBtn.disabled = false;
+                        }, 2000);
+
+                        // Refresh details view
+                        this.showLeadDetails(this.selectedLead);
+                    } else {
+                        throw new Error(data.message || 'Failed to save comment');
+                    }
+
+                } catch (error) {
+                    console.error('Error saving comment:', error);
+                    saveBtn.innerHTML = 'Error - Retry';
                     saveBtn.disabled = false;
-                }, 2000);
+                    
+                    setTimeout(() => {
+                        saveBtn.innerHTML = originalText;
+                    }, 3000);
+                }
             }
 
             loadSampleData() {
-                // Sample data for demonstration
-                const sampleData = [
-                    {
-                        id: 1,
-                        student_name: "Rahul Sharma",
-                        phone_number: "+91 9876543210",
-                        status: "new",
-                        location: "Hyderabad",
-                        created_at: "2024-01-15T10:30:00Z"
-                    },
-                    {
-                        id: 2,
-                        student_name: "Priya Patel",
-                        phone_number: "+91 9876543211",
-                        status: "contacted",
-                        location: "Bangalore",
-                        created_at: "2024-01-14T14:20:00Z"
-                    },
-                    {
-                        id: 3,
-                        student_name: "Amit Kumar",
-                        phone_number: "+91 9876543212",
-                        status: "qualified",
-                        location: "Chennai",
-                        created_at: "2024-01-13T09:15:00Z"
-                    },
-                    {
-                        id: 4,
-                        student_name: "Sneha Reddy",
-                        phone_number: "+91 9876543213",
-                        status: "converted",
-                        location: "Mumbai",
-                        created_at: "2024-01-12T16:45:00Z"
-                    }
-                ];
-                
-                this.gridApi.setGridOption('rowData', sampleData);
-            }
-
-            filterSampleData(filters, searchQuery) {
-                // This is a placeholder - replace with actual API call
-                console.log('Filtering data with:', filters, searchQuery);
-                // For now, just reload sample data
-                this.loadSampleData();
+                // Load initial data from API on page load
+                this.loadLeadsFromAPI();
             }
         }
 

@@ -1401,9 +1401,9 @@
                     if (data.message === 'EXISTING_USER') {
                         this.showAlert('User Already Exists, Opening Details...', 'success');
                         this.resetButtonState('Send OTP');
-                        setTimeout(() => {
-                            window.location.href = data.redirectUrl;
-                        }, 2000);
+                        // setTimeout(() => {
+                        //     window.location.href = data.redirectUrl;
+                        // }, 2000);
                         return;
                     }
                     else if (data.success === true) {
