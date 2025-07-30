@@ -118,6 +118,7 @@
             flex-direction: column;
             overflow: hidden;
             transition: width 0.3s ease;
+            position: relative;
         }
 
         .filters-header {
@@ -140,6 +141,7 @@
 
         .main-container.filters-collapsed .filters-title {
             opacity: 0;
+            pointer-events: none;
         }
 
         .toggle-filters-btn {
@@ -152,6 +154,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            z-index: 10;
         }
 
         .toggle-filters-btn:hover {
@@ -165,6 +169,36 @@
 
         .main-container.filters-collapsed .toggle-filters-btn svg {
             transform: rotate(180deg);
+        }
+
+        /* Collapsed state - show expand icon in center */
+        .collapsed-expand-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--color-blue);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(15, 98, 254, 0.3);
+            transition: all 0.15s ease;
+            z-index: 20;
+        }
+
+        .collapsed-expand-btn:hover {
+            background: #0353e9;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .main-container.filters-collapsed .collapsed-expand-btn {
+            display: flex;
         }
 
         .filters-form {
@@ -210,13 +244,6 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-        }
-
-        .bx--label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--color-text-primary);
-            line-height: 1.29;
         }
 
         /* Follow-up Date Quick Select */
@@ -337,12 +364,6 @@
             position: relative;
         }
 
-        .bx--select__wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
         .bx--select__input {
             width: 100%;
             height: 2.5rem;
@@ -405,11 +426,6 @@
             transform: translateY(-50%);
             fill: var(--color-text-secondary);
             pointer-events: none;
-        }
-
-        /* Flatpickr Custom Styling */
-        .flatpickr-calendar {
-            font-family: 'IBM Plex Sans', sans-serif;
         }
 
         .selected-items {
@@ -491,7 +507,6 @@
         /* Column 2: Data Grid */
         .grid-column {
             background: white;
-            border-right: 1px solid var(--color-border);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -582,36 +597,9 @@
             width: fit-content;
         }
 
-        .status-potential { background: #e8f4fd; color: #0f62fe; }
-        .status-semi-potential { background: #fff8e1; color: #f1c21b; }
-        .status-junk { background: #fff1f1; color: #da1e28; }
-        .status-enrolled { background: #e8f5e8; color: #24a148; }
-
-        /* Verification status badges */
-        .verification-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            width: fit-content;
-        }
-
-        .verification-otp { background: #e8f5e8; color: #24a148; }
-        .verification-auto { background: #e8f4fd; color: #0f62fe; }
-
         /* Brochure status styling */
         .brochure-sent { color: #24a148; font-weight: 500; }
         .brochure-not-sent { color: #da1e28; font-weight: 500; }
-
-        /* Loading animation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
 
         /* Responsive */
         @media (max-width: 1200px) {
@@ -632,10 +620,6 @@
             
             .filters-column {
                 display: none;
-            }
-            
-            .grid-column {
-                border-right: none;
             }
         }
     </style>
@@ -670,12 +654,19 @@
                     </svg>
                 </button>
             </div>
+            
+            <!-- Collapsed state expand button -->
+            <button class="collapsed-expand-btn" id="collapsed-expand-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+                </svg>
+            </button>
+            
             <form class="filters-form" id="filters-form">
                 <!-- Date Range Filter -->
                 <div class="form-group">
-                    <label class="bx--label">Created Date Range</label>
                     <div class="bx--date-picker">
-                        <input type="text" class="bx--date-picker__input" id="date-range-picker" placeholder="Select date range..." readonly>
+                        <input type="text" class="bx--date-picker__input" id="date-range-picker" placeholder="Created date range..." readonly>
                         <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
                             <path d="M12 1V0h1v1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h2V0h1v1h8zM1 3v11h14V3H1zm2-1h8v1H3V2zm0 3h1v1H3V5zm2 0h1v1H5V5zm2 0h1v1H7V5zm2 0h1v1H9V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zM3 7h1v1H3V7zm2 0h1v1H5V7zm2 0h1v1H7V7zm2 0h1v1H9V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM3 9h1v1H3V9zm2 0h1v1H5V9zm2 0h1v1H7V9zm2 0h1v1H9V9zm2 0h1v1h-1V9zm2 0h1v1h-1V9z"/>
                         </svg>
@@ -684,14 +675,13 @@
 
                 <!-- Follow-up Date Filter -->
                 <div class="form-group">
-                    <label class="bx--label">Follow-up Date</label>
                     <div class="followup-quick-select">
                         <button type="button" class="quick-select-btn" data-range="today">Today</button>
                         <button type="button" class="quick-select-btn" data-range="this-week">This Week</button>
                         <button type="button" class="quick-select-btn" data-range="next-week">Next Week</button>
                     </div>
                     <div class="bx--date-picker">
-                        <input type="text" class="bx--date-picker__input" id="followup-date-range-picker" placeholder="Custom follow-up date range..." readonly>
+                        <input type="text" class="bx--date-picker__input" id="followup-date-range-picker" placeholder="Follow-up date range..." readonly>
                         <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
                             <path d="M12 1V0h1v1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h2V0h1v1h8zM1 3v11h14V3H1zm2-1h8v1H3V2zm0 3h1v1H3V5zm2 0h1v1H5V5zm2 0h1v1H7V5zm2 0h1v1H9V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zM3 7h1v1H3V7zm2 0h1v1H5V7zm2 0h1v1H7V7zm2 0h1v1H9V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM3 9h1v1H3V9zm2 0h1v1H5V9zm2 0h1v1H7V9zm2 0h1v1H9V9zm2 0h1v1h-1V9zm2 0h1v1h-1V9z"/>
                         </svg>
@@ -700,7 +690,6 @@
 
                 <!-- Course Filter (Single Select) -->
                 <div class="form-group">
-                    <label class="bx--label">Course</label>
                     <div class="bx--select">
                         <select class="bx--select__input" id="course-select">
                             <option value="">All courses</option>
@@ -719,7 +708,6 @@
 
                 <!-- Counsellor Filter (Multi Select) -->
                 <div class="form-group">
-                    <label class="bx--label">Counsellor</label>
                     <div class="bx--multi-select" data-field="counsellor">
                         <div class="bx--multi-select__wrapper">
                             <input type="text" class="bx--multi-select__input" readonly placeholder="Select counsellors...">
@@ -755,7 +743,6 @@
 
                 <!-- Lead Source Filter (Multi Select) -->
                 <div class="form-group">
-                    <label class="bx--label">Lead Source</label>
                     <div class="bx--multi-select" data-field="lead_source">
                         <div class="bx--multi-select__wrapper">
                             <input type="text" class="bx--multi-select__input" readonly placeholder="Select lead sources...">
@@ -763,14 +750,6 @@
                                 <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                             </svg>
                             <div class="bx--multi-select__menu">
-                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ravi">
-                                    <input type="checkbox" id="source-marketing_ravi" value="marketing_ravi">
-                                    <label for="source-marketing_ravi">Marketing - Ravi</label>
-                                </div>
-                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ashok">
-                                    <input type="checkbox" id="source-marketing_ashok" value="marketing_ashok">
-                                    <label for="source-marketing_ashok">Marketing - Ashok</label>
-                                </div>
                                 <div class="bx--multi-select__option" data-checkbox="source-google_maps">
                                     <input type="checkbox" id="source-google_maps" value="google_maps">
                                     <label for="source-google_maps">Google Maps (GMB)</label>
@@ -807,7 +786,6 @@
 
                 <!-- Slot Preference Filter (Multi Select) -->
                 <div class="form-group">
-                    <label class="bx--label">Slot Preference</label>
                     <div class="bx--multi-select" data-field="slot_preference">
                         <div class="bx--multi-select__wrapper">
                             <input type="text" class="bx--multi-select__input" readonly placeholder="Select slot preferences...">
@@ -900,12 +878,12 @@
             }
 
             initializeDatePickers() {
-                // Main date range picker
+                // Main date range picker - default to 3 days ago to today
                 this.dateRangePicker = flatpickr("#date-range-picker", {
                     mode: "range",
                     dateFormat: "Y-m-d",
                     defaultDate: [
-                        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+                        new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
                         new Date() // today
                     ],
                     onChange: (selectedDates, dateStr, instance) => {
@@ -965,9 +943,10 @@
 
             initializeFiltersToggle() {
                 const toggleBtn = document.getElementById('toggle-filters-btn');
+                const collapsedExpandBtn = document.getElementById('collapsed-expand-btn');
                 const mainContainer = document.getElementById('main-container');
                 
-                toggleBtn.addEventListener('click', () => {
+                const toggleFilters = () => {
                     this.filtersCollapsed = !this.filtersCollapsed;
                     
                     if (this.filtersCollapsed) {
@@ -975,7 +954,10 @@
                     } else {
                         mainContainer.classList.remove('filters-collapsed');
                     }
-                });
+                };
+                
+                toggleBtn.addEventListener('click', toggleFilters);
+                collapsedExpandBtn.addEventListener('click', toggleFilters);
             }
 
             initializeGrid() {
@@ -1276,7 +1258,11 @@
                     
                     if (data.success) {
                         this.gridApi.setGridOption('rowData', data.data);
-                        console.log('Loaded leads:', data.data.length);
+                        console.log('Loaded leads:', data.data.length, 'Total:', data.total);
+                        
+                        // Update grid title with count
+                        const gridTitle = document.querySelector('.grid-title');
+                        gridTitle.textContent = `All Leads (${data.total})`;
                         
                         // Update UI based on applied filters from backend
                         if (data.filters_applied) {
@@ -1285,10 +1271,12 @@
                     } else {
                         console.error('API Error:', data.message);
                         this.gridApi.setGridOption('rowData', []);
+                        document.querySelector('.grid-title').textContent = 'All Leads (0)';
                     }
                 } catch (error) {
                     console.error('Error loading leads:', error);
                     this.gridApi.setGridOption('rowData', []);
+                    document.querySelector('.grid-title').textContent = 'All Leads (0)';
                 }
             }
 
@@ -1416,10 +1404,10 @@
                 // Reset URL
                 window.history.replaceState({}, '', window.location.pathname);
                 
-                // Set default date range (7 days ago to today)
+                // Set default date range (3 days ago to today)
                 const today = new Date();
-                const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-                this.dateRangePicker.setDate([weekAgo, today]);
+                const threeDaysAgo = new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000);
+                this.dateRangePicker.setDate([threeDaysAgo, today]);
                 
                 // Reload all data
                 this.loadLeadsFromAPI();
