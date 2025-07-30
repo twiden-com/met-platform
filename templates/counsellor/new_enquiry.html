@@ -903,7 +903,7 @@
 
                     <!-- Location Details Row 1: Country and State -->
                     <div class="form-grid">
-                        <div class="bx--form-item">
+                        <div class="bx--form-item hidden">
                             <label for="country" class="bx--label">Country</label>
                             <div class="bx--select">
                                 <select id="country" name="country" class="bx--select-input" disabled>
@@ -914,6 +914,36 @@
                                 </svg>
                             </div>
                         </div>
+                        <div class="bx--form-item">
+    <label for="date" class="bx--label">Date</label>
+    <div class="bx--date-picker bx--date-picker--single" style="width: 100%; max-width: 288px;">
+        <div class="bx--date-picker-container">
+            <input 
+                id="date" 
+                name="enquiry_date" 
+                type="date" 
+                class="bx--date-picker__input" 
+                style="width: 175%;"
+                pattern="\d{1,2}/\d{1,2}/\d{4}"
+                placeholder="mm/dd/yyyy"
+                value=""
+                max=""
+            >
+            
+        </div>
+    </div>
+</div>
+
+                        <script>
+                        // Set today's date as default and max date (no future dates allowed)
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const dateInput = document.getElementById('date');
+                            const today = new Date().toISOString().split('T')[0];
+                            
+                            dateInput.value = today;
+                            dateInput.max = today;
+                        });
+                        </script>
                         <div class="bx--form-item">
                             <label for="state" class="bx--label">State</label>
                             <div class="bx--select">
@@ -1115,15 +1145,10 @@
                             <div class="bx--select">
                                 <select id="slot-preference" name="slot_preference" class="bx--select-input">
                                     <option value="">Select preferred time slot</option>
-                                    <option value="6am-8am">6:00 AM - 8:00 AM</option>
-                                    <option value="8am-11am">8:00 AM - 11:00 AM</option>
-                                    <option value="11am-1pm">11:00 AM - 1:00 PM</option>
-                                    <option value="1pm-3pm">1:00 PM - 3:00 PM</option>
-                                    <option value="3pm-5pm">3:00 PM - 5:00 PM</option>
-                                    <option value="5pm-7pm">5:00 PM - 7:00 PM</option>
-                                    <option value="7pm-9pm">7:00 PM - 9:00 PM</option>
-                                    <option value="9pm-11pm">9:00 PM - 11:00 PM</option>
                                     <option value="flexible">Flexible</option>
+                                    <option value="morning">Morning</option>
+                                    <option value="afternoon">Afternoon</option>
+                                    <option value="evening">Evening</option>
                                 </select>
                                 <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
                                     <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
@@ -1903,7 +1928,8 @@
                     'urgency': 'urgency',
                     'interested_courses': '.courses-container',
                     'lead_quality': 'lead-quality',        
-                    'fee_quoted': 'fee-quoted'
+                    'fee_quoted': 'fee-quoted',
+                    'enquiry_date': 'date'
                 };
                 
                 errorFields.forEach(fieldName => {

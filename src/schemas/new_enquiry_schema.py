@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
 import json
 
 class StudentEnquiryRequest(BaseModel):
@@ -25,6 +25,14 @@ class StudentEnquiryRequest(BaseModel):
     send_brochure: Optional[bool] = Field(default=False)
     lead_quality: Optional[str] = Field(None)
     fee_quoted: Optional[int] = Field(0)
+    enquiry_date: Optional[date] = Field(None, description="Date of enquiry")
+
+    @field_validator('enquiry_date')
+    @classmethod
+    def validate_enquiry_date(cls, v):
+        if v and v > date.today():
+            raise ValueError('Enquiry date cannot be in the future')
+        return v
 
     @field_validator('name')
     @classmethod
@@ -113,8 +121,7 @@ class StudentEnquiryRequest(BaseModel):
     def validate_slot_preference(cls, v):
         if v is None:
             return v
-        valid_options = ['6am-8am', '8am-11am', '11am-1pm', '1pm-3pm', '3pm-5pm',
-                        '5pm-7pm', '7pm-9pm', '9pm-11pm', 'flexible']
+        valid_options = ['morning', 'evening', 'afternoon', 'flexible']
         if v not in valid_options:
             raise ValueError(f'Invalid slot_preference: {v}')
         return v
@@ -141,7 +148,7 @@ class StudentEnquiryRequest(BaseModel):
 
     def to_db_dict(self, counsellor_id: Optional[str] = None) -> dict:
         """Convert to database format"""
-        return {
+        db_dict = {
             "email": self.verified_phone + '@met.com',
             "phone_number": self.verified_phone,
             "verification_id": self.verification_id,
@@ -166,5 +173,10 @@ class StudentEnquiryRequest(BaseModel):
             "is_active": 0,
             "role": "student",
             "fee_quoted": self.fee_quoted,
-            "lead_quality": self.lead_quality
+            "lead_quality": self.lead_quality,
         }
+    
+        if self.enquiry_date and self.enquiry_date < date.today():
+                db_dict["created_at"] = datetime.combine(self.enquiry_date, datetime.min.time()).isoformat()
+
+        return db_dict
