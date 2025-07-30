@@ -267,21 +267,27 @@ async def create_student_enquiry(
 # Add this to your students.py router file
 from typing import Optional, List
 from fastapi import Query
+import json
+
+from typing import Optional, List
+from fastapi import Query
+import json
 
 @router.get("/leads")
 @auth_required(['counsellor', 'admin'])
 async def get_student_leads(
     request: Request,
     db: AsyncClient = Depends(get_db),
-    # Pagination
-    page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(25, ge=1, le=100, description="Items per page"),
     
-    # Filters
-    status: Optional[str] = Query(None, description="Comma-separated status values (new,contacted,qualified,converted,rejected)"),
-    courses: Optional[str] = Query(None, description="Comma-separated course names"),
-    location: Optional[str] = Query(None, description="Comma-separated location names"),
-    counsellor: Optional[str] = Query(None, description="Comma-separated counsellor names"),
+    # Filters - matching frontend field names
+    counsellor: Optional[str] = Query(None, description="Comma-separated counsellor values"),
+    lead_source: Optional[str] = Query(None, description="Comma-separated lead source values"),
+    slot_preference: Optional[str] = Query(None, description="Comma-separated slot preference values"),
+    course: Optional[str] = Query(None, description="Single course name from dropdown"),
+    start_date: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
+    end_date: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
+    followupdate_start: Optional[str] = Query(None, description="Follow-up start date (YYYY-MM-DD)"),
+    followupdate_end: Optional[str] = Query(None, description="Follow-up end date (YYYY-MM-DD)"),
     
     # Search
     search: Optional[str] = Query(None, description="Search term for name, phone, or email"),
@@ -291,185 +297,64 @@ async def get_student_leads(
     sort_order: str = Query("desc", regex="^(asc|desc)$", description="Sort order")
 ):
     """
-    Get student leads with filtering, search, and pagination using Supabase SDK methods
+    Get student leads with filtering, search, and sorting (no pagination)
     """
     try:
-        # Get current user info
-        current_user = getattr(request.state.user_data.user, 'id', None) if hasattr(request.state, 'user_data') else None
+        # 1. Build base query - select only student profiles (is_active = 0)
+        query = db.table('profiles').select('*').eq('is_active', 0)
         
-        # Start building the query with select fields
-        query = db.table('profiles').select(
-            """
-            id,
-            user_id,
-            name,
-            phone_number,
-            email,
-            place,
-            state,
-            country,
-            purpose,
-            college_name,
-            passout_year,
-            degree,
-            lead_source,
-            mode,
-            slot_preference,
-            counselled_by,
-            urgency,
-            interested_courses,
-            comments,
-            send_brochure,
-            fee_quoted,
-            lead_quality,
-            is_active,
-            is_verified,
-            created_at,
-            updated_at
-            """
-        )
+        # 2. Apply filters one by one
         
-        # Filter only student profiles/leads
-        query = query.eq('is_active', 0)
-        
-        # Apply status filter using .in_() method
-        if status:
-            status_list = [s.strip() for s in status.split(',')]
-            status_mapping = {
-                'new': 0,
-                'contacted': 1,
-                'qualified': 2,
-                'converted': 3,
-                'rejected': 4
-            }
-            status_values = [status_mapping.get(s) for s in status_list if s in status_mapping]
-            if status_values:
-                query = query.in_('is_verified', status_values)
-        
-        # Apply location filter using .in_() method
-        if location:
-            location_list = [l.strip() for l in location.split(',')]
-            query = query.in_('place', location_list)
-        
-        # Apply counsellor filter using .in_() method
+        # Counsellor filter
         if counsellor:
             counsellor_list = [c.strip() for c in counsellor.split(',')]
             query = query.in_('counselled_by', counsellor_list)
         
-        # Apply courses filter using .ilike() method for partial matching
-        if courses:
-            course_list = [c.strip() for c in courses.split(',')]
-            # For multiple courses, we need to use OR logic
-            if len(course_list) == 1:
-                query = query.ilike('interested_courses', f'%{course_list[0]}%')
-            else:
-                # Build OR conditions for multiple courses
-                or_conditions = []
-                for course in course_list:
-                    or_conditions.append(f'interested_courses.ilike.%{course}%')
-                query = query.or_(','.join(or_conditions))
+        # Lead source filter
+        if lead_source:
+            source_list = [s.strip() for s in lead_source.split(',')]
+            query = query.in_('lead_source', source_list)
         
-        # Apply search filter using .or_() method
+        # Slot preference filter
+        if slot_preference:
+            slot_list = [s.strip() for s in slot_preference.split(',')]
+            query = query.in_('slot_preference', slot_list)
+        
+        # Course filter (single course from dropdown)
+        if course:
+            query = query.ilike('interested_courses', f'%{course.strip()}%')
+        
+        # Created date range filter
+        if start_date:
+            query = query.gte('created_at', f'{start_date}T00:00:00')
+        if end_date:
+            query = query.lte('created_at', f'{end_date}T23:59:59')
+        
+        # Follow-up date range filter
+        if followupdate_start:
+            query = query.gte('next_follow_up', f'{followupdate_start}T00:00:00')
+        if followupdate_end:
+            query = query.lte('next_follow_up', f'{followupdate_end}T23:59:59')
+        
+        # Search filter
         if search:
             search_term = search.strip()
             query = query.or_(f'name.ilike.%{search_term}%,phone_number.ilike.%{search_term}%,email.ilike.%{search_term}%')
         
-        # Apply sorting using .order() method
+        # 3. Apply sorting (no pagination - get all records)
         query = query.order(sort_by, desc=(sort_order == "desc"))
         
-        # Calculate offset for pagination
-        offset = (page - 1) * limit
-        
-        # Get total count for pagination using count='exact'
-        count_query = db.table('profiles').select('*', count='exact').eq('is_active', 0)
-        
-        # Apply same filters to count query
-        if status:
-            status_list = [s.strip() for s in status.split(',')]
-            status_mapping = {
-                'new': 0,
-                'contacted': 1,
-                'qualified': 2,
-                'converted': 3,
-                'rejected': 4
-            }
-            status_values = [status_mapping.get(s) for s in status_list if s in status_mapping]
-            if status_values:
-                count_query = count_query.in_('is_verified', status_values)
-        
-        if location:
-            location_list = [l.strip() for l in location.split(',')]
-            count_query = count_query.in_('place', location_list)
-        
-        if counsellor:
-            counsellor_list = [c.strip() for c in counsellor.split(',')]
-            count_query = count_query.in_('counselled_by', counsellor_list)
-        
-        if courses:
-            course_list = [c.strip() for c in courses.split(',')]
-            if len(course_list) == 1:
-                count_query = count_query.ilike('interested_courses', f'%{course_list[0]}%')
-            else:
-                or_conditions = []
-                for course in course_list:
-                    or_conditions.append(f'interested_courses.ilike.%{course}%')
-                count_query = count_query.or_(','.join(or_conditions))
-        
-        if search:
-            search_term = search.strip()
-            count_query = count_query.or_(f'name.ilike.%{search_term}%,phone_number.ilike.%{search_term}%,email.ilike.%{search_term}%')
-        
-        # Execute count query
-        count_result = await count_query.execute()
-        total_records = count_result.count
-        
-        # Apply pagination using .range() method
-        query = query.range(offset, offset + limit - 1)
-        
-        # Execute main query
+        # 4. Execute the query (get all matching records)
         result = await query.execute()
         
-        if not result.data:
-            return JSONResponse(
-                content={
-                    "success": True,
-                    "data": [],
-                    "pagination": {
-                        "page": page,
-                        "limit": limit,
-                        "total": 0,
-                        "pages": 0
-                    },
-                    "message": "No leads found"
-                }
-            )
-        
-        # Format the data for frontend
+        # 5. Format data for frontend
         formatted_data = []
         for lead in result.data:
-            # Map is_verified to status
-            status_mapping = {
-                0: 'new',
-                1: 'contacted',
-                2: 'qualified',
-                3: 'converted',
-                4: 'rejected'
-            }
-            
-            # Parse interested courses if it's JSON string
+            # Parse interested_courses JSON string to array
             interested_courses = []
             if lead.get('interested_courses'):
                 try:
-                    if isinstance(lead['interested_courses'], str):
-                        # Try to parse as JSON first
-                        import json
-                        try:
-                            interested_courses = json.loads(lead['interested_courses'])
-                        except json.JSONDecodeError:
-                            # If not JSON, split by comma
-                            interested_courses = [course.strip() for course in lead['interested_courses'].split(',') if course.strip()]
-                    elif isinstance(lead['interested_courses'], list):
-                        interested_courses = lead['interested_courses']
+                    interested_courses = json.loads(lead['interested_courses'])
                 except:
                     interested_courses = []
             
@@ -479,8 +364,7 @@ async def get_student_leads(
                 "student_name": lead.get('name', ''),
                 "phone_number": lead.get('phone_number', ''),
                 "email": lead.get('email', ''),
-                "status": status_mapping.get(lead.get('is_verified', 0), 'new'),
-                "location": lead.get('place', ''),
+                "place": lead.get('place', ''),
                 "state": lead.get('state', ''),
                 "country": lead.get('country', ''),
                 "purpose": lead.get('purpose', ''),
@@ -497,31 +381,28 @@ async def get_student_leads(
                 "send_brochure": lead.get('send_brochure', False),
                 "fee_quoted": lead.get('fee_quoted'),
                 "lead_quality": lead.get('lead_quality', ''),
+                "is_verified": lead.get('is_verified', 0),
+                "additional_people": lead.get('additional_people', 0),
+                "next_follow_up": lead.get('next_follow_up'),
                 "created_at": lead.get('created_at'),
                 "updated_at": lead.get('updated_at')
             }
             formatted_data.append(formatted_lead)
         
-        # Calculate pagination info
-        total_pages = (total_records + limit - 1) // limit
-        
         return JSONResponse(
             content={
                 "success": True,
                 "data": formatted_data,
-                "pagination": {
-                    "page": page,
-                    "limit": limit,
-                    "total": total_records,
-                    "pages": total_pages,
-                    "has_next": page < total_pages,
-                    "has_prev": page > 1
-                },
+                "total": len(formatted_data),
                 "filters_applied": {
-                    "status": status.split(',') if status else [],
-                    "courses": courses.split(',') if courses else [],
-                    "location": location.split(',') if location else [],
                     "counsellor": counsellor.split(',') if counsellor else [],
+                    "lead_source": lead_source.split(',') if lead_source else [],
+                    "slot_preference": slot_preference.split(',') if slot_preference else [],
+                    "course": course or "",
+                    "start_date": start_date or "",
+                    "end_date": end_date or "",
+                    "followupdate_start": followupdate_start or "",
+                    "followupdate_end": followupdate_end or "",
                     "search": search or ""
                 }
             }

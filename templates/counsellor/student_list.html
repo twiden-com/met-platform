@@ -97,26 +97,36 @@
             color: var(--color-orange);
         }
 
-        /* Main Layout - Three Columns */
+        /* Main Layout - Collapsible Filters */
         .main-container {
             display: grid;
-            grid-template-columns: 1.2fr 5fr;
+            grid-template-columns: 320px 1fr;
             height: calc(100vh - 72px);
             overflow: hidden;
+            transition: grid-template-columns 0.3s ease;
         }
 
-        /* Column 1: Filters Form */
+        .main-container.filters-collapsed {
+            grid-template-columns: 50px 1fr;
+        }
+
+        /* Column 1: Collapsible Filters Form */
         .filters-column {
             background: white;
             border-right: 1px solid var(--color-border);
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
+            overflow: hidden;
+            transition: width 0.3s ease;
         }
 
         .filters-header {
-            padding: 1.5rem;
+            padding: 1rem;
             border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 60px;
         }
 
         .filters-title {
@@ -124,6 +134,37 @@
             font-weight: 600;
             color: var(--color-text-primary);
             margin: 0;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .main-container.filters-collapsed .filters-title {
+            opacity: 0;
+        }
+
+        .toggle-filters-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-filters-btn:hover {
+            background: #f4f4f4;
+        }
+
+        .toggle-filters-btn svg {
+            transition: transform 0.3s ease;
+            fill: var(--color-text-secondary);
+        }
+
+        .main-container.filters-collapsed .toggle-filters-btn svg {
+            transform: rotate(180deg);
         }
 
         .filters-form {
@@ -132,6 +173,37 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            overflow-y: auto;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .main-container.filters-collapsed .filters-form {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Active Filters Indicator */
+        .active-filters-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 3rem;
+            background: var(--color-blue);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .active-filters-indicator.show {
+            opacity: 1;
         }
 
         .form-group {
@@ -145,6 +217,35 @@
             font-weight: 500;
             color: var(--color-text-primary);
             line-height: 1.29;
+        }
+
+        /* Follow-up Date Quick Select */
+        .followup-quick-select {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-select-btn {
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--color-border);
+            background: white;
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .quick-select-btn:hover {
+            border-color: var(--color-blue);
+            color: var(--color-blue);
+        }
+
+        .quick-select-btn.active {
+            background: var(--color-blue);
+            color: white;
+            border-color: var(--color-blue);
         }
 
         .bx--multi-select {
@@ -468,149 +569,7 @@
             --ag-border-color: var(--color-border);
         }
 
-        /* Column 3: Details Panel */
-        .details-column {
-            background: white;
-            /* display: flex; */
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .details-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .details-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin: 0;
-        }
-
-        /* Tabs */
-        .bx--tabs {
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .bx--tabs__nav {
-            display: flex;
-            margin: 0;
-            padding: 0 1.5rem;
-            list-style: none;
-        }
-
-        .bx--tabs__nav-item {
-            position: relative;
-        }
-
-        .bx--tabs__nav-link {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            transition: all 0.15s ease;
-        }
-
-        .bx--tabs__nav-item--selected .bx--tabs__nav-link {
-            color: var(--color-blue);
-            border-bottom-color: var(--color-blue);
-        }
-
-        .bx--tabs__nav-link:hover {
-            color: var(--color-blue);
-        }
-
-        /* Tab Content */
-        .details-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-            padding-bottom: 120px; /* Space for floating comment box */
-        }
-
-        .tab-panel {
-            display: none;
-        }
-
-        .tab-panel.active {
-            display: block;
-        }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--color-text-secondary);
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .empty-icon {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Floating Comment Box */
-        .floating-comment-box {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid var(--color-border);
-            padding: 1rem 1.5rem;
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-        }
-
-        .comment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .bx--text-area {
-            width: 100%;
-            min-height: 60px;
-            padding: 0.75rem;
-            font-size: 0.875rem;
-            font-family: inherit;
-            color: var(--color-text-primary);
-            background-color: #f4f4f4;
-            border: none;
-            border-bottom: 1px solid #8d8d8d;
-            outline: none;
-            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
-            resize: vertical;
-        }
-
-        .bx--text-area:focus {
-            border-bottom: 2px solid var(--color-blue);
-            background-color: white;
-        }
-
-        .comment-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .comment-info {
-            font-size: 0.75rem;
-            color: var(--color-text-secondary);
-        }
-
-        /* Status badges for new statuses */
+        /* Status badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -648,94 +607,6 @@
         .brochure-sent { color: #24a148; font-weight: 500; }
         .brochure-not-sent { color: #da1e28; font-weight: 500; }
 
-        /* Details Tab Content */
-        .student-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .student-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--color-gray-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--color-text-secondary);
-            border: 2px solid var(--color-border);
-            margin-bottom: 1rem;
-        }
-
-        .student-info h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin: 0 0 0.5rem;
-        }
-
-        .student-meta {
-            font-size: 0.875rem;
-            color: var(--color-text-secondary);
-            margin: 0;
-        }
-
-        .details-section {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin: 0 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .detail-label {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--color-text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .detail-value {
-            font-size: 0.875rem;
-            color: var(--color-text-primary);
-            font-weight: 400;
-        }
-
-        .courses-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .course-tag {
-            background: #f4f4f4;
-            padding: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            color: var(--color-text-primary);
-            border-left: 3px solid var(--color-orange);
-        }
-
         /* Loading animation */
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -745,7 +616,11 @@
         /* Responsive */
         @media (max-width: 1200px) {
             .main-container {
-                grid-template-columns: 1fr 4fr 2fr;
+                grid-template-columns: 280px 1fr;
+            }
+            
+            .main-container.filters-collapsed {
+                grid-template-columns: 50px 1fr;
             }
         }
 
@@ -755,8 +630,7 @@
                 height: auto;
             }
             
-            .filters-column,
-            .details-column {
+            .filters-column {
                 display: none;
             }
             
@@ -783,16 +657,23 @@
         </div>
     </div>
 
-    <!-- Main Container - Three Columns -->
-    <div class="main-container">
-        <!-- Column 1: Filters Form -->
+    <!-- Main Container - Collapsible Filters -->
+    <div class="main-container" id="main-container">
+        <!-- Column 1: Collapsible Filters Form -->
         <div class="filters-column">
             <div class="filters-header">
                 <h2 class="filters-title">Filters</h2>
+                <div class="active-filters-indicator" id="active-filters-count">0</div>
+                <button class="toggle-filters-btn" id="toggle-filters-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
             </div>
             <form class="filters-form" id="filters-form">
                 <!-- Date Range Filter -->
                 <div class="form-group">
+                    <label class="bx--label">Created Date Range</label>
                     <div class="bx--date-picker">
                         <input type="text" class="bx--date-picker__input" id="date-range-picker" placeholder="Select date range..." readonly>
                         <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
@@ -801,8 +682,25 @@
                     </div>
                 </div>
 
+                <!-- Follow-up Date Filter -->
+                <div class="form-group">
+                    <label class="bx--label">Follow-up Date</label>
+                    <div class="followup-quick-select">
+                        <button type="button" class="quick-select-btn" data-range="today">Today</button>
+                        <button type="button" class="quick-select-btn" data-range="this-week">This Week</button>
+                        <button type="button" class="quick-select-btn" data-range="next-week">Next Week</button>
+                    </div>
+                    <div class="bx--date-picker">
+                        <input type="text" class="bx--date-picker__input" id="followup-date-range-picker" placeholder="Custom follow-up date range..." readonly>
+                        <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M12 1V0h1v1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h2V0h1v1h8zM1 3v11h14V3H1zm2-1h8v1H3V2zm0 3h1v1H3V5zm2 0h1v1H5V5zm2 0h1v1H7V5zm2 0h1v1H9V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zM3 7h1v1H3V7zm2 0h1v1H5V7zm2 0h1v1H7V7zm2 0h1v1H9V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM3 9h1v1H3V9zm2 0h1v1H5V9zm2 0h1v1H7V9zm2 0h1v1H9V9zm2 0h1v1h-1V9zm2 0h1v1h-1V9z"/>
+                        </svg>
+                    </div>
+                </div>
+
                 <!-- Course Filter (Single Select) -->
                 <div class="form-group">
+                    <label class="bx--label">Course</label>
                     <div class="bx--select">
                         <select class="bx--select__input" id="course-select">
                             <option value="">All courses</option>
@@ -821,6 +719,7 @@
 
                 <!-- Counsellor Filter (Multi Select) -->
                 <div class="form-group">
+                    <label class="bx--label">Counsellor</label>
                     <div class="bx--multi-select" data-field="counsellor">
                         <div class="bx--multi-select__wrapper">
                             <input type="text" class="bx--multi-select__input" readonly placeholder="Select counsellors...">
@@ -828,17 +727,25 @@
                                 <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                             </svg>
                             <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-not_yet">
+                                    <input type="checkbox" id="counsellor-not_yet" value="not_yet">
+                                    <label for="counsellor-not_yet">Not Yet</label>
+                                </div>
                                 <div class="bx--multi-select__option" data-checkbox="counsellor-ushmika">
-                                    <input type="checkbox" id="counsellor-ushmika" value="Ushmika">
+                                    <input type="checkbox" id="counsellor-ushmika" value="ushmika">
                                     <label for="counsellor-ushmika">Ushmika</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="counsellor-pallavi">
-                                    <input type="checkbox" id="counsellor-pallavi" value="Pallavi">
+                                    <input type="checkbox" id="counsellor-pallavi" value="pallavi">
                                     <label for="counsellor-pallavi">Pallavi</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="counsellor-taniath">
-                                    <input type="checkbox" id="counsellor-taniath" value="Taniath">
+                                    <input type="checkbox" id="counsellor-taniath" value="taniath">
                                     <label for="counsellor-taniath">Taniath</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-other">
+                                    <input type="checkbox" id="counsellor-other" value="other">
+                                    <label for="counsellor-other">Other</label>
                                 </div>
                             </div>
                         </div>
@@ -848,6 +755,7 @@
 
                 <!-- Lead Source Filter (Multi Select) -->
                 <div class="form-group">
+                    <label class="bx--label">Lead Source</label>
                     <div class="bx--multi-select" data-field="lead_source">
                         <div class="bx--multi-select__wrapper">
                             <input type="text" class="bx--multi-select__input" readonly placeholder="Select lead sources...">
@@ -855,29 +763,41 @@
                                 <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                             </svg>
                             <div class="bx--multi-select__menu">
-                                <div class="bx--multi-select__option" data-checkbox="source-website">
-                                    <input type="checkbox" id="source-website" value="Website">
-                                    <label for="source-website">Website</label>
+                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ravi">
+                                    <input type="checkbox" id="source-marketing_ravi" value="marketing_ravi">
+                                    <label for="source-marketing_ravi">Marketing - Ravi</label>
                                 </div>
-                                <div class="bx--multi-select__option" data-checkbox="source-social">
-                                    <input type="checkbox" id="source-social" value="Social Media">
-                                    <label for="source-social">Social Media</label>
+                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ashok">
+                                    <input type="checkbox" id="source-marketing_ashok" value="marketing_ashok">
+                                    <label for="source-marketing_ashok">Marketing - Ashok</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-google_maps">
+                                    <input type="checkbox" id="source-google_maps" value="google_maps">
+                                    <label for="source-google_maps">Google Maps (GMB)</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-social_media">
+                                    <input type="checkbox" id="source-social_media" value="social_media">
+                                    <label for="source-social_media">Social Media</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="source-referral">
-                                    <input type="checkbox" id="source-referral" value="Referral">
+                                    <input type="checkbox" id="source-referral" value="referral">
                                     <label for="source-referral">Referral</label>
                                 </div>
-                                <div class="bx--multi-select__option" data-checkbox="source-ad">
-                                    <input type="checkbox" id="source-ad" value="Advertisement">
-                                    <label for="source-ad">Advertisement</label>
+                                <div class="bx--multi-select__option" data-checkbox="source-direct_walkin">
+                                    <input type="checkbox" id="source-direct_walkin" value="direct_walkin">
+                                    <label for="source-direct_walkin">Direct Walk-in</label>
                                 </div>
-                                <div class="bx--multi-select__option" data-checkbox="source-walkin">
-                                    <input type="checkbox" id="source-walkin" value="Walk-in">
-                                    <label for="source-walkin">Walk-in</label>
+                                <div class="bx--multi-select__option" data-checkbox="source-website">
+                                    <input type="checkbox" id="source-website" value="website">
+                                    <label for="source-website">Website</label>
                                 </div>
-                                <div class="bx--multi-select__option" data-checkbox="source-coldcall">
-                                    <input type="checkbox" id="source-coldcall" value="Cold Call">
-                                    <label for="source-coldcall">Cold Call</label>
+                                <div class="bx--multi-select__option" data-checkbox="source-google_ads">
+                                    <input type="checkbox" id="source-google_ads" value="google_ads">
+                                    <label for="source-google_ads">Google Ads</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-other">
+                                    <input type="checkbox" id="source-other" value="other">
+                                    <label for="source-other">Other</label>
                                 </div>
                             </div>
                         </div>
@@ -887,6 +807,7 @@
 
                 <!-- Slot Preference Filter (Multi Select) -->
                 <div class="form-group">
+                    <label class="bx--label">Slot Preference</label>
                     <div class="bx--multi-select" data-field="slot_preference">
                         <div class="bx--multi-select__wrapper">
                             <input type="text" class="bx--multi-select__input" readonly placeholder="Select slot preferences...">
@@ -895,16 +816,20 @@
                             </svg>
                             <div class="bx--multi-select__menu">
                                 <div class="bx--multi-select__option" data-checkbox="slot-morning">
-                                    <input type="checkbox" id="slot-morning" value="Morning">
+                                    <input type="checkbox" id="slot-morning" value="morning">
                                     <label for="slot-morning">Morning</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="slot-afternoon">
-                                    <input type="checkbox" id="slot-afternoon" value="Afternoon">
+                                    <input type="checkbox" id="slot-afternoon" value="afternoon">
                                     <label for="slot-afternoon">Afternoon</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="slot-evening">
-                                    <input type="checkbox" id="slot-evening" value="Evening">
+                                    <input type="checkbox" id="slot-evening" value="evening">
                                     <label for="slot-evening">Evening</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="slot-flexible">
+                                    <input type="checkbox" id="slot-flexible" value="flexible">
+                                    <label for="slot-flexible">Flexible</label>
                                 </div>
                             </div>
                         </div>
@@ -942,7 +867,7 @@
                             <path d="M15 14.5l-3.5-3.5C12.4 9.9 13 8.5 13 7c0-3.3-2.7-6-6-6S1 3.7 1 7s2.7 6 6 6c1.5 0 2.9-.6 4-1.5l3.5 3.5.5-.5zM2 7c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5z"/>
                         </svg>
                     </div>
-                    <a href="/student/new_enquiry" class="bx--btn bx--btn--primary">
+                    <a href="/counsellor/new-enquiry" class="bx--btn bx--btn--primary">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M8 1a.5.5 0 0 1 .5.5v6h6a.5.5 0 0 1 0 1h-6v6a.5.5 0 0 1-1 0v-6h-6a.5.5 0 0 1 0-1h6v-6A.5.5 0 0 1 8 1z"/>
                         </svg>
@@ -954,65 +879,6 @@
                 <div id="leads-grid" class="ag-theme-alpine" style="height: 100%; width: 100%;"></div>
             </div>
         </div>
-
-        <!-- Column 3: Details Panel -->
-        <div class="details-column">
-            <div class="details-header">
-                <h3 class="details-title">Lead Details</h3>
-            </div>
-
-            <!-- Tabs -->
-            <div class="bx--tabs">
-                <ul class="bx--tabs__nav" role="tablist">
-                    <li class="bx--tabs__nav-item bx--tabs__nav-item--selected">
-                        <a class="bx--tabs__nav-link" href="#details-tab" onclick="switchTab(event, 'details-tab')">Details</a>
-                    </li>
-                    <li class="bx--tabs__nav-item">
-                        <a class="bx--tabs__nav-link" href="#timeline-tab" onclick="switchTab(event, 'timeline-tab')">Timeline</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="details-content">
-                <!-- Details Tab -->
-                <div id="details-tab" class="tab-panel active">
-                    <div class="empty-state">
-                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <h4>Select a Lead</h4>
-                        <p>Choose a lead from the table to view detailed information</p>
-                    </div>
-                </div>
-
-                <!-- Timeline Tab -->
-                <div id="timeline-tab" class="tab-panel">
-                    <div class="empty-state">
-                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <h4>No Timeline Available</h4>
-                        <p>Select a lead to view its timeline and journey</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Floating Comment Box -->
-            <div class="floating-comment-box">
-                <form class="comment-form" id="comment-form">
-                    <textarea class="bx--text-area" id="comment-textarea" placeholder="Add a comment about this lead..." rows="3"></textarea>
-                    <div class="comment-actions">
-                        <span class="comment-info">Comments are saved automatically</span>
-                        <button type="submit" class="bx--btn bx--btn--primary" id="save-comment-btn">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM7 3.5A.5.5 0 0 1 7.5 3h1a.5.5 0 0 1 0 1H8v6.5a.5.5 0 0 1-1 0V4H7.5a.5.5 0 0 1-.5-.5z"/>
-                            </svg>
-                            Save Comment
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -1021,26 +887,93 @@
                 this.gridApi = null;
                 this.selectedLead = null;
                 this.dateRangePicker = null;
+                this.followupDateRangePicker = null;
+                this.filtersCollapsed = false;
                 
                 this.initializeGrid();
-                this.initializeDatePicker();
+                this.initializeDatePickers();
                 this.initializeMultiSelects();
+                this.initializeFollowupQuickSelect();
+                this.initializeFiltersToggle();
                 this.bindEvents();
                 this.loadSampleData();
             }
 
-            initializeDatePicker() {
-                // Initialize Flatpickr for date range picker
+            initializeDatePickers() {
+                // Main date range picker
                 this.dateRangePicker = flatpickr("#date-range-picker", {
                     mode: "range",
                     dateFormat: "Y-m-d",
                     defaultDate: [
-                        new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+                        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
                         new Date() // today
                     ],
                     onChange: (selectedDates, dateStr, instance) => {
-                        // Auto-submit form when date changes
                         this.handleFilterSubmit();
+                    }
+                });
+
+                // Follow-up date range picker
+                this.followupDateRangePicker = flatpickr("#followup-date-range-picker", {
+                    mode: "range",
+                    dateFormat: "Y-m-d",
+                    onChange: (selectedDates, dateStr, instance) => {
+                        // Clear quick select buttons when using custom range
+                        document.querySelectorAll('.quick-select-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        this.handleFilterSubmit();
+                    }
+                });
+            }
+
+            initializeFollowupQuickSelect() {
+                const quickSelectBtns = document.querySelectorAll('.quick-select-btn');
+                
+                quickSelectBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Remove active from all buttons
+                        quickSelectBtns.forEach(b => b.classList.remove('active'));
+                        
+                        // Add active to clicked button
+                        btn.classList.add('active');
+                        
+                        const range = btn.getAttribute('data-range');
+                        const today = new Date();
+                        let startDate, endDate;
+                        
+                        switch(range) {
+                            case 'today':
+                                startDate = endDate = new Date(today);
+                                break;
+                            case 'this-week':
+                                startDate = new Date(today);
+                                endDate = new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000);
+                                break;
+                            case 'next-week':
+                                startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+                                endDate = new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000);
+                                break;
+                        }
+                        
+                        // Set the date range picker
+                        this.followupDateRangePicker.setDate([startDate, endDate]);
+                        this.handleFilterSubmit();
+                    });
+                });
+            }
+
+            initializeFiltersToggle() {
+                const toggleBtn = document.getElementById('toggle-filters-btn');
+                const mainContainer = document.getElementById('main-container');
+                
+                toggleBtn.addEventListener('click', () => {
+                    this.filtersCollapsed = !this.filtersCollapsed;
+                    
+                    if (this.filtersCollapsed) {
+                        mainContainer.classList.add('filters-collapsed');
+                    } else {
+                        mainContainer.classList.remove('filters-collapsed');
                     }
                 });
             }
@@ -1068,6 +1001,16 @@
                                     </div>
                                 </div>
                             `;
+                        }
+                    },
+                    {
+                        headerName: "Phone Number",
+                        field: "phone_number",
+                        width: 130,
+                        cellRenderer: (params) => {
+                            if (!params.value) return '';
+                            // Format phone number for display
+                            return `<span style="font-family: monospace;">${params.value}</span>`;
                         }
                     },
                     {
@@ -1103,36 +1046,32 @@
                     {
                         headerName: "Counselled By",
                         field: "counselled_by",
-                        width: 120
+                        width: 120,
+                        cellRenderer: (params) => {
+                            if (!params.value || params.value === 'not_yet') {
+                                return '<span style="color: #da1e28; font-weight: 500;">Not Yet</span>';
+                            }
+                            return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+                        }
                     },
                     {
                         headerName: "Lead Source",
                         field: "lead_source",
-                        width: 120
-                    },
-                    {
-                        headerName: "Verification",
-                        field: "is_verified",
-                        width: 110,
+                        width: 120,
                         cellRenderer: (params) => {
-                            const verification = params.value;
-                            if (verification === 1) {
-                                return '<span class="verification-badge verification-otp">OTP Verified</span>';
-                            } else if (verification === 3) {
-                                return '<span class="verification-badge verification-auto">Auto Confirmed</span>';
-                            }
-                            return '<span style="color: #6f6f6f;">Not Verified</span>';
+                            if (!params.value) return '';
+                            // Format lead source for display
+                            return params.value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                         }
-                    },
-                    {
-                        headerName: "Place",
-                        field: "place",
-                        width: 100
                     },
                     {
                         headerName: "Mode",
                         field: "mode",
-                        width: 100
+                        width: 100,
+                        cellRenderer: (params) => {
+                            if (!params.value) return '';
+                            return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+                        }
                     },
                     {
                         headerName: "Brochure",
@@ -1191,23 +1130,18 @@
                         select.classList.toggle('bx--multi-select--expanded');
                     });
                     
-                    // Handle option clicks (both checkbox and label)
+                    // Handle option clicks
                     const options = select.querySelectorAll('.bx--multi-select__option');
                     options.forEach(option => {
                         option.addEventListener('click', (e) => {
-                            // Get the checkbox ID from data attribute
                             const checkboxId = option.getAttribute('data-checkbox');
                             const checkbox = document.getElementById(checkboxId);
                             
                             if (checkbox && e.target !== checkbox) {
-                                // Only toggle if click wasn't on checkbox itself
                                 checkbox.checked = !checkbox.checked;
                             }
                             
-                            // Update selected items display
                             this.updateSelectedItems(select, field);
-                            
-                            // Auto-submit form when multiselect changes
                             this.handleFilterSubmit();
                         });
                     });
@@ -1267,6 +1201,40 @@
                         selectedContainer.appendChild(tag);
                     });
                 }
+                
+                // Update active filters count
+                this.updateActiveFiltersCount();
+            }
+
+            updateActiveFiltersCount() {
+                let count = 0;
+                
+                // Count date range
+                if (document.getElementById('date-range-picker').value) count++;
+                
+                // Count follow-up date
+                if (document.getElementById('followup-date-range-picker').value) count++;
+                
+                // Count course selection
+                if (document.getElementById('course-select').value) count++;
+                
+                // Count multiselect filters
+                document.querySelectorAll('.bx--multi-select').forEach(select => {
+                    const checkboxes = select.querySelectorAll('input[type="checkbox"]:checked');
+                    if (checkboxes.length > 0) count++;
+                });
+                
+                // Count search
+                if (document.getElementById('search-input').value.trim()) count++;
+                
+                const indicator = document.getElementById('active-filters-count');
+                indicator.textContent = count;
+                
+                if (count > 0) {
+                    indicator.classList.add('show');
+                } else {
+                    indicator.classList.remove('show');
+                }
             }
 
             bindEvents() {
@@ -1280,43 +1248,20 @@
                 document.getElementById('reset-btn').addEventListener('click', () => {
                     this.resetFilters();
                 });
-                
-                // Comment form
-                document.getElementById('comment-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.saveComment();
-                });
 
                 // Auto-submit on course select change
                 document.getElementById('course-select').addEventListener('change', () => {
                     this.handleFilterSubmit();
                 });
-            }
 
-            handleFilterSubmit() {
-                const formData = this.getFilterFormData();
-                const queryParams = new URLSearchParams();
-                
-                // Build query parameters
-                Object.keys(formData).forEach(key => {
-                    if (formData[key].length > 0) {
-                        queryParams.append(key, formData[key].join(','));
-                    }
+                // Auto-submit on search
+                let searchTimeout;
+                document.getElementById('search-input').addEventListener('input', () => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        this.handleFilterSubmit();
+                    }, 500); // Debounce search
                 });
-                
-                // Add search query if present
-                const searchQuery = document.getElementById('search-input').value.trim();
-                if (searchQuery) {
-                    queryParams.append('search', searchQuery);
-                }
-                
-                // Make API call to FastAPI backend
-                console.log('Filter query:', queryParams.toString());
-                this.loadLeadsFromAPI(queryParams.toString());
-                
-                // Update URL
-                const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
-                window.history.replaceState({}, '', newUrl);
             }
 
             async loadLeadsFromAPI(queryString = '') {
@@ -1332,39 +1277,128 @@
                     if (data.success) {
                         this.gridApi.setGridOption('rowData', data.data);
                         console.log('Loaded leads:', data.data.length);
+                        
+                        // Update UI based on applied filters from backend
+                        if (data.filters_applied) {
+                            this.updateFiltersFromBackend(data.filters_applied);
+                        }
                     } else {
                         console.error('API Error:', data.message);
                         this.gridApi.setGridOption('rowData', []);
                     }
                 } catch (error) {
                     console.error('Error loading leads:', error);
-                    // Fallback to sample data on error
-                    this.loadSampleData();
+                    this.gridApi.setGridOption('rowData', []);
                 }
             }
 
+            updateFiltersFromBackend(filtersApplied) {
+                // This method updates the UI to reflect the filters that were actually applied
+                console.log('Filters applied by backend:', filtersApplied);
+                
+                // Update active filters count
+                this.updateActiveFiltersCount();
+            }
+
             getFilterFormData() {
-                const formData = {
-                    status: [],
-                    courses: [],
-                    location: [],
-                    counsellor: []
-                };
+                const formData = {};
+                
+                // Get date range
+                const dateRangeValue = document.getElementById('date-range-picker').value;
+                if (dateRangeValue) {
+                    const dates = dateRangeValue.split(' to ');
+                    if (dates.length === 2) {
+                        formData.start_date = dates[0];
+                        formData.end_date = dates[1];
+                    } else if (dates.length === 1) {
+                        formData.start_date = dates[0];
+                        formData.end_date = dates[0];
+                    }
+                }
+                
+                // Get follow-up date range
+                const followupDateRangeValue = document.getElementById('followup-date-range-picker').value;
+                if (followupDateRangeValue) {
+                    const dates = followupDateRangeValue.split(' to ');
+                    if (dates.length === 2) {
+                        formData.followupdate_start = dates[0];
+                        formData.followupdate_end = dates[1];
+                    } else if (dates.length === 1) {
+                        formData.followupdate_start = dates[0];
+                        formData.followupdate_end = dates[0];
+                    }
+                }
+                
+                // Get course selection (single select)
+                const courseSelect = document.getElementById('course-select');
+                if (courseSelect.value) {
+                    formData.course = courseSelect.value;
+                }
                 
                 // Get selected values from each multiselect
                 document.querySelectorAll('.bx--multi-select').forEach(select => {
                     const field = select.getAttribute('data-field');
                     const checkboxes = select.querySelectorAll('input[type="checkbox"]:checked');
                     
-                    checkboxes.forEach(checkbox => {
-                        formData[field].push(checkbox.value);
-                    });
+                    if (checkboxes.length > 0) {
+                        formData[field] = [];
+                        checkboxes.forEach(checkbox => {
+                            formData[field].push(checkbox.value);
+                        });
+                    }
                 });
                 
                 return formData;
             }
 
+            handleFilterSubmit() {
+                const formData = this.getFilterFormData();
+                const queryParams = new URLSearchParams();
+                
+                // Build query parameters
+                Object.keys(formData).forEach(key => {
+                    const value = formData[key];
+                    if (Array.isArray(value) && value.length > 0) {
+                        queryParams.append(key, value.join(','));
+                    } else if (!Array.isArray(value) && value) {
+                        queryParams.append(key, value);
+                    }
+                });
+                
+                // Add search query if present
+                const searchQuery = document.getElementById('search-input').value.trim();
+                if (searchQuery) {
+                    queryParams.append('search', searchQuery);
+                }
+                
+                // Debug: Log the query parameters
+                console.log('Filter query params:', queryParams.toString());
+                console.log('Form data:', formData);
+                
+                // Make API call to FastAPI backend
+                this.loadLeadsFromAPI(queryParams.toString());
+                
+                // Update URL
+                const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
+                window.history.replaceState({}, '', newUrl);
+                
+                // Update active filters count
+                this.updateActiveFiltersCount();
+            }
+
             resetFilters() {
+                // Clear date pickers
+                this.dateRangePicker.clear();
+                this.followupDateRangePicker.clear();
+                
+                // Clear quick select buttons
+                document.querySelectorAll('.quick-select-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Reset course select
+                document.getElementById('course-select').value = '';
+                
                 // Uncheck all checkboxes
                 document.querySelectorAll('.bx--multi-select input[type="checkbox"]').forEach(checkbox => {
                     checkbox.checked = false;
@@ -1382,262 +1416,24 @@
                 // Reset URL
                 window.history.replaceState({}, '', window.location.pathname);
                 
+                // Set default date range (7 days ago to today)
+                const today = new Date();
+                const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                this.dateRangePicker.setDate([weekAgo, today]);
+                
                 // Reload all data
                 this.loadLeadsFromAPI();
+                
+                // Update active filters count
+                this.updateActiveFiltersCount();
             }
 
             async onRowSelected(lead) {
                 try {
-                    // Fetch detailed lead information
-                    const response = await fetch(`/student/leads/${lead.id}`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.selectedLead = data.data;
-                        this.showLeadDetails(this.selectedLead);
-                        console.log('Selected lead details:', this.selectedLead);
-                    } else {
-                        console.error('Failed to load lead details:', data.message);
-                    }
-
+                    // For now, just log the selected lead
+                    console.log('Selected lead:', lead);
                 } catch (error) {
                     console.error('Error loading lead details:', error);
-                    // Don't show details if API fails
-                    this.showEmptyDetails();
-                }
-            }
-
-            showEmptyDetails() {
-                const detailsTab = document.getElementById('details-tab');
-                detailsTab.innerHTML = `
-                    <div class="empty-state">
-                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <h4>Unable to Load Details</h4>
-                        <p>Please check your connection or try again later</p>
-                    </div>
-                `;
-            }
-
-            showEmptyDetails() {
-                const detailsTab = document.getElementById('details-tab');
-                detailsTab.innerHTML = `
-                    <div class="empty-state">
-                        <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <h4>Unable to Load Details</h4>
-                        <p>Please check your connection or try again later</p>
-                    </div>
-                `;
-            }
-
-            showLeadDetails(lead) {
-                const detailsTab = document.getElementById('details-tab');
-                const initials = lead.student_name ? lead.student_name.split(' ').map(n => n[0]).join('').toUpperCase() : '';
-                const statusClass = `status-${(lead.status || 'new').toLowerCase()}`;
-
-                // Format courses
-                const coursesHtml = (lead.interested_courses || []).map(course => 
-                    `<span class="course-tag">${course}</span>`
-                ).join('');
-
-                detailsTab.innerHTML = `
-                    <div class="student-header">
-                        <div class="student-avatar">${initials}</div>
-                        <div class="student-info">
-                            <h2>${lead.student_name || 'Unknown'}</h2>
-                            <p class="student-meta">${lead.phone_number || ''} • ${lead.location || 'Unknown location'}</p>
-                        </div>
-                    </div>
-
-                    <div class="details-section">
-                        <h3 class="section-title">Contact Information</h3>
-                        <div class="detail-item">
-                            <span class="detail-label">Phone Number</span>
-                            <span class="detail-value">${lead.phone_number || 'Not provided'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Email</span>
-                            <span class="detail-value">${lead.email || 'Not provided'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Location</span>
-                            <span class="detail-value">${lead.location || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">State</span>
-                            <span class="detail-value">${lead.state || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Lead Source</span>
-                            <span class="detail-value">${lead.lead_source || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Status</span>
-                            <span class="detail-value">
-                                <span class="status-badge ${statusClass}">${lead.status || 'New'}</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="details-section">
-                        <h3 class="section-title">Academic & Professional</h3>
-                        <div class="detail-item">
-                            <span class="detail-label">Education Level</span>
-                            <span class="detail-value">${lead.degree || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">College Name</span>
-                            <span class="detail-value">${lead.college_name || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Passout Year</span>
-                            <span class="detail-value">${lead.passout_year || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Purpose</span>
-                            <span class="detail-value">${lead.purpose || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Timeline</span>
-                            <span class="detail-value">${lead.urgency || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Additional People</span>
-                            <span class="detail-value">${lead.additional_people || 0}</span>
-                        </div>
-                    </div>
-
-                    <div class="details-section">
-                        <h3 class="section-title">Course Preferences</h3>
-                        <div class="detail-item">
-                            <span class="detail-label">Interested Courses</span>
-                            <div class="courses-list">
-                                ${coursesHtml || '<span class="course-tag">No courses selected</span>'}
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Mode</span>
-                            <span class="detail-value">${lead.mode || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Slot Preference</span>
-                            <span class="detail-value">${lead.slot_preference || 'Not specified'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Fee Quoted</span>
-                            <span class="detail-value">${lead.fee_quoted ? '₹' + lead.fee_quoted.toLocaleString() : 'Not quoted'}</span>
-                        </div>
-                    </div>
-
-                    <div class="details-section">
-                        <h3 class="section-title">Counselling Details</h3>
-                        <div class="detail-item">
-                            <span class="detail-label">Counselled By</span>
-                            <span class="detail-value">${lead.counselled_by || 'Not assigned'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Lead Quality</span>
-                            <span class="detail-value">${lead.lead_quality || 'Not assessed'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Created Date</span>
-                            <span class="detail-value">${lead.created_at ? new Date(lead.created_at).toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                            }) : 'Unknown'}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Send Brochure</span>
-                            <span class="detail-value">${lead.send_brochure ? 'Yes' : 'No'}</span>
-                        </div>
-                    </div>
-
-                    ${lead.comments ? `
-                    <div class="details-section">
-                        <h3 class="section-title">Previous Comments</h3>
-                        <div class="detail-item">
-                            <span class="detail-value">${lead.comments}</span>
-                        </div>
-                    </div>
-                    ` : ''}
-                `;
-
-                // Load existing comment in textarea
-                const commentTextarea = document.getElementById('comment-textarea');
-                if (commentTextarea) {
-                    commentTextarea.value = lead.comments || '';
-                }
-            }
-
-            async saveComment() {
-                const comment = document.getElementById('comment-textarea').value.trim();
-                if (!this.selectedLead) {
-                    console.error('No lead selected');
-                    return;
-                }
-                
-                const saveBtn = document.getElementById('save-comment-btn');
-                const originalText = saveBtn.innerHTML;
-                
-                try {
-                    // Show loading state
-                    saveBtn.disabled = true;
-                    saveBtn.innerHTML = `
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="animation: spin 1s linear infinite;">
-                            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm0-2A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" opacity="0.3"/>
-                            <path d="M8 0a8 8 0 0 1 8 8h-2A6 6 0 0 0 8 2V0z"/>
-                        </svg>
-                        Saving...
-                    `;
-                    
-                    const response = await fetch(`/student/leads/${this.selectedLead.id}/comment`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ comment: comment })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        // Update local data
-                        this.selectedLead.comments = comment;
-                        
-                        // Show success state
-                        saveBtn.innerHTML = 'Saved!';
-                        setTimeout(() => {
-                            saveBtn.innerHTML = originalText;
-                            saveBtn.disabled = false;
-                        }, 2000);
-
-                        // Refresh details view
-                        this.showLeadDetails(this.selectedLead);
-                    } else {
-                        throw new Error(data.message || 'Failed to save comment');
-                    }
-
-                } catch (error) {
-                    console.error('Error saving comment:', error);
-                    saveBtn.innerHTML = 'Error - Retry';
-                    saveBtn.disabled = false;
-                    
-                    setTimeout(() => {
-                        saveBtn.innerHTML = originalText;
-                    }, 3000);
                 }
             }
 
@@ -1645,23 +1441,6 @@
                 // Load initial data from API on page load
                 this.loadLeadsFromAPI();
             }
-        }
-
-        // Tab switching function
-        function switchTab(event, tabId) {
-            event.preventDefault();
-            
-            // Update tab navigation
-            document.querySelectorAll('.bx--tabs__nav-item').forEach(item => {
-                item.classList.remove('bx--tabs__nav-item--selected');
-            });
-            event.target.parentElement.classList.add('bx--tabs__nav-item--selected');
-            
-            // Update tab content
-            document.querySelectorAll('.tab-panel').forEach(panel => {
-                panel.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
         }
 
         // Initialize dashboard on page load
