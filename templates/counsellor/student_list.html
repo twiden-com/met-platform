@@ -665,6 +665,11 @@
             <form class="filters-form" id="filters-form">
                 <!-- Date Range Filter -->
                 <div class="form-group">
+                    <div class="followup-quick-select">
+                        <button type="button" class="quick-select-btn" data-range="created-today">Today</button>
+                        <button type="button" class="quick-select-btn" data-range="created-week">This Week</button>
+                        <button type="button" class="quick-select-btn" data-range="created-month">This Month</button>
+                    </div>
                     <div class="bx--date-picker">
                         <input type="text" class="bx--date-picker__input" id="date-range-picker" placeholder="Created date range..." readonly>
                         <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
@@ -673,38 +678,29 @@
                     </div>
                 </div>
 
-                <!-- Follow-up Date Filter -->
-                <div class="form-group">
-                    <div class="followup-quick-select">
-                        <button type="button" class="quick-select-btn" data-range="today">Today</button>
-                        <button type="button" class="quick-select-btn" data-range="this-week">This Week</button>
-                        <button type="button" class="quick-select-btn" data-range="next-week">Next Week</button>
-                    </div>
-                    <div class="bx--date-picker">
-                        <input type="text" class="bx--date-picker__input" id="followup-date-range-picker" placeholder="Follow-up date range..." readonly>
-                        <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
-                            <path d="M12 1V0h1v1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h2V0h1v1h8zM1 3v11h14V3H1zm2-1h8v1H3V2zm0 3h1v1H3V5zm2 0h1v1H5V5zm2 0h1v1H7V5zm2 0h1v1H9V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zM3 7h1v1H3V7zm2 0h1v1H5V7zm2 0h1v1H7V7zm2 0h1v1H9V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM3 9h1v1H3V9zm2 0h1v1H5V9zm2 0h1v1H7V9zm2 0h1v1H9V9zm2 0h1v1h-1V9zm2 0h1v1h-1V9z"/>
-                        </svg>
-                    </div>
-                </div>
+                
 
                 <!-- Course Filter (Single Select) -->
-                <div class="form-group">
+                
+<div class="form-group">
                     <div class="bx--select">
                         <select class="bx--select__input" id="course-select">
                             <option value="">All courses</option>
-                            <option value="Data Science with AI">Data Science with AI</option>
-                            <option value="Python Full Stack with AI">Python Full Stack with AI</option>
-                            <option value="Digital Marketing with AI">Digital Marketing with AI</option>
-                            <option value="Cybersecurity">Cybersecurity</option>
-                            <option value="Java Full Stack with AI">Java Full Stack with AI</option>
-                            <option value="Data Analytics & Gen AI">Data Analytics & Gen AI</option>
+                            <option value="data_science_ai">Data Science with AI</option>
+                            <option value="python_fullstack_ai">Python Full Stack with AI</option>
+                            <option value="digital_marketing_ai">Digital Marketing with AI</option>
+                            <option value="cybersecurity">Cybersecurity</option>
+                            <option value="java_fullstack_ai">Java Full Stack with AI</option>
+                            <option value="data_analytics_ai">Data Analytics & Gen AI</option>
+                            <option value="video_editing_graphic_design">Video Editing & Graphic Design/option>
+                            
                         </select>
                         <svg class="bx--select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
                             <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                         </svg>
                     </div>
                 </div>
+
 
                 <!-- Counsellor Filter (Multi Select) -->
                 <div class="form-group">
@@ -815,6 +811,21 @@
                     </div>
                 </div>
 
+                <!-- Follow-up Date Filter -->
+                <div class="form-group">
+                    <div class="followup-quick-select">
+                        <button type="button" class="quick-select-btn" data-range="followup-today">Today</button>
+                        <button type="button" class="quick-select-btn" data-range="followup-week">This Week</button>
+                        <button type="button" class="quick-select-btn" data-range="followup-next">Next Week</button>
+                    </div>
+                    <div class="bx--date-picker">
+                        <input type="text" class="bx--date-picker__input" id="followup-date-range-picker" placeholder="Next Followup date" readonly>
+                        <svg class="bx--date-picker__icon" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M12 1V0h1v1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h2V0h1v1h8zM1 3v11h14V3H1zm2-1h8v1H3V2zm0 3h1v1H3V5zm2 0h1v1H5V5zm2 0h1v1H7V5zm2 0h1v1H9V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zM3 7h1v1H3V7zm2 0h1v1H5V7zm2 0h1v1H7V7zm2 0h1v1H9V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM3 9h1v1H3V9zm2 0h1v1H5V9zm2 0h1v1H7V9zm2 0h1v1H9V9zm2 0h1v1h-1V9zm2 0h1v1h-1V9z"/>
+                        </svg>
+                    </div>
+                </div>
+
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <button type="submit" class="bx--btn bx--btn--primary">
@@ -878,15 +889,19 @@
             }
 
             initializeDatePickers() {
-                // Main date range picker - default to 3 days ago to today
+                // Main date range picker - default to today only
                 this.dateRangePicker = flatpickr("#date-range-picker", {
                     mode: "range",
                     dateFormat: "Y-m-d",
                     defaultDate: [
-                        new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-                        new Date() // today
+                        new Date(), // today
+                        new Date()  // today (same day range)
                     ],
                     onChange: (selectedDates, dateStr, instance) => {
+                        // Clear created date quick select buttons when using custom range
+                        document.querySelectorAll('.quick-select-btn[data-range^="created-"]').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
                         this.handleFilterSubmit();
                     }
                 });
@@ -896,13 +911,18 @@
                     mode: "range",
                     dateFormat: "Y-m-d",
                     onChange: (selectedDates, dateStr, instance) => {
-                        // Clear quick select buttons when using custom range
-                        document.querySelectorAll('.quick-select-btn').forEach(btn => {
+                        // Clear follow-up date quick select buttons when using custom range
+                        document.querySelectorAll('.quick-select-btn[data-range^="followup-"]').forEach(btn => {
                             btn.classList.remove('active');
                         });
                         this.handleFilterSubmit();
                     }
                 });
+                // SET TODAY BUTTON AS ACTIVE ON INITIAL LOAD - ADD THIS
+    const todayBtn = document.querySelector('.quick-select-btn[data-range="created-today"]');
+    if (todayBtn) {
+        todayBtn.classList.add('active');
+    }
             }
 
             initializeFollowupQuickSelect() {
@@ -910,32 +930,64 @@
                 
                 quickSelectBtns.forEach(btn => {
                     btn.addEventListener('click', () => {
-                        // Remove active from all buttons
-                        quickSelectBtns.forEach(b => b.classList.remove('active'));
-                        
-                        // Add active to clicked button
-                        btn.classList.add('active');
-                        
                         const range = btn.getAttribute('data-range');
                         const today = new Date();
                         let startDate, endDate;
                         
-                        switch(range) {
-                            case 'today':
-                                startDate = endDate = new Date(today);
-                                break;
-                            case 'this-week':
-                                startDate = new Date(today);
-                                endDate = new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000);
-                                break;
-                            case 'next-week':
-                                startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-                                endDate = new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000);
-                                break;
+                        // Handle created date quick selects
+                        if (range.startsWith('created-')) {
+                            // Remove active from other created date buttons
+                            document.querySelectorAll('.quick-select-btn[data-range^="created-"]').forEach(b => {
+                                b.classList.remove('active');
+                            });
+                            btn.classList.add('active');
+                            
+                            switch(range) {
+                                case 'created-today':
+                                    startDate = endDate = new Date(today);
+                                    break;
+                                case 'created-week':
+                                    // This week (Monday to Sunday)
+                                    const dayOfWeek = today.getDay();
+                                    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Handle Sunday
+                                    startDate = new Date(today.getTime() + mondayOffset * 24 * 60 * 60 * 1000);
+                                    endDate = new Date(startDate.getTime() + 6 * 24 * 60 * 60 * 1000);
+                                    break;
+                                case 'created-month':
+                                    // This month (1st to last day)
+                                    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                                    endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                                    break;
+                            }
+                            
+                            this.dateRangePicker.setDate([startDate, endDate]);
                         }
                         
-                        // Set the date range picker
-                        this.followupDateRangePicker.setDate([startDate, endDate]);
+                        // Handle follow-up date quick selects  
+                        else if (range.startsWith('followup-')) {
+                            // Remove active from other follow-up date buttons
+                            document.querySelectorAll('.quick-select-btn[data-range^="followup-"]').forEach(b => {
+                                b.classList.remove('active');
+                            });
+                            btn.classList.add('active');
+                            
+                            switch(range) {
+                                case 'followup-today':
+                                    startDate = endDate = new Date(today);
+                                    break;
+                                case 'followup-week':
+                                    startDate = new Date(today);
+                                    endDate = new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000);
+                                    break;
+                                case 'followup-next':
+                                    startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+                                    endDate = new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000);
+                                    break;
+                            }
+                            
+                            this.followupDateRangePicker.setDate([startDate, endDate]);
+                        }
+                        
                         this.handleFilterSubmit();
                     });
                 });
@@ -974,9 +1026,7 @@
                             
                             return `
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #f4f4f4; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: #6f6f6f; border: 1px solid #e0e0e0;">
-                                        ${initials}
-                                    </div>
+                                    
                                     <div style="display: flex; flex-direction: column;">
                                         <span style="font-weight: 500; font-size: 0.875rem;">${params.value || ''}</span>
                                         ${additionalLabel ? `<span style="font-size: 0.75rem; color: #0f62fe; font-weight: 500;">${additionalLabel}</span>` : ''}
@@ -988,7 +1038,7 @@
                     {
                         headerName: "Phone Number",
                         field: "phone_number",
-                        width: 130,
+                        width: 200,
                         cellRenderer: (params) => {
                             if (!params.value) return '';
                             // Format phone number for display
@@ -998,7 +1048,7 @@
                     {
                         headerName: "Courses",
                         field: "interested_courses",
-                        width: 150,
+                        width: 200,
                         cellRenderer: (params) => {
                             if (!params.value || params.value.length === 0) return 'None';
                             const courses = Array.isArray(params.value) ? params.value : [params.value];
@@ -1379,7 +1429,7 @@
                 this.dateRangePicker.clear();
                 this.followupDateRangePicker.clear();
                 
-                // Clear quick select buttons
+                // Clear all quick select buttons
                 document.querySelectorAll('.quick-select-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
@@ -1404,10 +1454,9 @@
                 // Reset URL
                 window.history.replaceState({}, '', window.location.pathname);
                 
-                // Set default date range (3 days ago to today)
+                // Set default date range (today only)
                 const today = new Date();
-                const threeDaysAgo = new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000);
-                this.dateRangePicker.setDate([threeDaysAgo, today]);
+                this.dateRangePicker.setDate([today, today]);
                 
                 // Reload all data
                 this.loadLeadsFromAPI();
@@ -1426,9 +1475,17 @@
             }
 
             loadSampleData() {
-                // Load initial data from API on page load
-                this.loadLeadsFromAPI();
-            }
+    // Load initial data with today's filter applied
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    
+    const queryParams = new URLSearchParams();
+    queryParams.append('start_date', todayStr);
+    queryParams.append('end_date', todayStr);
+    
+    console.log('Loading initial data for today:', todayStr);
+    this.loadLeadsFromAPI(queryParams.toString());
+}
         }
 
         // Initialize dashboard on page load
