@@ -79,7 +79,7 @@ async def student_send_otp(request:Request, country_code:str, phone: str, db:Asy
 
 @router.post("/verify/phone_otp")
 @auth_required([], signup_flow=True)
-async def student_validate_otp(phone:str, country_code:str, otp: str, verification_id: str, db:AsyncClient = Depends(get_db)): #Eg. otp - 287976 
+async def student_validate_otp(request:Request, phone:str, country_code:str, otp: str, verification_id: str, db:AsyncClient = Depends(get_db)): #Eg. otp - 287976 
     try:
         res = verify_otp(code=otp, verification_id=verification_id, country_code=country_code, phone=phone)
         
