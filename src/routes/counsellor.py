@@ -21,6 +21,11 @@ async def show_councellor_dashboard(request: Request):
 async def show_new_enquiry_form(request: Request):
      return templates.TemplateResponse("counsellor/new_enquiry.html", {"request": request})
 
+@router.get("/new-batch", response_class=HTMLResponse)
+@auth_required(['counsellor'])
+async def show_new_batch_form(request: Request):
+     return templates.TemplateResponse("counsellor/new_batch.html", {"request": request})
+
 @router.get("/student-list", response_class=HTMLResponse)
 @auth_required(['counsellor'])
 async def show_student_list(request: Request):

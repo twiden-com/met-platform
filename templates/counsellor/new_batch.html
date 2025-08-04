@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha Edu Tech - New Batch</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/carbon-components/10.58.12/css/carbon-components.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@carbon/styles@1.32.0/css/styles.min.css">
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+            --color-gray-bg: #f2f4f8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--color-gray-bg);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: var(--color-navy);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        .main-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 3rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .bx--form-item {
+            margin-bottom: 2rem;
+        }
+
+        .bx--label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #161616;
+            margin-bottom: 0.5rem;
+            line-height: 1.29;
+        }
+
+        /* Required field indicator */
+        .bx--label.required::after {
+            content: ' *';
+            color: #da1e28;
+            font-weight: 400;
+        }
+
+        .bx--text-input,
+        .bx--text-area,
+        .bx--select-input {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: #161616;
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        .bx--text-area {
+            height: auto;
+            padding: 0.75rem 1rem;
+            resize: vertical;
+        }
+
+        .bx--text-input:focus,
+        .bx--text-area:focus,
+        .bx--select-input:focus {
+            border-bottom: 2px solid #0f62fe;
+            background-color: white;
+        }
+
+        /* Date input styling */
+        .bx--date-picker__input {
+            width: 100%;
+            height: 2.5rem;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: #161616;
+            background-color: #f4f4f4;
+            border: none;
+            border-bottom: 1px solid #8d8d8d;
+            outline: none;
+            transition: all 0.11s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        .bx--date-picker__input:focus {
+            border-bottom: 2px solid #0f62fe;
+            background-color: white;
+        }
+
+        .bx--select {
+            position: relative;
+        }
+
+        .bx--select__arrow {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+            fill: #161616;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid-three {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Error field highlighting */
+        .field-error {
+            border-bottom: 2px solid #da1e28 !important;
+            background-color: #fff1f1 !important;
+            transition: all 0.3s ease;
+        }
+
+        .field-error:focus {
+            border-bottom: 2px solid #da1e28 !important;
+            background-color: #fff1f1 !important;
+            box-shadow: 0 0 0 2px rgba(218, 30, 40, 0.2) !important;
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: #24a148;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #161616;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-message {
+            color: #6f6f6f;
+            margin-bottom: 2rem;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Alert Messages */
+        .alert-message {
+            margin-bottom: 2rem;
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* CSS animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Loading State Integration */
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            font-size: 0.875rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        /* Responsive - Only for very narrow mobile screens */
+        @media (max-width: 600px) {
+            .app-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .header-left {
+                gap: 1rem;
+            }
+            
+            .main-container {
+                padding: 2rem 1rem;
+            }
+            
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-grid,
+            .form-grid-three {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .logo {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        /* Date picker container styling */
+        .bx--date-picker {
+            width: 100%;
+        }
+
+        .bx--date-picker-container {
+            width: 100%;
+        }
+
+        /* Class time special styling */
+        .time-select {
+            max-height: 12rem;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="header-left">
+            <a href="/counsellor/dashboard" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Dashboard
+            </a>
+            <h1 class="page-title">New Batch</h1>
+        </div>
+        <div class="logo">
+            Medha<span class="logo-accent">EduTech</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="form-container">
+            <div id="form-response" class="alert-message"></div>
+
+            <form id="batch-form" method="POST" action="/batch/create">
+                
+                <!-- Batch Name -->
+                <div class="bx--form-item form-grid-full">
+                    <label for="batch-name" class="bx--label required">Batch Name</label>
+                    <input type="text" id="batch-name" name="batch_name" class="bx--text-input" placeholder="Enter batch name" required>
+                </div>
+
+                <!-- Start Date and Status -->
+                <div class="form-grid">
+                    <div class="bx--form-item">
+                        <label for="start-date" class="bx--label required">Start Date</label>
+                        <div class="bx--date-picker bx--date-picker--single">
+                            <div class="bx--date-picker-container">
+                                <input 
+                                    id="start-date" 
+                                    name="start_date" 
+                                    type="date" 
+                                    class="bx--date-picker__input" 
+                                    required
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bx--form-item">
+                        <label for="status" class="bx--label required">Status</label>
+                        <div class="bx--select">
+                            <select id="status" name="status" class="bx--select-input" required>
+                                <option value="Demo" selected>Demo</option>
+                                <option value="Started">Started</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estimated End Date and Mode -->
+                <div class="form-grid">
+                    <div class="bx--form-item">
+                        <label for="end-date" class="bx--label">Estimated End Date</label>
+                        <div class="bx--date-picker bx--date-picker--single">
+                            <div class="bx--date-picker-container">
+                                <input 
+                                    id="end-date" 
+                                    name="estimated_end_date" 
+                                    type="date" 
+                                    class="bx--date-picker__input"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bx--form-item">
+                        <label for="mode" class="bx--label">Mode</label>
+                        <div class="bx--select">
+                            <select id="mode" name="mode" class="bx--select-input">
+                                <option value="">Select mode</option>
+                                <option value="Online">Online</option>
+                                <option value="Offline">Offline</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trainer and Class Time -->
+                <div class="form-grid">
+                    <div class="bx--form-item">
+                        <label for="trainer" class="bx--label required">Trainer</label>
+                        <div class="bx--select">
+                            <select id="trainer" name="trainer" class="bx--select-input" required>
+                                <option value="">Select trainer</option>
+                                <option value="Mrs. Mounika">Mrs. Mounika</option>
+                                <option value="Mr. Shahul">Mr. Shahul</option>
+                                <option value="Mr. Chaitanya Vaddi">Mr. Chaitanya Vaddi</option>
+                            </select>
+                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="bx--form-item">
+                        <label for="class-time" class="bx--label">Class Time</label>
+                        <div class="bx--select">
+                            <select id="class-time" name="class_time" class="bx--select-input time-select">
+                                <option value="Not Yet">Not Yet</option>
+                                <option value="06:00 AM">06:00 AM</option>
+                                <option value="06:30 AM">06:30 AM</option>
+                                <option value="07:00 AM">07:00 AM</option>
+                                <option value="07:30 AM">07:30 AM</option>
+                                <option value="08:00 AM">08:00 AM</option>
+                                <option value="08:30 AM">08:30 AM</option>
+                                <option value="09:00 AM">09:00 AM</option>
+                                <option value="09:30 AM">09:30 AM</option>
+                                <option value="10:00 AM">10:00 AM</option>
+                                <option value="10:30 AM">10:30 AM</option>
+                                <option value="11:00 AM">11:00 AM</option>
+                                <option value="11:30 AM">11:30 AM</option>
+                                <option value="12:00 PM">12:00 PM</option>
+                                <option value="12:30 PM">12:30 PM</option>
+                                <option value="01:00 PM">01:00 PM</option>
+                                <option value="01:30 PM">01:30 PM</option>
+                                <option value="02:00 PM">02:00 PM</option>
+                                <option value="02:30 PM">02:30 PM</option>
+                                <option value="03:00 PM">03:00 PM</option>
+                                <option value="03:30 PM">03:30 PM</option>
+                                <option value="04:00 PM">04:00 PM</option>
+                                <option value="04:30 PM">04:30 PM</option>
+                                <option value="05:00 PM">05:00 PM</option>
+                                <option value="05:30 PM">05:30 PM</option>
+                                <option value="06:00 PM">06:00 PM</option>
+                                <option value="06:30 PM">06:30 PM</option>
+                                <option value="07:00 PM">07:00 PM</option>
+                                <option value="07:30 PM">07:30 PM</option>
+                                <option value="08:00 PM">08:00 PM</option>
+                                <option value="08:30 PM">08:30 PM</option>
+                                <option value="09:00 PM">09:00 PM</option>
+                                <option value="09:30 PM">09:30 PM</option>
+                                <option value="10:00 PM">10:00 PM</option>
+                            </select>
+                            <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                                <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Batch Campus -->
+                <div class="bx--form-item">
+                    <label for="batch-campus" class="bx--label">Batch Campus</label>
+                    <div class="bx--select">
+                        <select id="batch-campus" name="batch_campus" class="bx--select-input">
+                            <option value="">Select campus</option>
+                            <option value="603 - MET">603 - MET</option>
+                            <option value="609 - MET">609 - MET</option>
+                            <option value="Digital Media">Digital Media</option>
+                        </select>
+                        <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Group Link -->
+                <div class="bx--form-item">
+                    <label for="whatsapp-link" class="bx--label">WhatsApp Group Link</label>
+                    <input type="url" id="whatsapp-link" name="whatsapp_group_link" class="bx--text-input" placeholder="https://chat.whatsapp.com/...">
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="bx--btn bx--btn--secondary" onclick="window.history.back()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="bx--btn bx--btn--primary">
+                        Create Batch
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="success-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+            </div>
+            <h2 class="modal-title">Batch Created Successfully!</h2>
+            <p class="modal-message">New batch has been created and is now available in the system.</p>
+            <button class="bx--btn bx--btn--primary" onclick="window.location.href='/admin/dashboard'">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class BatchForm {
+            constructor() {
+                this.initializeElements();
+                this.bindEvents();
+                this.setDefaultStartDate();
+            }
+
+            initializeElements() {
+                this.batchForm = document.getElementById('batch-form');
+                this.startDateInput = document.getElementById('start-date');
+                this.endDateInput = document.getElementById('end-date');
+            }
+
+            bindEvents() {
+                this.batchForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                this.startDateInput.addEventListener('change', () => this.updateMinEndDate());
+            }
+
+            setDefaultStartDate() {
+                // Set today as default start date
+                const today = new Date().toISOString().split('T')[0];
+                this.startDateInput.value = today;
+                this.updateMinEndDate();
+            }
+
+            updateMinEndDate() {
+                // Set minimum end date to be same as start date
+                if (this.startDateInput.value) {
+                    this.endDateInput.min = this.startDateInput.value;
+                }
+            }
+
+            handleFormSubmit(e) {
+                e.preventDefault();
+                
+                // Basic validation
+                if (!this.validateForm()) {
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = `
+                    <div class="loading-container">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="animation: spin 1s linear infinite;">
+                            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm0-2A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" opacity="0.3"/>
+                            <path d="M8 0a8 8 0 0 1 8 8h-2A6 6 0 0 0 8 2V0z"/>
+                        </svg>
+                        <span>Creating...</span>
+                    </div>
+                `;
+                submitBtn.disabled = true;
+
+                // Submit form via fetch
+                this.submitFormData(e.target, submitBtn, originalText);
+            }
+
+            validateForm() {
+                this.clearErrorHighlights();
+                
+                const batchName = document.getElementById('batch-name').value.trim();
+                const startDate = document.getElementById('start-date').value;
+                const status = document.getElementById('status').value;
+                const trainer = document.getElementById('trainer').value;
+                
+                let isValid = true;
+                let errorMessage = '';
+
+                if (!batchName) {
+                    this.highlightField('batch-name');
+                    errorMessage += 'Batch name is required.\n';
+                    isValid = false;
+                }
+
+                if (!startDate) {
+                    this.highlightField('start-date');
+                    errorMessage += 'Start date is required.\n';
+                    isValid = false;
+                }
+
+                if (!status) {
+                    this.highlightField('status');
+                    errorMessage += 'Status is required.\n';
+                    isValid = false;
+                }
+
+                if (!trainer) {
+                    this.highlightField('trainer');
+                    errorMessage += 'Trainer selection is required.\n';
+                    isValid = false;
+                }
+
+                // Validate end date is after start date
+                const endDate = document.getElementById('end-date').value;
+                if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+                    this.highlightField('end-date');
+                    errorMessage += 'End date must be after start date.\n';
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    this.showAlert(errorMessage.trim(), 'error');
+                    this.scrollToError();
+                }
+
+                return isValid;
+            }
+
+            async submitFormData(form, submitBtn, originalText) {
+                try {
+                    const formData = new FormData(form);
+                    
+                    // Simulate API call - replace with actual endpoint
+                    const response = await fetch('/batch/create', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    // For demo purposes, simulate success after 2 seconds
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Simulate successful response
+                    const data = { success: true, message: 'Batch created successfully' };
+
+                    if (data.success) {
+                        this.showSuccessModal();
+                    } else {
+                        this.showAlert(data.message || 'Failed to create batch', 'error');
+                        this.scrollToError();
+                    }
+
+                } catch (error) {
+                    console.error('Network error:', error);
+                    this.showAlert('Network error. Please check your connection and try again.', 'error');
+                    this.scrollToError();
+                } finally {
+                    // Always reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+
+            highlightField(fieldId) {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    element.classList.add('field-error');
+                }
+            }
+
+            clearErrorHighlights() {
+                document.querySelectorAll('.field-error').forEach(el => {
+                    el.classList.remove('field-error');
+                });
+            }
+
+            scrollToError() {
+                const alertDiv = document.getElementById('form-response');
+                if (alertDiv) {
+                    alertDiv.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                } else {
+                    const formContainer = document.querySelector('.form-container');
+                    if (formContainer) {
+                        formContainer.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }
+                }
+            }
+
+            showSuccessModal() {
+                const modal = document.getElementById('success-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    
+                    const okButton = modal.querySelector('.bx--btn--primary');
+                    if (okButton) {
+                        okButton.onclick = () => {
+                            window.location.href = '/admin/dashboard';
+                        };
+                    }
+                    
+                    modal.onclick = (e) => {
+                        if (e.target === modal) {
+                            window.location.href = '/admin/dashboard';
+                        }
+                    };
+                }
+            }
+
+            showAlert(message, type) {
+                const alertDiv = document.getElementById('form-response');
+                let alertClass, iconSvg;
+                
+                let displayMessage = '';
+                if (typeof message === 'string') {
+                    displayMessage = message;
+                } else if (typeof message === 'object') {
+                    displayMessage = JSON.stringify(message);
+                } else {
+                    displayMessage = String(message);
+                }
+                
+                if (type === 'success') {
+                    alertClass = 'bx--inline-notification--success';
+                    iconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                    </svg>`;
+                } else if (type === 'info') {
+                    alertClass = 'bx--inline-notification--info';
+                    iconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
+                    </svg>`;
+                } else {
+                    alertClass = 'bx--inline-notification--error';
+                    iconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                    </svg>`;
+                }
+                
+                alertDiv.innerHTML = `
+                    <div class="bx--inline-notification ${alertClass}" style="margin-bottom: 1rem; padding: 1rem; border-radius: 4px; display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="bx--inline-notification__icon">
+                            ${iconSvg}
+                        </div>
+                        <div class="bx--inline-notification__details">
+                            <div class="bx--inline-notification__text-wrapper">
+                                <p class="bx--inline-notification__subtitle" style="margin: 0; font-size: 0.875rem; white-space: pre-line;">${displayMessage}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Auto-hide after 5 seconds for success/info messages
+                if (type === 'success' || type === 'info') {
+                    setTimeout(() => {
+                        alertDiv.innerHTML = '';
+                    }, 5000);
+                }
+            }
+        }
+
+        // Initialize the batch form
+        let batchForm;
+        document.addEventListener('DOMContentLoaded', () => {
+            batchForm = new BatchForm();
+        });
+    </script>
+</body>
+</html>
