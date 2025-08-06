@@ -597,6 +597,8 @@
             width: fit-content;
         }
 
+        
+
         /* Brochure status styling */
         .brochure-sent { color: #24a148; font-weight: 500; }
         .brochure-not-sent { color: #da1e28; font-weight: 500; }
@@ -667,8 +669,9 @@
                 <div class="form-group">
                     <div class="followup-quick-select">
                         <button type="button" class="quick-select-btn" data-range="created-today">Today</button>
-                        <button type="button" class="quick-select-btn" data-range="created-week">This Week</button>
-                        <button type="button" class="quick-select-btn" data-range="created-month">This Month</button>
+                        <button type="button" class="quick-select-btn" data-range="created-week">Week</button>
+                        <button type="button" class="quick-select-btn" data-range="created-month">Month</button>
+                        <button type="button" class="quick-select-btn" data-range="created-all">All</button>
                     </div>
                     <div class="bx--date-picker">
                         <input type="text" class="bx--date-picker__input" id="date-range-picker" placeholder="Created date range..." readonly>
@@ -746,6 +749,16 @@
                                 <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                             </svg>
                             <div class="bx--multi-select__menu">
+                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ravi">
+                                    <input type="checkbox" id="source-marketing_ravi" value="marketing_ravi">
+                                    <label for="source-marketing_ravi">Marketing Ravi</label>
+                                </div>
+
+                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ashok">
+                                    <input type="checkbox" id="source-marketing_ashok" value="marketing_ashok">
+                                    <label for="source-marketing_ashok">Marketing Ashok</label>
+                                </div>
+                                
                                 <div class="bx--multi-select__option" data-checkbox="source-google_maps">
                                     <input type="checkbox" id="source-google_maps" value="google_maps">
                                     <label for="source-google_maps">Google Maps (GMB)</label>
@@ -958,6 +971,11 @@
                                     startDate = new Date(today.getFullYear(), today.getMonth(), 1);
                                     endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
                                     break;
+                                case 'created-all':
+                                    // From Jan 1, 2024 till today
+                                    startDate = new Date(2024, 0, 1); // January 1, 2024
+                                    endDate = new Date(today); // Today
+                                    break;
                             }
                             
                             this.dateRangePicker.setDate([startDate, endDate]);
@@ -1014,27 +1032,63 @@
 
             initializeGrid() {
                 const columnDefs = [
-                    {
-                        headerName: "Name",
-                        field: "student_name",
-                        width: 180,
+                                        {
+                        headerName: "Date",
+                        field: "created_at",
+                        width: 100,
                         pinned: 'left',
                         cellRenderer: (params) => {
-                            const initials = params.value ? params.value.split(' ').map(n => n[0]).join('').toUpperCase() : '';
-                            const additionalPeople = params.data.additional_people || 0;
-                            const additionalLabel = additionalPeople > 0 ? `+${additionalPeople}` : '';
-                            
-                            return `
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    
-                                    <div style="display: flex; flex-direction: column;">
-                                        <span style="font-weight: 500; font-size: 0.875rem;">${params.value || ''}</span>
-                                        ${additionalLabel ? `<span style="font-size: 0.75rem; color: #0f62fe; font-weight: 500;">${additionalLabel}</span>` : ''}
-                                    </div>
-                                </div>
-                            `;
+                            if (!params.value) return '';
+                            const date = new Date(params.value);
+                            return date.toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric'
+                            });
                         }
                     },
+                    {
+    headerName: "Name",
+    field: "student_name",
+    width: 180,
+    pinned: 'left',
+    cellRenderer: (params) => {
+        const initials = params.value ? params.value.split(' ').map(n => n[0]).join('').toUpperCase() : 'NA';
+        const additionalPeople = params.data.additional_people || 0;
+        const additionalLabel = additionalPeople > 0 ? `+${additionalPeople}` : '';
+        const isVerified = params.data.is_verified;
+        
+        // Twitter-like verified badges
+        let verifiedBadge = '';
+        if (isVerified === 1) {
+            // Blue verified badge (like Twitter blue checkmark)
+            verifiedBadge = `
+                <svg width="16" height="16" viewBox="0 0 24 24" style="margin-left: 4px;" fill="none">
+                    <circle cx="12" cy="12" r="12" fill="#1d9bf0"/>
+                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            `;
+        } else if (isVerified === 3) {
+            // Gold/yellow verified badge (like Twitter premium)
+            verifiedBadge = `
+                <svg width="16" height="16" viewBox="0 0 24 24" style="margin-left: 4px;" fill="none">
+                    <circle cx="12" cy="12" r="12" fill="#ffd700"/>
+                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            `;
+        }
+        
+        return `
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight: 500; font-size: 0.875rem; display: flex; align-items: center;">
+                        ${verifiedBadge} &nbsp; ${params.value || ''}
+                    </span>
+                    ${additionalLabel ? `<span style="font-size: 0.75rem; color: #0f62fe; font-weight: 500;">${additionalLabel}</span>` : ''}
+                </div>
+            </div>
+        `;
+    }
+},
                     {
                         headerName: "Phone Number",
                         field: "phone_number",
@@ -1062,19 +1116,7 @@
                             `;
                         }
                     },
-                    {
-                        headerName: "Date",
-                        field: "created_at",
-                        width: 100,
-                        cellRenderer: (params) => {
-                            if (!params.value) return '';
-                            const date = new Date(params.value);
-                            return date.toLocaleDateString('en-US', { 
-                                month: 'short', 
-                                day: 'numeric'
-                            });
-                        }
-                    },
+
                     {
                         headerName: "Counselled By",
                         field: "counselled_by",
@@ -1089,7 +1131,7 @@
                     {
                         headerName: "Lead Source",
                         field: "lead_source",
-                        width: 120,
+                        width: 180,
                         cellRenderer: (params) => {
                             if (!params.value) return '';
                             // Format lead source for display
@@ -1106,6 +1148,24 @@
                         }
                     },
                     {
+                        headerName: "Lead Quality",
+                        field: "lead_quality",
+                        width: 100,
+                        cellRenderer: (params) => {
+                            if (!params.value) return 'NA';
+                            return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+                        }
+                    },
+                    {
+                        headerName: "Urgency",
+                        field: "urgency",
+                        width: 100,
+                        cellRenderer: (params) => {
+                            if (!params.value) return 'NA';
+                            return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+                        }
+                    },
+                    {
                         headerName: "Brochure",
                         field: "send_brochure",
                         width: 100,
@@ -1114,7 +1174,16 @@
                                 '<span class="brochure-sent">Sent</span>' : 
                                 '<span class="brochure-not-sent">Not Sent</span>';
                         }
-                    }
+                    },
+                    {
+                        headerName: "Comment",
+                        field: "comments",
+                        width: 150,
+                        cellRenderer: (params) => {
+                            if (!params.value) return 'NA';
+                            return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+                        }
+                    },
                 ];
 
                 const gridOptions = {
@@ -1297,38 +1366,143 @@
             }
 
             async loadLeadsFromAPI(queryString = '') {
-                try {
-                    const response = await fetch(`/student/leads?${queryString}`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.gridApi.setGridOption('rowData', data.data);
-                        console.log('Loaded leads:', data.data.length, 'Total:', data.total);
-                        
-                        // Update grid title with count
-                        const gridTitle = document.querySelector('.grid-title');
-                        gridTitle.textContent = `All Leads (${data.total})`;
-                        
-                        // Update UI based on applied filters from backend
-                        if (data.filters_applied) {
-                            this.updateFiltersFromBackend(data.filters_applied);
-                        }
-                    } else {
-                        console.error('API Error:', data.message);
-                        this.gridApi.setGridOption('rowData', []);
-                        document.querySelector('.grid-title').textContent = 'All Leads (0)';
-                    }
-                } catch (error) {
-                    console.error('Error loading leads:', error);
-                    this.gridApi.setGridOption('rowData', []);
-                    document.querySelector('.grid-title').textContent = 'All Leads (0)';
+    try {
+        const response = await fetch(`/student/leads?${queryString}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            this.gridApi.setGridOption('rowData', data.data);
+            console.log('Loaded leads:', data.data.length, 'Total:', data.total);
+            
+            // Calculate lead source counts
+            const leadSourceCounts = {};
+            const leadSourceLabels = {
+                'marketing_ravi': 'Ravi',
+                'marketing_ashok': 'Ashok',
+                'marketing_kumar': 'Kumar',
+                'google_maps': 'GMB',
+                'social_media': 'Social Media',
+                'referral': 'Referral',
+                'direct_walkin': 'Direct Walk-in',
+                'website': 'Website',
+                'google_ads': 'Google Ads',
+                'other': 'Other'
+            };
+            
+            // Count occurrences of each lead source
+            data.data.forEach(lead => {
+                if (lead.lead_source) {
+                    leadSourceCounts[lead.lead_source] = (leadSourceCounts[lead.lead_source] || 0) + 1;
                 }
+            });
+            
+            // Update grid title
+            const gridTitle = document.querySelector('.grid-title');
+            gridTitle.textContent = `All Leads (${data.total})`;
+            
+            // Create or update stat cards container
+            let statsContainer = document.querySelector('.lead-source-stats');
+            if (!statsContainer) {
+                statsContainer = document.createElement('div');
+                statsContainer.className = 'lead-source-stats';
+                statsContainer.style.cssText = `
+                    display: flex;
+                    gap: 8px;
+                    flex-wrap: wrap;
+                    margin: 12px 0;
+                    align-items: center;
+                `;
+                
+                // Insert after the grid title
+                const titleElement = document.querySelector('.grid-title');
+                titleElement.parentNode.insertBefore(statsContainer, titleElement.nextSibling);
             }
+            
+            // Clear existing cards
+            statsContainer.innerHTML = '';
+            
+            // Create stat cards for sources with count > 0
+            Object.entries(leadSourceCounts).forEach(([source, count]) => {
+                if (count > 0) {
+                    const label = leadSourceLabels[source] || source;
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.cssText = `
+                        background: #f4f4f4;
+                        border: 1px solid #e0e0e0;
+                        border-radius: 6px;
+                        padding: 6px 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 0.75rem;
+                        color: #525252;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                        transition: all 0.2s ease;
+                        cursor: default;
+                    `;
+                    
+                    card.innerHTML = `
+                        <span style="font-weight: 500; color: #161616;">${label}</span>
+                        <span style="
+                            background: #0f62fe;
+                            color: white;
+                            border-radius: 10px;
+                            padding: 2px 6px;
+                            font-size: 0.7rem;
+                            font-weight: 600;
+                            min-width: 20px;
+                            text-align: center;
+                        ">${count}</span>
+                    `;
+                    
+                    // Add hover effect
+                    card.addEventListener('mouseenter', () => {
+                        card.style.transform = 'translateY(-1px)';
+                        card.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
+                    });
+                    
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transform = 'translateY(0)';
+                        card.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                    });
+                    
+                    statsContainer.appendChild(card);
+                }
+            });
+            
+            // Update UI based on applied filters from backend
+            if (data.filters_applied) {
+                this.updateFiltersFromBackend(data.filters_applied);
+            }
+        } else {
+            console.error('API Error:', data.message);
+            this.gridApi.setGridOption('rowData', []);
+            document.querySelector('.grid-title').textContent = 'All Leads (0)';
+            
+            // Clear stats if error
+            const statsContainer = document.querySelector('.lead-source-stats');
+            if (statsContainer) {
+                statsContainer.innerHTML = '';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading leads:', error);
+        this.gridApi.setGridOption('rowData', []);
+        document.querySelector('.grid-title').textContent = 'All Leads (0)';
+        
+        // Clear stats if error
+        const statsContainer = document.querySelector('.lead-source-stats');
+        if (statsContainer) {
+            statsContainer.innerHTML = '';
+        }
+    }
+}
 
             updateFiltersFromBackend(filtersApplied) {
                 // This method updates the UI to reflect the filters that were actually applied
