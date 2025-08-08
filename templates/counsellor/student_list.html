@@ -30,6 +30,8 @@
             --color-blue: #0f62fe;
             --color-green: #24a148;
             --color-red: #da1e28;
+            --color-yellow: #f1c21b;
+            --color-purple: #8a3ffc;
         }
 
         * {
@@ -97,17 +99,34 @@
             color: var(--color-orange);
         }
 
-        /* Main Layout - Collapsible Filters */
+        /* Main Layout - Smart Collapsible Layout */
         .main-container {
             display: grid;
-            grid-template-columns: 320px 1fr;
+            grid-template-columns: 320px 1fr 400px;
             height: calc(100vh - 72px);
             overflow: hidden;
             transition: grid-template-columns 0.3s ease;
         }
 
         .main-container.filters-collapsed {
-            grid-template-columns: 50px 1fr;
+            grid-template-columns: 50px 1fr 400px;
+        }
+
+        .main-container.details-hidden {
+            grid-template-columns: 320px 1fr 0px;
+        }
+
+        .main-container.filters-collapsed.details-hidden {
+            grid-template-columns: 50px 1fr 0px;
+        }
+
+        /* Smart layout: when details open, auto-collapse filters on smaller screens */
+        .main-container.smart-layout {
+            grid-template-columns: 50px 1fr 400px;
+        }
+
+        .main-container.smart-layout.details-hidden {
+            grid-template-columns: 320px 1fr 0px;
         }
 
         /* Column 1: Collapsible Filters Form */
@@ -171,7 +190,6 @@
             transform: rotate(180deg);
         }
 
-        /* Collapsed state - show expand icon in center */
         .collapsed-expand-btn {
             position: absolute;
             top: 50%;
@@ -217,7 +235,6 @@
             pointer-events: none;
         }
 
-        /* Active Filters Indicator */
         .active-filters-indicator {
             position: absolute;
             top: 1rem;
@@ -246,7 +263,6 @@
             gap: 0.5rem;
         }
 
-        /* Follow-up Date Quick Select */
         .followup-quick-select {
             display: flex;
             gap: 0.5rem;
@@ -275,6 +291,7 @@
             border-color: var(--color-blue);
         }
 
+        /* Multi-select and form controls styling */
         .bx--multi-select {
             position: relative;
         }
@@ -359,7 +376,6 @@
             flex: 1;
         }
 
-        /* Single Select Styling */
         .bx--select {
             position: relative;
         }
@@ -394,7 +410,6 @@
             pointer-events: none;
         }
 
-        /* Date Picker Styling */
         .bx--date-picker {
             position: relative;
         }
@@ -571,6 +586,333 @@
             overflow: hidden;
         }
 
+        /* Column 3: Row Details Panel */
+        .details-column {
+            background: white;
+            border-left: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform: translateX(0);
+        }
+
+        .main-container.details-hidden .details-column {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .details-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .details-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-blue), var(--color-purple));
+        }
+
+        .details-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-details-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-secondary);
+        }
+
+        .close-details-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--color-text-primary);
+            transform: scale(1.1);
+        }
+
+        .details-content {
+            flex: 1;
+            padding: 0;
+            overflow-y: auto;
+            background: #fafbfc;
+        }
+
+        /* Student Info Card */
+        .student-info-card {
+            background: white;
+            margin: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .student-header {
+            background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-purple) 100%);
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .student-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20px;
+            width: 100px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(15deg);
+        }
+
+        .student-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .student-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verified-badge {
+            width: 18px;
+            height: 18px;
+        }
+
+        .student-contact {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin: 0;
+            font-family: monospace;
+        }
+
+        /* Form Fields */
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--color-blue);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .field-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            background: white;
+            transition: all 0.15s ease;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.1);
+        }
+
+        .field-input:disabled {
+            background: #f3f4f6;
+            color: var(--color-text-secondary);
+            cursor: not-allowed;
+        }
+
+        .field-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .field-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-new {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-contacted {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-qualified {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-converted {
+            background: #ecfccb;
+            color: #65a30d;
+        }
+
+        .status-lost {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Action Buttons */
+        .details-actions {
+            padding: 1.5rem;
+            border-top: 1px solid var(--color-border);
+            background: white;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: var(--color-green);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-save:hover {
+            background: #16a34a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--color-text-secondary);
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #f3f4f6;
+            color: var(--color-text-primary);
+        }
+
+        .btn-edit {
+            background: var(--color-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-edit:hover {
+            background: #0353e9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 98, 254, 0.3);
+        }
+
         /* ag-Grid Styling */
         .ag-theme-alpine {
             --ag-background-color: white;
@@ -584,33 +926,43 @@
             --ag-border-color: var(--color-border);
         }
 
-        /* Status badges */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            width: fit-content;
-        }
-
-        
-
         /* Brochure status styling */
         .brochure-sent { color: #24a148; font-weight: 500; }
         .brochure-not-sent { color: #da1e28; font-weight: 500; }
 
+        /* Loading States */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* Responsive */
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
             .main-container {
-                grid-template-columns: 280px 1fr;
+                grid-template-columns: 280px 1fr 350px;
             }
             
             .main-container.filters-collapsed {
-                grid-template-columns: 50px 1fr;
+                grid-template-columns: 50px 1fr 350px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 260px 1fr 320px;
+            }
+            
+            .main-container.filters-collapsed {
+                grid-template-columns: 50px 1fr 320px;
             }
         }
 
@@ -620,7 +972,7 @@
                 height: auto;
             }
             
-            .filters-column {
+            .filters-column, .details-column {
                 display: none;
             }
         }
@@ -643,8 +995,8 @@
         </div>
     </div>
 
-    <!-- Main Container - Collapsible Filters -->
-    <div class="main-container" id="main-container">
+    <!-- Main Container - Three Column Layout -->
+    <div class="main-container details-hidden" id="main-container">
         <!-- Column 1: Collapsible Filters Form -->
         <div class="filters-column">
             <div class="filters-header">
@@ -681,11 +1033,8 @@
                     </div>
                 </div>
 
-                
-
                 <!-- Course Filter (Single Select) -->
-                
-<div class="form-group">
+                <div class="form-group">
                     <div class="bx--select">
                         <select class="bx--select__input" id="course-select">
                             <option value="">All courses</option>
@@ -695,15 +1044,13 @@
                             <option value="cybersecurity">Cybersecurity</option>
                             <option value="java_fullstack_ai">Java Full Stack with AI</option>
                             <option value="data_analytics_ai">Data Analytics & Gen AI</option>
-                            <option value="video_editing_graphic_design">Video Editing & Graphic Design/option>
-                            
+                            <option value="video_editing_graphic_design">Video Editing & Graphic Design</option>
                         </select>
                         <svg class="bx--select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
                             <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                         </svg>
                     </div>
                 </div>
-
 
                 <!-- Counsellor Filter (Multi Select) -->
                 <div class="form-group">
@@ -753,12 +1100,10 @@
                                     <input type="checkbox" id="source-marketing_ravi" value="marketing_ravi">
                                     <label for="source-marketing_ravi">Marketing Ravi</label>
                                 </div>
-
                                 <div class="bx--multi-select__option" data-checkbox="source-marketing_ashok">
                                     <input type="checkbox" id="source-marketing_ashok" value="marketing_ashok">
                                     <label for="source-marketing_ashok">Marketing Ashok</label>
                                 </div>
-                                
                                 <div class="bx--multi-select__option" data-checkbox="source-google_maps">
                                     <input type="checkbox" id="source-google_maps" value="google_maps">
                                     <label for="source-google_maps">Google Maps (GMB)</label>
@@ -881,6 +1226,252 @@
                 <div id="leads-grid" class="ag-theme-alpine" style="height: 100%; width: 100%;"></div>
             </div>
         </div>
+
+        <!-- Column 3: Row Details Panel -->
+        <div class="details-column" id="details-column">
+            <div class="details-header">
+                <h3 class="details-title">
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Lead Details
+                </h3>
+                <button class="close-details-btn" id="close-details-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="details-content">
+                <!-- Student Info Card -->
+                <div class="student-info-card">
+                    <div class="student-header">
+                        <div class="student-avatar" id="student-avatar">
+                            NA
+                        </div>
+                        <h3 class="student-name" id="student-name">
+                            Select a lead
+                            <svg class="verified-badge" viewBox="0 0 24 24" fill="none" style="display: none;" id="verified-badge">
+                                <circle cx="12" cy="12" r="12" fill="#1d9bf0"/>
+                                <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </h3>
+                        <p class="student-contact" id="student-contact">
+                            Click on a row to view details
+                        </p>
+                        
+                    </div>
+                    
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                            Basic Information
+                        </h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="field-label">Student Name</label>
+                                <input type="text" class="field-input" id="edit-student-name" disabled>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Phone Number</label>
+                                <input type="tel" class="field-input" id="edit-phone-number" disabled>
+                            </div>
+                            <div class="form-field" style="display: none;">
+                                <label class="field-label">Email Address</label>
+                                <input type="email" class="field-input" id="edit-email" disabled>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Additional People</label>
+                                <input type="number" class="field-input" id="edit-additional-people" disabled min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Information Section -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+                            </svg>
+                            Course Information
+                        </h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="field-label">Interested Courses</label>
+                                <div class="bx--multi-select" data-field="interested_courses" id="edit-interested-courses-select">
+                                    <div class="bx--multi-select__wrapper">
+                                        <input type="text" class="bx--multi-select__input field-input" readonly placeholder="Select courses..." disabled>
+                                        <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
+                                            <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
+                                        </svg>
+                                        <div class="bx--multi-select__menu">
+                                            <div class="bx--multi-select__option" data-checkbox="course-data_science_ai">
+                                                <input type="checkbox" id="course-data_science_ai" value="data_science_ai">
+                                                <label for="course-data_science_ai">Data Science with AI</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-python_fullstack_ai">
+                                                <input type="checkbox" id="course-python_fullstack_ai" value="python_fullstack_ai">
+                                                <label for="course-python_fullstack_ai">Python Full Stack with AI</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-digital_marketing_ai">
+                                                <input type="checkbox" id="course-digital_marketing_ai" value="digital_marketing_ai">
+                                                <label for="course-digital_marketing_ai">Digital Marketing with AI</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-cybersecurity">
+                                                <input type="checkbox" id="course-cybersecurity" value="cybersecurity">
+                                                <label for="course-cybersecurity">Cybersecurity</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-java_fullstack_ai">
+                                                <input type="checkbox" id="course-java_fullstack_ai" value="java_fullstack_ai">
+                                                <label for="course-java_fullstack_ai">Java Full Stack with AI</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-data_analytics_ai">
+                                                <input type="checkbox" id="course-data_analytics_ai" value="data_analytics_ai">
+                                                <label for="course-data_analytics_ai">Data Analytics & Gen AI</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-video_editing_graphic_design">
+                                                <input type="checkbox" id="course-video_editing_graphic_design" value="video_editing_graphic_design">
+                                                <label for="course-video_editing_graphic_design">Video Editing & Graphic Design</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="selected-items" id="interested_courses-selected"></div>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Mode of Learning</label>
+                                <select class="field-input field-select" id="edit-mode" disabled>
+                                    <option value="">Select mode</option>
+                                    <option value="online">Online</option>
+                                    <option value="offline">Offline</option>
+                                    <option value="hybrid">Hybrid</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Slot Preference</label>
+                                <select class="field-input field-select" id="edit-slot-preference" disabled>
+                                    <option value="">Select slot</option>
+                                    <option value="morning">Morning</option>
+                                    <option value="afternoon">Afternoon</option>
+                                    <option value="evening">Evening</option>
+                                    <option value="flexible">Flexible</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lead Management Section -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2-7h-3V2h-2v2H8V2H6v2H3v2h18V4zM3 8v10c0 1.1.9 2 2 2h14c0-1.1-.9-2-2-2H5c-.55 0-1-.45-1-1V8H3z"/>
+                            </svg>
+                            Lead Management
+                        </h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="field-label">Lead Source</label>
+                                <select class="field-input field-select" id="edit-lead-source" disabled>
+                                    <option value="">Select source</option>
+                                    <option value="marketing_ravi">Marketing Ravi</option>
+                                    <option value="marketing_ashok">Marketing Ashok</option>
+                                    <option value="google_maps">Google Maps (GMB)</option>
+                                    <option value="social_media">Social Media</option>
+                                    <option value="referral">Referral</option>
+                                    <option value="direct_walkin">Direct Walk-in</option>
+                                    <option value="website">Website</option>
+                                    <option value="google_ads">Google Ads</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Counselled By</label>
+                                <select class="field-input field-select" id="edit-counselled-by" disabled>
+                                    <option value="">Select counsellor</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="ushmika">Ushmika</option>
+                                    <option value="pallavi">Pallavi</option>
+                                    <option value="taniath">Taniath</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Lead Quality</label>
+                                <select class="field-input field-select" id="edit-lead-quality" disabled>
+                                    <option value="">Select quality</option>
+                                    <option value="not_yet">Not Yet</option>
+                                    <option value="potential">Potential</option>
+                                    <option value="semi_potential">Semi-potential</option>
+                                    <option value="junk">Junk</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Urgency</label>
+                                <select class="field-input field-select" id="edit-urgency" disabled>
+                                    <option value="">Select urgency</option>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Next Follow-up Date</label>
+                                <input type="date" class="field-input" id="edit-next-followup" disabled>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Send Brochure</label>
+                                <select class="field-input field-select" id="edit-send-brochure" disabled>
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="form-section">
+                        <h4 class="section-title">
+                            <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>
+                            </svg>
+                            Comments & Notes
+                        </h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="field-label">Comments</label>
+                                <textarea class="field-input field-textarea" id="edit-comments" disabled placeholder="Add any notes or comments about this lead..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="details-actions">
+                <button class="btn-edit" id="edit-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    Edit Lead
+                </button>
+                
+                <button class="btn-save" id="save-btn" style="display: none;">
+                    <span class="loading-spinner" style="display: none;"></span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Save Changes
+                </button>
+                
+                <button class="btn-cancel" id="cancel-btn" style="display: none;">
+                    Cancel
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -891,14 +1482,436 @@
                 this.dateRangePicker = null;
                 this.followupDateRangePicker = null;
                 this.filtersCollapsed = false;
+                this.detailsHidden = true;
+                this.isEditing = false;
+                this.originalLeadData = null;
                 
                 this.initializeGrid();
                 this.initializeDatePickers();
                 this.initializeMultiSelects();
                 this.initializeFollowupQuickSelect();
                 this.initializeFiltersToggle();
+                this.initializeDetailsPanel();
                 this.bindEvents();
                 this.loadSampleData();
+            }
+
+            initializeDetailsPanel() {
+                const editBtn = document.getElementById('edit-btn');
+                const saveBtn = document.getElementById('save-btn');
+                const cancelBtn = document.getElementById('cancel-btn');
+                const closeBtn = document.getElementById('close-details-btn');
+
+                editBtn.addEventListener('click', () => this.enableEdit());
+                saveBtn.addEventListener('click', () => this.saveChanges());
+                cancelBtn.addEventListener('click', () => this.cancelEdit());
+                closeBtn.addEventListener('click', () => this.hideDetails());
+
+                // Initialize the courses multiselect in details panel
+                this.initializeCoursesMultiselect();
+            }
+
+            initializeCoursesMultiselect() {
+                const coursesSelect = document.getElementById('edit-interested-courses-select');
+                if (!coursesSelect) return;
+
+                const input = coursesSelect.querySelector('.bx--multi-select__input');
+                const menu = coursesSelect.querySelector('.bx--multi-select__menu');
+                const selectedContainer = coursesSelect.querySelector('.selected-items');
+                
+                // Toggle dropdown
+                input.addEventListener('click', () => {
+                    if (input.disabled) return;
+                    coursesSelect.classList.toggle('bx--multi-select--expanded');
+                });
+                
+                // Handle option clicks
+                const options = coursesSelect.querySelectorAll('.bx--multi-select__option');
+                options.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        if (input.disabled) return;
+                        
+                        const checkboxId = option.getAttribute('data-checkbox');
+                        const checkbox = document.getElementById(checkboxId);
+                        
+                        if (checkbox && e.target !== checkbox) {
+                            checkbox.checked = !checkbox.checked;
+                        }
+                        
+                        this.updateSelectedItems(coursesSelect, 'interested_courses');
+                    });
+                });
+                
+                // Handle direct checkbox changes
+                const checkboxes = coursesSelect.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        if (input.disabled) return;
+                        this.updateSelectedItems(coursesSelect, 'interested_courses');
+                    });
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#edit-interested-courses-select')) {
+                        coursesSelect.classList.remove('bx--multi-select--expanded');
+                    }
+                });
+            }
+
+            showDetails() {
+                this.detailsHidden = false;
+                const mainContainer = document.getElementById('main-container');
+                mainContainer.classList.remove('details-hidden');
+                
+                // Smart layout: auto-collapse filters when details open on smaller screens
+                if (window.innerWidth <= 1400 && !this.filtersCollapsed) {
+                    mainContainer.classList.add('smart-layout');
+                }
+            }
+
+            hideDetails() {
+                this.detailsHidden = true;
+                const mainContainer = document.getElementById('main-container');
+                mainContainer.classList.add('details-hidden');
+                mainContainer.classList.remove('smart-layout');
+                
+                this.selectedLead = null;
+                this.cancelEdit();
+                this.clearDetailsForm();
+            }
+
+            enableEdit() {
+                this.isEditing = true;
+                this.originalLeadData = { ...this.selectedLead };
+                
+                // Enable all regular form fields
+                document.querySelectorAll('.field-input:not(.bx--multi-select__input)').forEach(input => {
+                    input.disabled = false;
+                });
+
+                // Enable the courses multiselect
+                const coursesSelect = document.getElementById('edit-interested-courses-select');
+                if (coursesSelect) {
+                    const input = coursesSelect.querySelector('.bx--multi-select__input');
+                    if (input) input.disabled = false;
+                }
+
+                // Show/hide buttons
+                document.getElementById('edit-btn').style.display = 'none';
+                document.getElementById('save-btn').style.display = 'flex';
+                document.getElementById('cancel-btn').style.display = 'block';
+
+                // Update header title
+                document.querySelector('.details-title').innerHTML = `
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    Editing Lead
+                `;
+            }
+
+            cancelEdit() {
+                this.isEditing = false;
+                
+                // Disable all regular form fields
+                document.querySelectorAll('.field-input:not(.bx--multi-select__input)').forEach(input => {
+                    input.disabled = true;
+                });
+
+                // Disable the courses multiselect
+                const coursesSelect = document.getElementById('edit-interested-courses-select');
+                if (coursesSelect) {
+                    const input = coursesSelect.querySelector('.bx--multi-select__input');
+                    if (input) input.disabled = true;
+                }
+
+                // Show/hide buttons
+                document.getElementById('edit-btn').style.display = 'flex';
+                document.getElementById('save-btn').style.display = 'none';
+                document.getElementById('cancel-btn').style.display = 'none';
+
+                // Restore original data if it exists
+                if (this.originalLeadData) {
+                    this.populateDetailsForm(this.originalLeadData);
+                }
+
+                // Update header title
+                document.querySelector('.details-title').innerHTML = `
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Lead Details
+                `;
+
+                this.originalLeadData = null;
+            }
+
+            async saveChanges() {
+                if (!this.selectedLead || !this.isEditing) return;
+
+                const saveBtn = document.getElementById('save-btn');
+                const spinner = saveBtn.querySelector('.loading-spinner');
+                const icon = saveBtn.querySelector('svg');
+                
+                // Show loading state
+                spinner.style.display = 'inline-block';
+                icon.style.display = 'none';
+                saveBtn.disabled = true;
+
+                try {
+                    // Collect form data
+                    const updatedData = this.collectFormData();
+                    
+                    // Simulate API call
+                    await this.updateLeadAPI(this.selectedLead.id, updatedData);
+                    
+                    // Update grid data
+                    this.updateGridRow(updatedData);
+                    
+                    // Exit edit mode
+                    this.cancelEdit();
+                    
+                    // Show success feedback
+                    this.showNotification('Lead updated successfully!', 'success');
+                    
+                } catch (error) {
+                    console.error('Error saving lead:', error);
+                    this.showNotification('Failed to save changes. Please try again.', 'error');
+                } finally {
+                    // Hide loading state
+                    spinner.style.display = 'none';
+                    icon.style.display = 'inline-block';
+                    saveBtn.disabled = false;
+                }
+            }
+
+            collectFormData() {
+                // Get courses from multiselect
+                const coursesSelect = document.getElementById('edit-interested-courses-select');
+                const selectedCourses = [];
+                if (coursesSelect) {
+                    const checkboxes = coursesSelect.querySelectorAll('input[type="checkbox"]:checked');
+                    checkboxes.forEach(checkbox => {
+                        selectedCourses.push(checkbox.value);
+                    });
+                }
+
+                return {
+                    student_name: document.getElementById('edit-student-name').value,
+                    phone_number: document.getElementById('edit-phone-number').value,
+                    email: document.getElementById('edit-email').value,
+                    additional_people: parseInt(document.getElementById('edit-additional-people').value) || 0,
+                    interested_courses: selectedCourses,
+                    mode: document.getElementById('edit-mode').value,
+                    slot_preference: document.getElementById('edit-slot-preference').value,
+                    lead_source: document.getElementById('edit-lead-source').value,
+                    counselled_by: document.getElementById('edit-counselled-by').value,
+                    lead_quality: document.getElementById('edit-lead-quality').value,
+                    urgency: document.getElementById('edit-urgency').value,
+                    next_followup: document.getElementById('edit-next-followup').value,
+                    send_brochure: document.getElementById('edit-send-brochure').value === 'true',
+                    comments: document.getElementById('edit-comments').value
+                };
+            }
+
+            async updateLeadAPI(leadId, data) {
+                try {
+                    const response = await fetch(`/student/leads/${leadId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        throw new Error(result.message || 'Failed to update lead');
+                    }
+
+                    return result;
+                } catch (error) {
+                    console.error('API Error:', error);
+                    throw error;
+                }
+            }
+
+            updateGridRow(updatedData) {
+                if (!this.selectedLead) return;
+                
+                // Update the selected lead data
+                Object.assign(this.selectedLead, updatedData);
+                
+                // Update the grid
+                const rowNode = this.gridApi.getRowNode(this.selectedLead.id);
+                if (rowNode) {
+                    rowNode.setData(this.selectedLead);
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 500;
+                    z-index: 10000;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                `;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Animate out and remove
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
+            populateDetailsForm(lead) {
+                // Update student header
+                const initials = lead.student_name ? lead.student_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'NA';
+                document.getElementById('student-avatar').textContent = initials;
+                document.getElementById('student-name').innerHTML = `
+                    ${this.getVerifiedBadge(lead.is_verified)}
+                    ${lead.student_name || 'Unknown'}
+                `;
+
+                let desc = lead.phone_number || '';
+// if (lead.place) desc += '\n・' + lead.place;
+if (lead.state) desc += '・' + lead.state;
+document.getElementById('student-contact').textContent = desc || 'No contact info';
+
+                // Populate basic form fields
+                document.getElementById('edit-student-name').value = lead.student_name || '';
+                document.getElementById('edit-phone-number').value = lead.phone_number || '';
+                document.getElementById('edit-email').value = lead.email || '';
+                document.getElementById('edit-additional-people').value = lead.additional_people || 0;
+                
+                // Handle interested courses multiselect
+                this.populateCoursesMultiselect(lead.interested_courses);
+                
+                // Populate dropdown fields
+                document.getElementById('edit-mode').value = lead.mode || '';
+                document.getElementById('edit-slot-preference').value = lead.slot_preference || '';
+                document.getElementById('edit-lead-source').value = lead.lead_source || '';
+                document.getElementById('edit-counselled-by').value = lead.counselled_by || '';
+                document.getElementById('edit-lead-quality').value = lead.lead_quality || '';
+                document.getElementById('edit-urgency').value = lead.urgency || '';
+                document.getElementById('edit-next-followup').value = lead.next_followup || '';
+                document.getElementById('edit-send-brochure').value = lead.send_brochure ? 'true' : 'false';
+                document.getElementById('edit-comments').value = lead.comments || '';
+            }
+
+            populateCoursesMultiselect(interestedCourses) {
+                const coursesSelect = document.getElementById('edit-interested-courses-select');
+                if (!coursesSelect) return;
+
+                // Clear all checkboxes first
+                const checkboxes = coursesSelect.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // Handle courses data - it might be array or string
+                let courses = [];
+                if (Array.isArray(interestedCourses)) {
+                    courses = interestedCourses;
+                } else if (typeof interestedCourses === 'string') {
+                    courses = interestedCourses.split(',').map(c => c.trim());
+                }
+
+                // Map course names to values
+                const courseMapping = {
+                    'Data Science with AI': 'data_science_ai',
+                    'Python Full Stack with AI': 'python_fullstack_ai',
+                    'Digital Marketing with AI': 'digital_marketing_ai',
+                    'Cybersecurity': 'cybersecurity',
+                    'Java Full Stack with AI': 'java_fullstack_ai',
+                    'Data Analytics & Gen AI': 'data_analytics_ai',
+                    'Video Editing & Graphic Design': 'video_editing_graphic_design'
+                };
+
+                // Check the appropriate checkboxes
+                courses.forEach(course => {
+                    // Try direct value match first
+                    let checkbox = coursesSelect.querySelector(`input[value="${course}"]`);
+                    
+                    // If not found, try mapping from display name to value
+                    if (!checkbox && courseMapping[course]) {
+                        checkbox = coursesSelect.querySelector(`input[value="${courseMapping[course]}"]`);
+                    }
+                    
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+
+                // Update the multiselect display
+                this.updateSelectedItems(coursesSelect, 'interested_courses');
+            }
+
+            clearDetailsForm() {
+                // Clear student header
+                document.getElementById('student-avatar').textContent = 'NA';
+                document.getElementById('student-name').innerHTML = 'Select a lead';
+                document.getElementById('student-contact').textContent = 'Click on a row to view details';
+
+                // Clear all regular form fields
+                document.querySelectorAll('.field-input:not(.bx--multi-select__input)').forEach(input => {
+                    if (input.type === 'checkbox') {
+                        input.checked = false;
+                    } else {
+                        input.value = '';
+                    }
+                });
+
+                // Clear courses multiselect
+                const coursesSelect = document.getElementById('edit-interested-courses-select');
+                if (coursesSelect) {
+                    const checkboxes = coursesSelect.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    this.updateSelectedItems(coursesSelect, 'interested_courses');
+                }
+            }
+
+            getVerifiedBadge(isVerified) {
+                if (isVerified === 1) {
+                    return `<svg class="verified-badge" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="12" fill="#1d9bf0"/>
+                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>`;
+                } else if (isVerified === 3) {
+                    return `<svg class="verified-badge" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="12" fill="#ffd700"/>
+                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>`;
+                }
+                return '';
             }
 
             initializeDatePickers() {
@@ -931,11 +1944,12 @@
                         this.handleFilterSubmit();
                     }
                 });
-                // SET TODAY BUTTON AS ACTIVE ON INITIAL LOAD - ADD THIS
-    const todayBtn = document.querySelector('.quick-select-btn[data-range="created-today"]');
-    if (todayBtn) {
-        todayBtn.classList.add('active');
-    }
+                
+                // SET TODAY BUTTON AS ACTIVE ON INITIAL LOAD
+                const todayBtn = document.querySelector('.quick-select-btn[data-range="created-today"]');
+                if (todayBtn) {
+                    todayBtn.classList.add('active');
+                }
             }
 
             initializeFollowupQuickSelect() {
@@ -1032,7 +2046,7 @@
 
             initializeGrid() {
                 const columnDefs = [
-                                        {
+                    {
                         headerName: "Date",
                         field: "created_at",
                         width: 100,
@@ -1047,55 +2061,51 @@
                         }
                     },
                     {
-    headerName: "Name",
-    field: "student_name",
-    width: 180,
-    pinned: 'left',
-    cellRenderer: (params) => {
-        const initials = params.value ? params.value.split(' ').map(n => n[0]).join('').toUpperCase() : 'NA';
-        const additionalPeople = params.data.additional_people || 0;
-        const additionalLabel = additionalPeople > 0 ? `+${additionalPeople}` : '';
-        const isVerified = params.data.is_verified;
-        
-        // Twitter-like verified badges
-        let verifiedBadge = '';
-        if (isVerified === 1) {
-            // Blue verified badge (like Twitter blue checkmark)
-            verifiedBadge = `
-                <svg width="16" height="16" viewBox="0 0 24 24" style="margin-left: 4px;" fill="none">
-                    <circle cx="12" cy="12" r="12" fill="#1d9bf0"/>
-                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            `;
-        } else if (isVerified === 3) {
-            // Gold/yellow verified badge (like Twitter premium)
-            verifiedBadge = `
-                <svg width="16" height="16" viewBox="0 0 24 24" style="margin-left: 4px;" fill="none">
-                    <circle cx="12" cy="12" r="12" fill="#ffd700"/>
-                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            `;
-        }
-        
-        return `
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-weight: 500; font-size: 0.875rem; display: flex; align-items: center;">
-                        ${verifiedBadge} &nbsp; ${params.value || ''}
-                    </span>
-                    ${additionalLabel ? `<span style="font-size: 0.75rem; color: #0f62fe; font-weight: 500;">${additionalLabel}</span>` : ''}
-                </div>
-            </div>
-        `;
-    }
-},
+                        headerName: "Name",
+                        field: "student_name",
+                        width: 180,
+                        pinned: 'left',
+                        cellRenderer: (params) => {
+                            const additionalPeople = params.data.additional_people || 0;
+                            const additionalLabel = additionalPeople > 0 ? `+${additionalPeople}` : '';
+                            const isVerified = params.data.is_verified;
+                            
+                            // Twitter-like verified badges
+                            let verifiedBadge = '';
+                            if (isVerified === 1) {
+                                verifiedBadge = `
+                                    <svg width="16" height="16" viewBox="0 0 24 24" style="margin-left: 4px;" fill="none">
+                                        <circle cx="12" cy="12" r="12" fill="#1d9bf0"/>
+                                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                `;
+                            } else if (isVerified === 3) {
+                                verifiedBadge = `
+                                    <svg width="16" height="16" viewBox="0 0 24 24" style="margin-left: 4px;" fill="none">
+                                        <circle cx="12" cy="12" r="12" fill="#ffd700"/>
+                                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                `;
+                            }
+                            
+                            return `
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="display: flex; flex-direction: column;">
+                                        <span style="font-weight: 500; font-size: 0.875rem; display: flex; align-items: center;">
+                                            ${params.value || ''} ${verifiedBadge}
+                                        </span>
+                                        ${additionalLabel ? `<span style="font-size: 0.75rem; color: #0f62fe; font-weight: 500;">${additionalLabel}</span>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    },
                     {
                         headerName: "Phone Number",
                         field: "phone_number",
                         width: 200,
                         cellRenderer: (params) => {
                             if (!params.value) return '';
-                            // Format phone number for display
                             return `<span style="font-family: monospace;">${params.value}</span>`;
                         }
                     },
@@ -1116,7 +2126,6 @@
                             `;
                         }
                     },
-
                     {
                         headerName: "Counselled By",
                         field: "counselled_by",
@@ -1134,7 +2143,6 @@
                         width: 180,
                         cellRenderer: (params) => {
                             if (!params.value) return '';
-                            // Format lead source for display
                             return params.value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                         }
                     },
@@ -1183,7 +2191,7 @@
                             if (!params.value) return 'NA';
                             return params.value.charAt(0).toUpperCase() + params.value.slice(1);
                         }
-                    },
+                    }
                 ];
 
                 const gridOptions = {
@@ -1199,6 +2207,9 @@
                         if (selectedRows.length > 0) {
                             this.onRowSelected(selectedRows[0]);
                         }
+                    },
+                    onRowClicked: (event) => {
+                        this.onRowSelected(event.data);
                     },
                     suppressRowClickSelection: false,
                     rowHeight: 52,
@@ -1366,143 +2377,75 @@
             }
 
             async loadLeadsFromAPI(queryString = '') {
-    try {
-        const response = await fetch(`/student/leads?${queryString}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            this.gridApi.setGridOption('rowData', data.data);
-            console.log('Loaded leads:', data.data.length, 'Total:', data.total);
-            
-            // Calculate lead source counts
-            const leadSourceCounts = {};
-            const leadSourceLabels = {
-                'marketing_ravi': 'Ravi',
-                'marketing_ashok': 'Ashok',
-                'marketing_kumar': 'Kumar',
-                'google_maps': 'GMB',
-                'social_media': 'Social Media',
-                'referral': 'Referral',
-                'direct_walkin': 'Direct Walk-in',
-                'website': 'Website',
-                'google_ads': 'Google Ads',
-                'other': 'Other'
-            };
-            
-            // Count occurrences of each lead source
-            data.data.forEach(lead => {
-                if (lead.lead_source) {
-                    leadSourceCounts[lead.lead_source] = (leadSourceCounts[lead.lead_source] || 0) + 1;
+                try {
+                    const response = await fetch(`/student/leads?${queryString}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.gridApi.setGridOption('rowData', data.data);
+                        console.log('Loaded leads:', data.data.length, 'Total:', data.total);
+                        
+                        // Calculate lead source counts
+                        const leadSourceCounts = {};
+                        const leadSourceLabels = {
+                            'marketing_ravi': 'Ravi',
+                            'marketing_ashok': 'Ashok',
+                            'marketing_kumar': 'Kumar',
+                            'google_maps': 'GMB',
+                            'social_media': 'Social Media',
+                            'referral': 'Referral',
+                            'direct_walkin': 'Direct Walk-in',
+                            'website': 'Website',
+                            'google_ads': 'Google Ads',
+                            'other': 'Other'
+                        };
+                        
+                        // Count occurrences of each lead source
+                        data.data.forEach(lead => {
+                            if (lead.lead_source) {
+                                leadSourceCounts[lead.lead_source] = (leadSourceCounts[lead.lead_source] || 0) + 1;
+                            }
+                        });
+                        
+                        // Update grid title
+                        const gridTitle = document.querySelector('.grid-title');
+                        gridTitle.textContent = `All Leads (${data.total})`;
+                        
+                        // Create or update stat cards container
+                        this.updateStatsCards(leadSourceCounts, leadSourceLabels);
+                        
+                        // Update UI based on applied filters from backend
+                        if (data.filters_applied) {
+                            this.updateFiltersFromBackend(data.filters_applied);
+                        }
+                    } else {
+                        console.error('API Error:', data.message);
+                        this.gridApi.setGridOption('rowData', []);
+                        document.querySelector('.grid-title').textContent = 'All Leads (0)';
+                        
+                        // Clear stats if error
+                        const statsContainer = document.querySelector('.lead-source-stats');
+                        if (statsContainer) {
+                            statsContainer.innerHTML = '';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading leads:', error);
+                    this.gridApi.setGridOption('rowData', []);
+                    document.querySelector('.grid-title').textContent = 'All Leads (0)';
+                    
+                    // Clear stats if error
+                    const statsContainer = document.querySelector('.lead-source-stats');
+                    if (statsContainer) {
+                        statsContainer.innerHTML = '';
+                    }
                 }
-            });
-            
-            // Update grid title
-            const gridTitle = document.querySelector('.grid-title');
-            gridTitle.textContent = `All Leads (${data.total})`;
-            
-            // Create or update stat cards container
-            let statsContainer = document.querySelector('.lead-source-stats');
-            if (!statsContainer) {
-                statsContainer = document.createElement('div');
-                statsContainer.className = 'lead-source-stats';
-                statsContainer.style.cssText = `
-                    display: flex;
-                    gap: 8px;
-                    flex-wrap: wrap;
-                    margin: 12px 0;
-                    align-items: center;
-                `;
-                
-                // Insert after the grid title
-                const titleElement = document.querySelector('.grid-title');
-                titleElement.parentNode.insertBefore(statsContainer, titleElement.nextSibling);
             }
-            
-            // Clear existing cards
-            statsContainer.innerHTML = '';
-            
-            // Create stat cards for sources with count > 0
-            Object.entries(leadSourceCounts).forEach(([source, count]) => {
-                if (count > 0) {
-                    const label = leadSourceLabels[source] || source;
-                    const card = document.createElement('div');
-                    card.className = 'stat-card';
-                    card.style.cssText = `
-                        background: #f4f4f4;
-                        border: 1px solid #e0e0e0;
-                        border-radius: 6px;
-                        padding: 6px 10px;
-                        display: flex;
-                        align-items: center;
-                        gap: 6px;
-                        font-size: 0.75rem;
-                        color: #525252;
-                        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                        transition: all 0.2s ease;
-                        cursor: default;
-                    `;
-                    
-                    card.innerHTML = `
-                        <span style="font-weight: 500; color: #161616;">${label}</span>
-                        <span style="
-                            background: #0f62fe;
-                            color: white;
-                            border-radius: 10px;
-                            padding: 2px 6px;
-                            font-size: 0.7rem;
-                            font-weight: 600;
-                            min-width: 20px;
-                            text-align: center;
-                        ">${count}</span>
-                    `;
-                    
-                    // Add hover effect
-                    card.addEventListener('mouseenter', () => {
-                        card.style.transform = 'translateY(-1px)';
-                        card.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
-                    });
-                    
-                    card.addEventListener('mouseleave', () => {
-                        card.style.transform = 'translateY(0)';
-                        card.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                    });
-                    
-                    statsContainer.appendChild(card);
-                }
-            });
-            
-            // Update UI based on applied filters from backend
-            if (data.filters_applied) {
-                this.updateFiltersFromBackend(data.filters_applied);
-            }
-        } else {
-            console.error('API Error:', data.message);
-            this.gridApi.setGridOption('rowData', []);
-            document.querySelector('.grid-title').textContent = 'All Leads (0)';
-            
-            // Clear stats if error
-            const statsContainer = document.querySelector('.lead-source-stats');
-            if (statsContainer) {
-                statsContainer.innerHTML = '';
-            }
-        }
-    } catch (error) {
-        console.error('Error loading leads:', error);
-        this.gridApi.setGridOption('rowData', []);
-        document.querySelector('.grid-title').textContent = 'All Leads (0)';
-        
-        // Clear stats if error
-        const statsContainer = document.querySelector('.lead-source-stats');
-        if (statsContainer) {
-            statsContainer.innerHTML = '';
-        }
-    }
-}
 
             updateFiltersFromBackend(filtersApplied) {
                 // This method updates the UI to reflect the filters that were actually applied
@@ -1510,6 +2453,180 @@
                 
                 // Update active filters count
                 this.updateActiveFiltersCount();
+            }
+
+            updateStatsCards(leadSourceCounts, leadSourceLabels) {
+                let statsContainer = document.querySelector('.lead-source-stats');
+                if (!statsContainer) {
+                    statsContainer = document.createElement('div');
+                    statsContainer.className = 'lead-source-stats';
+                    statsContainer.style.cssText = `
+                        display: flex;
+                        gap: 8px;
+                        flex-wrap: wrap;
+                        margin: 12px 0;
+                        align-items: center;
+                    `;
+                    
+                    // Insert after the grid title
+                    const titleElement = document.querySelector('.grid-title');
+                    titleElement.parentNode.insertBefore(statsContainer, titleElement.nextSibling);
+                }
+                
+                // Clear existing cards
+                statsContainer.innerHTML = '';
+                
+                // Create stat cards for sources with count > 0
+                Object.entries(leadSourceCounts).forEach(([source, count]) => {
+                    if (count > 0) {
+                        const label = leadSourceLabels[source] || source;
+                        const card = document.createElement('div');
+                        card.className = 'stat-card';
+                        card.style.cssText = `
+                            background: #f4f4f4;
+                            border: 1px solid #e0e0e0;
+                            border-radius: 6px;
+                            padding: 6px 10px;
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            font-size: 0.75rem;
+                            color: #525252;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                            transition: all 0.2s ease;
+                            cursor: default;
+                        `;
+                        
+                        card.innerHTML = `
+                            <span style="font-weight: 500; color: #161616;">${label}</span>
+                            <span style="
+                                background: #0f62fe;
+                                color: white;
+                                border-radius: 10px;
+                                padding: 2px 6px;
+                                font-size: 0.7rem;
+                                font-weight: 600;
+                                min-width: 20px;
+                                text-align: center;
+                            ">${count}</span>
+                        `;
+                        
+                        // Add hover effect
+                        card.addEventListener('mouseenter', () => {
+                            card.style.transform = 'translateY(-1px)';
+                            card.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
+                        });
+                        
+                        card.addEventListener('mouseleave', () => {
+                            card.style.transform = 'translateY(0)';
+                            card.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                        });
+                        
+                        statsContainer.appendChild(card);
+                    }
+                });
+            }
+
+            generateSampleData() {
+                const sampleLeads = [
+                    {
+                        id: '1',
+                        created_at: '2024-08-08T10:30:00Z',
+                        student_name: 'Arjun Sharma',
+                        phone_number: '+91 9876543210',
+                        email: 'arjun.sharma@email.com',
+                        additional_people: 0,
+                        interested_courses: ['Data Science with AI', 'Python Full Stack with AI'],
+                        mode: 'online',
+                        slot_preference: 'evening',
+                        lead_source: 'marketing_ravi',
+                        counselled_by: 'ushmika',
+                        lead_quality: 'hot',
+                        urgency: 'high',
+                        next_followup: '2024-08-09',
+                        send_brochure: true,
+                        comments: 'Very interested, ready to join next batch',
+                        is_verified: 1
+                    },
+                    {
+                        id: '2',
+                        created_at: '2024-08-08T14:15:00Z',
+                        student_name: 'Priya Patel',
+                        phone_number: '+91 8765432109',
+                        email: 'priya.patel@email.com',
+                        additional_people: 2,
+                        interested_courses: ['Digital Marketing with AI'],
+                        mode: 'offline',
+                        slot_preference: 'morning',
+                        lead_source: 'google_maps',
+                        counselled_by: 'pallavi',
+                        lead_quality: 'warm',
+                        urgency: 'medium',
+                        next_followup: '2024-08-10',
+                        send_brochure: false,
+                        comments: 'Needs more information about course duration',
+                        is_verified: 0
+                    },
+                    {
+                        id: '3',
+                        created_at: '2024-08-08T16:45:00Z',
+                        student_name: 'Rahul Kumar',
+                        phone_number: '+91 7654321098',
+                        email: 'rahul.kumar@email.com',
+                        additional_people: 1,
+                        interested_courses: ['Cybersecurity', 'Java Full Stack with AI'],
+                        mode: 'hybrid',
+                        slot_preference: 'flexible',
+                        lead_source: 'social_media',
+                        counselled_by: 'not_yet',
+                        lead_quality: 'cold',
+                        urgency: 'low',
+                        next_followup: '2024-08-12',
+                        send_brochure: true,
+                        comments: 'Still researching options',
+                        is_verified: 3
+                    },
+                    {
+                        id: '4',
+                        created_at: '2024-08-08T11:20:00Z',
+                        student_name: 'Sneha Reddy',
+                        phone_number: '+91 6543210987',
+                        email: 'sneha.reddy@email.com',
+                        additional_people: 0,
+                        interested_courses: ['Data Analytics & Gen AI'],
+                        mode: 'online',
+                        slot_preference: 'afternoon',
+                        lead_source: 'website',
+                        counselled_by: 'taniath',
+                        lead_quality: 'hot',
+                        urgency: 'high',
+                        next_followup: '2024-08-09',
+                        send_brochure: true,
+                        comments: 'Ready to start immediately',
+                        is_verified: 1
+                    },
+                    {
+                        id: '5',
+                        created_at: '2024-08-08T09:00:00Z',
+                        student_name: 'Vikram Singh',
+                        phone_number: '+91 5432109876',
+                        email: 'vikram.singh@email.com',
+                        additional_people: 3,
+                        interested_courses: ['Video Editing & Graphic Design'],
+                        mode: 'offline',
+                        slot_preference: 'morning',
+                        lead_source: 'referral',
+                        counselled_by: 'ushmika',
+                        lead_quality: 'warm',
+                        urgency: 'medium',
+                        next_followup: '2024-08-11',
+                        send_brochure: false,
+                        comments: 'Referred by previous student',
+                        is_verified: 0
+                    }
+                ];
+                
+                return sampleLeads;
             }
 
             getFilterFormData() {
@@ -1587,7 +2704,7 @@
                 console.log('Filter query params:', queryParams.toString());
                 console.log('Form data:', formData);
                 
-                // Make API call to FastAPI backend
+                // Make API call
                 this.loadLeadsFromAPI(queryParams.toString());
                 
                 // Update URL
@@ -1641,26 +2758,48 @@
 
             async onRowSelected(lead) {
                 try {
-                    // For now, just log the selected lead
                     console.log('Selected lead:', lead);
+                    
+                    // If currently editing, cancel edit mode first
+                    if (this.isEditing) {
+                        this.cancelEdit();
+                    }
+                    
+                    this.selectedLead = lead;
+                    
+                    // Show details panel
+                    this.showDetails();
+                    
+                    // Populate form with lead data
+                    this.populateDetailsForm(lead);
+                    
+                    // Highlight selected row
+                    this.gridApi.forEachNode((node) => {
+                        if (node.data.id === lead.id) {
+                            node.setSelected(true);
+                        }
+                    });
+                    
                 } catch (error) {
                     console.error('Error loading lead details:', error);
                 }
             }
 
             loadSampleData() {
-    // Load initial data with today's filter applied
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-    
-    const queryParams = new URLSearchParams();
-    queryParams.append('start_date', todayStr);
-    queryParams.append('end_date', todayStr);
-    
-    console.log('Loading initial data for today:', todayStr);
-    this.loadLeadsFromAPI(queryParams.toString());
-}
+                // Load initial data with today's filter applied
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+                
+                const queryParams = new URLSearchParams();
+                queryParams.append('start_date', todayStr);
+                queryParams.append('end_date', todayStr);
+                
+                console.log('Loading initial data for today:', todayStr);
+                this.loadLeadsFromAPI(queryParams.toString());
+            }
         }
+
+        
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', () => {

@@ -419,22 +419,58 @@ async def get_student_leads(
             }
         )
 
+# Add this to your students.py router file
+from typing import Optional, List
+from fastapi import Query, Body
+from pydantic import BaseModel
+import json
+from datetime import datetime
 
-@router.get("/leads/{lead_id}")
+# Pydantic model for lead update request
+class LeadUpdateRequest(BaseModel):
+    student_name: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    additional_people: Optional[int] = None
+    interested_courses: Optional[List[str]] = None
+    mode: Optional[str] = None
+    slot_preference: Optional[str] = None
+    lead_source: Optional[str] = None
+    counselled_by: Optional[str] = None
+    lead_quality: Optional[str] = None
+    urgency: Optional[str] = None
+    next_followup: Optional[str] = None
+    send_brochure: Optional[bool] = None
+    comments: Optional[str] = None
+    place: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    purpose: Optional[str] = None
+    college_name: Optional[str] = None
+    passout_year: Optional[int] = None
+    degree: Optional[str] = None
+    fee_quoted: Optional[float] = None
+
+@router.put("/leads/{lead_id}")
 @auth_required(['counsellor', 'admin'])
-async def get_student_lead_details(
-    lead_id: int,
+async def update_student_lead(
     request: Request,
     db: AsyncClient = Depends(get_db)
 ):
     """
-    Get detailed information for a specific student lead using Supabase SDK methods
+    Update student lead details
     """
     try:
-        # Fetch lead details using .eq() method
-        result = await db.table('profiles').select('*').eq('id', lead_id).eq('is_active', 0).single().execute()
+        # Extract lead_id from path parameters
+        lead_id = int(request.path_params.get('lead_id'))
         
-        if not result.data:
+        # Get the request body manually
+        body = await request.json()
+        
+        # 1. First check if the lead exists and is a student profile
+        existing_result = await db.table('profiles').select('*').eq('id', lead_id).eq('is_active', 0).single().execute()
+        
+        if not existing_result.data:
             return JSONResponse(
                 status_code=404,
                 content={
@@ -443,270 +479,142 @@ async def get_student_lead_details(
                 }
             )
         
-        lead = result.data
+        # 2. Prepare update data - only include fields that are provided
+        update_data = {}
         
-        # Map is_verified to status
-        status_mapping = {
-            0: 'new',
-            1: 'contacted',
-            2: 'qualified',
-            3: 'converted',
-            4: 'rejected'
+        # Map frontend field names to database field names
+        field_mapping = {
+            'student_name': 'name',
+            'phone_number': 'phone_number',
+            'email': 'email',
+            'additional_people': 'additional_people',
+            'mode': 'mode',
+            'slot_preference': 'slot_preference',
+            'lead_source': 'lead_source',
+            'counselled_by': 'counselled_by',
+            'lead_quality': 'lead_quality',
+            'urgency': 'urgency',
+            'next_followup': 'next_follow_up',
+            'send_brochure': 'send_brochure',
+            'comments': 'comments',
+            'place': 'place',
+            'state': 'state',
+            'country': 'country',
+            'purpose': 'purpose',
+            'college_name': 'college_name',
+            'passout_year': 'passout_year',
+            'degree': 'degree',
+            'fee_quoted': 'fee_quoted'
         }
         
-        # Parse interested courses if it's JSON string
-        interested_courses = []
-        if lead.get('interested_courses'):
-            try:
-                if isinstance(lead['interested_courses'], str):
-                    import json
+        # Process each field from the request body
+        for frontend_field, db_field in field_mapping.items():
+            if frontend_field in body:
+                value = body[frontend_field]
+                
+                # Handle None values
+                if value is None:
+                    continue
+                    
+                # Handle empty strings - convert to None for certain fields that don't allow empty strings
+                if value == "":
+                    # Fields that should be set to NULL when empty
+                    if frontend_field in ['next_followup', 'passout_year', 'fee_quoted']:
+                        update_data[db_field] = None
+                        continue
+                    # For other string fields, allow empty strings
+                    else:
+                        update_data[db_field] = value
+                        continue
+                
+                # Handle next_followup date conversion
+                if frontend_field == 'next_followup' and value:
                     try:
-                        interested_courses = json.loads(lead['interested_courses'])
-                    except json.JSONDecodeError:
-                        interested_courses = [course.strip() for course in lead['interested_courses'].split(',') if course.strip()]
-                elif isinstance(lead['interested_courses'], list):
-                    interested_courses = lead['interested_courses']
+                        # Convert YYYY-MM-DD to ISO timestamp
+                        update_data[db_field] = f"{value}T00:00:00"
+                    except:
+                        update_data[db_field] = value
+                else:
+                    update_data[db_field] = value
+        
+        # 3. Handle interested_courses specially (convert array to JSON string)
+        if 'interested_courses' in body and body['interested_courses'] is not None:
+            # Store the course values as-is (with underscores) since that's your database format
+            update_data['interested_courses'] = json.dumps(body['interested_courses'])
+        
+        # 4. Add updated_at timestamp
+        update_data['updated_at'] = datetime.utcnow().isoformat()
+        
+        # 5. Perform the update
+        result = await db.table('profiles').update(update_data).eq('id', lead_id).eq('is_active', 0).execute()
+        
+        if not result.data:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "success": False,
+                    "message": "Failed to update lead"
+                }
+            )
+        
+        # 6. Fetch and return the updated lead data
+        updated_result = await db.table('profiles').select('*').eq('id', lead_id).single().execute()
+        updated_lead = updated_result.data
+        
+        # Parse interested_courses JSON string back to array for response
+        interested_courses = []
+        if updated_lead.get('interested_courses'):
+            try:
+                interested_courses = json.loads(updated_lead['interested_courses'])
             except:
                 interested_courses = []
         
+        # 7. Format the response data
         formatted_lead = {
-            "id": lead.get('id'),
-            "user_id": lead.get('user_id'),
-            "student_name": lead.get('name', ''),
-            "phone_number": lead.get('phone_number', ''),
-            "email": lead.get('email', ''),
-            "status": status_mapping.get(lead.get('is_verified', 0), 'new'),
-            "location": lead.get('place', ''),
-            "state": lead.get('state', ''),
-            "country": lead.get('country', ''),
-            "purpose": lead.get('purpose', ''),
-            "college_name": lead.get('college_name', ''),
-            "passout_year": lead.get('passout_year'),
-            "degree": lead.get('degree', ''),
-            "lead_source": lead.get('lead_source', ''),
-            "mode": lead.get('mode', ''),
-            "slot_preference": lead.get('slot_preference', ''),
-            "counselled_by": lead.get('counselled_by', ''),
-            "urgency": lead.get('urgency', ''),
+            "id": updated_lead.get('id'),
+            "user_id": updated_lead.get('user_id'),
+            "student_name": updated_lead.get('name', ''),
+            "phone_number": updated_lead.get('phone_number', ''),
+            "email": updated_lead.get('email', ''),
+            "place": updated_lead.get('place', ''),
+            "state": updated_lead.get('state', ''),
+            "country": updated_lead.get('country', ''),
+            "purpose": updated_lead.get('purpose', ''),
+            "college_name": updated_lead.get('college_name', ''),
+            "passout_year": updated_lead.get('passout_year'),
+            "degree": updated_lead.get('degree', ''),
+            "lead_source": updated_lead.get('lead_source', ''),
+            "mode": updated_lead.get('mode', ''),
+            "slot_preference": updated_lead.get('slot_preference', ''),
+            "counselled_by": updated_lead.get('counselled_by', ''),
+            "urgency": updated_lead.get('urgency', ''),
             "interested_courses": interested_courses,
-            "comments": lead.get('comments', ''),
-            "send_brochure": lead.get('send_brochure', False),
-            "fee_quoted": lead.get('fee_quoted'),
-            "lead_quality": lead.get('lead_quality', ''),
-            "additional_people": lead.get('additional_people', 0),
-            "created_at": lead.get('created_at'),
-            "updated_at": lead.get('updated_at')
+            "comments": updated_lead.get('comments', ''),
+            "send_brochure": updated_lead.get('send_brochure', False),
+            "fee_quoted": updated_lead.get('fee_quoted'),
+            "lead_quality": updated_lead.get('lead_quality', ''),
+            "is_verified": updated_lead.get('is_verified', 0),
+            "additional_people": updated_lead.get('additional_people', 0),
+            "next_follow_up": updated_lead.get('next_follow_up'),
+            "created_at": updated_lead.get('created_at'),
+            "updated_at": updated_lead.get('updated_at')
         }
         
         return JSONResponse(
             content={
                 "success": True,
+                "message": "Lead updated successfully",
                 "data": formatted_lead
             }
         )
         
     except Exception as e:
-        print(f"Error fetching lead details: {str(e)}")
+        print(f"Error updating lead: {str(e)}")
         return JSONResponse(
             status_code=500,
             content={
                 "success": False,
-                "message": "Failed to fetch lead details",
-                "error": str(e)
-            }
-        )
-
-
-@router.post("/leads/{lead_id}/comment")
-@auth_required(['counsellor', 'admin'])
-async def update_lead_comment(
-    lead_id: int,
-    request: Request,
-    db: AsyncClient = Depends(get_db)
-):
-    """
-    Update comment for a specific lead using Supabase SDK methods
-    """
-    try:
-        # Get comment from request body
-        body = await request.json()
-        comment = body.get('comment', '').strip()
-        
-        # Update the lead comment using .update() and .eq() methods
-        result = await db.table('profiles').update({
-            'comments': comment,
-            'updated_at': 'now()'
-        }).eq('id', lead_id).eq('is_active', 0).eq('role', 'student').execute()
-        
-        if not result.data:
-            return JSONResponse(
-                status_code=404,
-                content={
-                    "success": False,
-                    "message": "Lead not found or update failed"
-                }
-            )
-        
-        return JSONResponse(
-            content={
-                "success": True,
-                "message": "Comment updated successfully",
-                "data": {
-                    "id": lead_id,
-                    "comment": comment
-                }
-            }
-        )
-        
-    except Exception as e:
-        print(f"Error updating comment: {str(e)}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "message": "Failed to update comment",
-                "error": str(e)
-            }
-        )
-
-
-# Additional useful endpoints you might want to add:
-
-@router.patch("/leads/{lead_id}/status")
-@auth_required(['counsellor', 'admin'])
-async def update_lead_status(
-    lead_id: int,
-    request: Request,
-    db: AsyncClient = Depends(get_db)
-):
-    """
-    Update status for a specific lead using Supabase SDK methods
-    """
-    try:
-        body = await request.json()
-        new_status = body.get('status', '').strip().lower()
-        
-        # Validate status
-        status_mapping = {
-            'new': 0,
-            'contacted': 1,
-            'qualified': 2,
-            'converted': 3,
-            'rejected': 4
-        }
-        
-        if new_status not in status_mapping:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "success": False,
-                    "message": f"Invalid status. Must be one of: {', '.join(status_mapping.keys())}"
-                }
-            )
-        
-        # Update the lead status using .update() and .eq() methods
-        result = await db.table('profiles').update({
-            'is_verified': status_mapping[new_status],
-            'updated_at': 'now()'
-        }).eq('id', lead_id).eq('is_active', 0).execute()
-        
-        if not result.data:
-            return JSONResponse(
-                status_code=404,
-                content={
-                    "success": False,
-                    "message": "Lead not found or update failed"
-                }
-            )
-        
-        return JSONResponse(
-            content={
-                "success": True,
-                "message": f"Lead status updated to {new_status}",
-                "data": {
-                    "id": lead_id,
-                    "status": new_status
-                }
-            }
-        )
-        
-    except Exception as e:
-        print(f"Error updating lead status: {str(e)}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "message": "Failed to update lead status",
-                "error": str(e)
-            }
-        )
-
-
-@router.get("/leads/stats/summary")
-@auth_required(['counsellor', 'admin'])
-async def get_leads_summary_stats(
-    request: Request,
-    db: AsyncClient = Depends(get_db)
-):
-    """
-    Get summary statistics for leads using Supabase SDK methods
-    """
-    try:
-        # Get total leads count
-        total_result = await db.table('profiles').select('id', count='exact').eq('is_active', 0).execute()
-        total_leads = total_result.count
-        
-        # Get status distribution
-        status_stats = {}
-        status_mapping = {
-            0: 'new',
-            1: 'contacted', 
-            2: 'qualified',
-            3: 'converted',
-            4: 'rejected'
-        }
-        
-        for status_value, status_name in status_mapping.items():
-            result = await db.table('profiles').select('id', count='exact').eq('is_active', 0).eq('is_verified', status_value).execute()
-            status_stats[status_name] = result.count
-        
-        # Get recent leads (last 7 days)
-        from datetime import datetime, timedelta
-        seven_days_ago = (datetime.now() - timedelta(days=7)).isoformat()
-        
-        recent_result = await db.table('profiles').select('id', count='exact').eq('is_active', 0).gte('created_at', seven_days_ago).execute()
-        recent_leads = recent_result.count
-        
-        return JSONResponse(
-            content={
-                "success": True,
-                "data": {
-                    "total_leads": total_leads,
-                    "recent_leads": recent_leads,
-                    "status_distribution": status_stats,
-                    "conversion_rate": round((status_stats.get('converted', 0) / total_leads * 100), 2) if total_leads > 0 else 0
-                }
-            }
-        )
-        
-    except Exception as e:
-        print(f"Error fetching leads summary: {str(e)}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "message": "Failed to fetch leads summary",
-                "error": str(e)
-            }
-        )
-        
-    except Exception as e:
-        print(f"Error updating comment: {str(e)}")
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "message": "Failed to update comment",
+                "message": "Failed to update lead",
                 "error": str(e)
             }
         )
