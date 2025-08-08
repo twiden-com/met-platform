@@ -1260,7 +1260,6 @@
                         <p class="student-contact" id="student-contact">
                             Click on a row to view details
                         </p>
-                        
                     </div>
                     
                     <!-- Basic Information Section -->
@@ -1280,7 +1279,7 @@
                                 <label class="field-label">Phone Number</label>
                                 <input type="tel" class="field-input" id="edit-phone-number" disabled>
                             </div>
-                            <div class="form-field" style="display: none;">
+                            <div class="form-field">
                                 <label class="field-label">Email Address</label>
                                 <input type="email" class="field-input" id="edit-email" disabled>
                             </div>
@@ -1304,7 +1303,7 @@
                                 <label class="field-label">Interested Courses</label>
                                 <div class="bx--multi-select" data-field="interested_courses" id="edit-interested-courses-select">
                                     <div class="bx--multi-select__wrapper">
-                                        <input type="text" class="bx--multi-select__input field-input" readonly placeholder="Select courses..." disabled>
+                                        <input type="text" class="bx--multi-select__input field-input" readonly placeholder="Select courses..." disabled style="pointer-events: none; cursor: not-allowed;">
                                         <svg class="bx--multi-select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
                                             <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                                         </svg>
@@ -1513,29 +1512,85 @@
 
             initializeCoursesMultiselect() {
                 const coursesSelect = document.getElementById('edit-interested-courses-select');
-                if (!coursesSelect) return;
+                if (!coursesSelect) {
+                    console.error('Courses multiselect not found!');
+                    return;
+                }
 
                 const input = coursesSelect.querySelector('.bx--multi-select__input');
                 const menu = coursesSelect.querySelector('.bx--multi-select__menu');
                 const selectedContainer = coursesSelect.querySelector('.selected-items');
                 
-                // Toggle dropdown
-                input.addEventListener('click', () => {
-                    if (input.disabled) return;
-                    coursesSelect.classList.toggle('bx--multi-select--expanded');
+                console.log('Initializing courses multiselect:', { input, menu, selectedContainer });
+                
+                // IMPORTANT: Remove any existing click handlers first
+                const newInput = input.cloneNode(true);
+                input.parentNode.replaceChild(newInput, input);
+                
+                // Toggle dropdown on the NEW input element
+                newInput.addEventListener('click', (e) => {
+                    console.log('NEW Courses multiselect clicked, disabled:', newInput.disabled, 'isEditing:', this.isEditing);
+                    
+                    // CRITICAL: Check both disabled state AND edit mode
+                    if (newInput.disabled || !this.isEditing) {
+                        console.log('Courses multiselect click blocked - not in edit mode');
+                        return;
+                    }
+                    
+                    e.preventDefault();
+                    e.stopImmediatePropagation(); // STRONGER: Stop ALL propagation
+                    
+                    const wasExpanded = coursesSelect.classList.contains('bx--multi-select--expanded');
+                    console.log('Was expanded before click:', wasExpanded);
+                    
+                    // Close ALL other multiselects first
+                    document.querySelectorAll('.bx--multi-select').forEach(other => {
+                        if (other !== coursesSelect) {
+                            other.classList.remove('bx--multi-select--expanded');
+                        }
+                    });
+                    
+                    // Toggle this one explicitly
+                    if (wasExpanded) {
+                        coursesSelect.classList.remove('bx--multi-select--expanded');
+                        console.log('Closed courses dropdown');
+                    } else {
+                        coursesSelect.classList.add('bx--multi-select--expanded');
+                        console.log('Opened courses dropdown');
+                    }
+                    
+                    console.log('Final expanded state:', coursesSelect.classList.contains('bx--multi-select--expanded'));
                 });
                 
                 // Handle option clicks
                 const options = coursesSelect.querySelectorAll('.bx--multi-select__option');
-                options.forEach(option => {
-                    option.addEventListener('click', (e) => {
-                        if (input.disabled) return;
+                console.log('Found course options:', options.length);
+                
+                options.forEach((option, index) => {
+                    // Remove existing handlers and add new ones
+                    const newOption = option.cloneNode(true);
+                    option.parentNode.replaceChild(newOption, option);
+                    
+                    newOption.addEventListener('click', (e) => {
+                        console.log('Course option clicked:', index, 'disabled:', newInput.disabled, 'isEditing:', this.isEditing);
                         
-                        const checkboxId = option.getAttribute('data-checkbox');
+                        // CRITICAL: Check both disabled state AND edit mode
+                        if (newInput.disabled || !this.isEditing) {
+                            console.log('Course option click blocked - not in edit mode');
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            return;
+                        }
+                        
+                        e.preventDefault();
+                        e.stopImmediatePropagation(); // Prevent closing dropdown
+                        
+                        const checkboxId = newOption.getAttribute('data-checkbox');
                         const checkbox = document.getElementById(checkboxId);
                         
                         if (checkbox && e.target !== checkbox) {
                             checkbox.checked = !checkbox.checked;
+                            console.log('Toggled checkbox:', checkboxId, 'checked:', checkbox.checked);
                         }
                         
                         this.updateSelectedItems(coursesSelect, 'interested_courses');
@@ -1544,17 +1599,61 @@
                 
                 // Handle direct checkbox changes
                 const checkboxes = coursesSelect.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', () => {
-                        if (input.disabled) return;
+                console.log('Found course checkboxes:', checkboxes.length);
+                
+                checkboxes.forEach((checkbox, index) => {
+                    checkbox.addEventListener('change', (e) => {
+                        console.log('Course checkbox changed:', index, 'checked:', checkbox.checked, 'disabled:', newInput.disabled, 'isEditing:', this.isEditing);
+                        
+                        // CRITICAL: Check both disabled state AND edit mode
+                        if (newInput.disabled || !this.isEditing) {
+                            console.log('Course checkbox change blocked - not in edit mode');
+                            // Revert the checkbox change
+                            checkbox.checked = !checkbox.checked;
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            return;
+                        }
+                        
+                        e.stopImmediatePropagation(); // Prevent closing dropdown
                         this.updateSelectedItems(coursesSelect, 'interested_courses');
                     });
                 });
                 
-                // Close dropdown when clicking outside
+                // Handle remove tag clicks (this is where you were able to remove courses)
+                this.initializeRemoveTagHandlers();
+                
+                // Close dropdown when clicking outside - but NOT on the multiselect itself
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('#edit-interested-courses-select')) {
-                        coursesSelect.classList.remove('bx--multi-select--expanded');
+                        if (coursesSelect.classList.contains('bx--multi-select--expanded')) {
+                            coursesSelect.classList.remove('bx--multi-select--expanded');
+                            console.log('Closed courses dropdown (clicked outside)');
+                        }
+                    }
+                }, true); // Use capture phase
+            }
+
+            initializeRemoveTagHandlers() {
+                // This method will be called every time tags are updated
+                const selectedContainer = document.getElementById('interested_courses-selected');
+                if (!selectedContainer) return;
+
+                // Handle remove tag clicks with edit mode protection
+                selectedContainer.addEventListener('click', (e) => {
+                    if (e.target.closest('.remove-tag')) {
+                        console.log('Remove tag clicked, isEditing:', this.isEditing);
+                        
+                        // CRITICAL: Only allow removing tags in edit mode
+                        if (!this.isEditing) {
+                            console.log('Remove tag blocked - not in edit mode');
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            return;
+                        }
+                        
+                        // Allow the removal to proceed
+                        console.log('Tag removal allowed - in edit mode');
                     }
                 });
             }
@@ -1582,19 +1681,32 @@
             }
 
             enableEdit() {
+                console.log('Enabling edit mode...');
                 this.isEditing = true;
                 this.originalLeadData = { ...this.selectedLead };
                 
-                // Enable all regular form fields
-                document.querySelectorAll('.field-input:not(.bx--multi-select__input)').forEach(input => {
-                    input.disabled = false;
+                // Enable all regular form fields (excluding multiselect inputs)
+                document.querySelectorAll('.field-input').forEach(input => {
+                    // Skip multiselect inputs, we'll handle them separately
+                    if (!input.classList.contains('bx--multi-select__input')) {
+                        input.disabled = false;
+                        console.log('Enabled field:', input.id);
+                    }
                 });
 
-                // Enable the courses multiselect
+                // Enable the courses multiselect specifically
                 const coursesSelect = document.getElementById('edit-interested-courses-select');
                 if (coursesSelect) {
                     const input = coursesSelect.querySelector('.bx--multi-select__input');
-                    if (input) input.disabled = false;
+                    if (input) {
+                        input.disabled = false;
+                        input.style.pointerEvents = 'auto';
+                        input.style.cursor = 'pointer';
+                        input.removeAttribute('readonly'); // Remove readonly if present
+                        console.log('Enabled courses multiselect, disabled:', input.disabled);
+                    }
+                } else {
+                    console.error('Courses multiselect not found in enableEdit!');
                 }
 
                 // Show/hide buttons
@@ -1609,21 +1721,27 @@
                     </svg>
                     Editing Lead
                 `;
+                
+                console.log('Edit mode enabled, isEditing:', this.isEditing);
             }
 
             cancelEdit() {
                 this.isEditing = false;
                 
-                // Disable all regular form fields
-                document.querySelectorAll('.field-input:not(.bx--multi-select__input)').forEach(input => {
+                // Disable all form fields
+                document.querySelectorAll('.field-input').forEach(input => {
                     input.disabled = true;
                 });
 
-                // Disable the courses multiselect
+                // Disable the courses multiselect specifically
                 const coursesSelect = document.getElementById('edit-interested-courses-select');
                 if (coursesSelect) {
                     const input = coursesSelect.querySelector('.bx--multi-select__input');
-                    if (input) input.disabled = true;
+                    if (input) {
+                        input.disabled = true;
+                        input.style.pointerEvents = 'none';
+                        input.style.cursor = 'not-allowed';
+                    }
                 }
 
                 // Show/hide buttons
@@ -1654,23 +1772,38 @@
                 const spinner = saveBtn.querySelector('.loading-spinner');
                 const icon = saveBtn.querySelector('svg');
                 
-                // Show loading state
-                spinner.style.display = 'inline-block';
-                icon.style.display = 'none';
-                saveBtn.disabled = true;
-
                 try {
                     // Collect form data
                     const updatedData = this.collectFormData();
                     
-                    // Simulate API call
-                    await this.updateLeadAPI(this.selectedLead.id, updatedData);
+                    // Validate form data
+                    const validationErrors = this.validateFormData(updatedData);
+                    if (validationErrors.length > 0) {
+                        this.showNotification(`Validation Error: ${validationErrors.join(', ')}`, 'error');
+                        return;
+                    }
                     
-                    // Update grid data
-                    this.updateGridRow(updatedData);
+                    // Show loading state
+                    spinner.style.display = 'inline-block';
+                    icon.style.display = 'none';
+                    saveBtn.disabled = true;
                     
-                    // Exit edit mode
-                    this.cancelEdit();
+                    // Call API to update lead
+                    const response = await this.updateLeadAPI(this.selectedLead.id, updatedData);
+                    
+                    // Update the selected lead with the response data
+                    if (response.data) {
+                        this.selectedLead = response.data;
+                        
+                        // Update the grid row with new data
+                        this.updateGridRow(response.data);
+                        
+                        // Exit edit mode FIRST (this disables form fields and changes buttons)
+                        this.exitEditModeOnly();
+                        
+                        // THEN repopulate the form with updated data (this preserves the fresh data)
+                        this.populateDetailsForm(response.data);
+                    }
                     
                     // Show success feedback
                     this.showNotification('Lead updated successfully!', 'success');
@@ -1684,6 +1817,42 @@
                     icon.style.display = 'inline-block';
                     saveBtn.disabled = false;
                 }
+            }
+
+            exitEditModeOnly() {
+                this.isEditing = false;
+                
+                // Disable all form fields
+                document.querySelectorAll('.field-input').forEach(input => {
+                    input.disabled = true;
+                });
+
+                // Disable the courses multiselect specifically
+                const coursesSelect = document.getElementById('edit-interested-courses-select');
+                if (coursesSelect) {
+                    const input = coursesSelect.querySelector('.bx--multi-select__input');
+                    if (input) {
+                        input.disabled = true;
+                        input.style.pointerEvents = 'none';
+                        input.style.cursor = 'not-allowed';
+                    }
+                }
+
+                // Show/hide buttons
+                document.getElementById('edit-btn').style.display = 'flex';
+                document.getElementById('save-btn').style.display = 'none';
+                document.getElementById('cancel-btn').style.display = 'none';
+
+                // Update header title
+                document.querySelector('.details-title').innerHTML = `
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Lead Details
+                `;
+
+                // Clear original data (no longer needed)
+                this.originalLeadData = null;
             }
 
             collectFormData() {
@@ -1715,6 +1884,26 @@
                 };
             }
 
+            validateFormData(formData) {
+                const errors = [];
+
+                // Validate required fields
+                if (!formData.student_name || formData.student_name.trim() === '') {
+                    errors.push('Student name is required');
+                }
+
+                if (!formData.phone_number || formData.phone_number.trim() === '') {
+                    errors.push('Phone number is required');
+                }
+
+                // Validate at least one course is selected
+                if (!formData.interested_courses || formData.interested_courses.length === 0) {
+                    errors.push('At least one course must be selected');
+                }
+
+                return errors;
+            }
+
             async updateLeadAPI(leadId, data) {
                 try {
                     const response = await fetch(`/student/leads/${leadId}`, {
@@ -1743,15 +1932,32 @@
             }
 
             updateGridRow(updatedData) {
-                if (!this.selectedLead) return;
+                if (!this.selectedLead || !updatedData) return;
                 
-                // Update the selected lead data
-                Object.assign(this.selectedLead, updatedData);
+                // Find the row node in the grid
+                let targetNode = null;
+                this.gridApi.forEachNode((node) => {
+                    if (node.data && node.data.id === updatedData.id) {
+                        targetNode = node;
+                    }
+                });
                 
-                // Update the grid
-                const rowNode = this.gridApi.getRowNode(this.selectedLead.id);
-                if (rowNode) {
-                    rowNode.setData(this.selectedLead);
+                if (targetNode) {
+                    // Update the row data
+                    targetNode.setData(updatedData);
+                    
+                    // Ensure the row stays selected
+                    targetNode.setSelected(true);
+                    
+                    // Refresh the grid to show changes
+                    this.gridApi.refreshCells({
+                        rowNodes: [targetNode],
+                        force: true
+                    });
+                    
+                    console.log('Grid row updated successfully');
+                } else {
+                    console.warn('Could not find grid row to update');
                 }
             }
 
@@ -1795,14 +2001,10 @@
                 const initials = lead.student_name ? lead.student_name.split(' ').map(n => n[0]).join('').toUpperCase() : 'NA';
                 document.getElementById('student-avatar').textContent = initials;
                 document.getElementById('student-name').innerHTML = `
-                    ${this.getVerifiedBadge(lead.is_verified)}
                     ${lead.student_name || 'Unknown'}
+                    ${this.getVerifiedBadge(lead.is_verified)}
                 `;
-
-                let desc = lead.phone_number || '';
-// if (lead.place) desc += '\n・' + lead.place;
-if (lead.state) desc += '・' + lead.state;
-document.getElementById('student-contact').textContent = desc || 'No contact info';
+                document.getElementById('student-contact').textContent = lead.phone_number || 'No contact info';
 
                 // Populate basic form fields
                 document.getElementById('edit-student-name').value = lead.student_name || '';
@@ -1843,27 +2045,10 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                     courses = interestedCourses.split(',').map(c => c.trim());
                 }
 
-                // Map course names to values
-                const courseMapping = {
-                    'Data Science with AI': 'data_science_ai',
-                    'Python Full Stack with AI': 'python_fullstack_ai',
-                    'Digital Marketing with AI': 'digital_marketing_ai',
-                    'Cybersecurity': 'cybersecurity',
-                    'Java Full Stack with AI': 'java_fullstack_ai',
-                    'Data Analytics & Gen AI': 'data_analytics_ai',
-                    'Video Editing & Graphic Design': 'video_editing_graphic_design'
-                };
-
-                // Check the appropriate checkboxes
+                // Since database stores course values with underscores, use them directly
                 courses.forEach(course => {
-                    // Try direct value match first
-                    let checkbox = coursesSelect.querySelector(`input[value="${course}"]`);
-                    
-                    // If not found, try mapping from display name to value
-                    if (!checkbox && courseMapping[course]) {
-                        checkbox = coursesSelect.querySelector(`input[value="${courseMapping[course]}"]`);
-                    }
-                    
+                    // Find checkbox with matching value (underscore format)
+                    const checkbox = coursesSelect.querySelector(`input[value="${course}"]`);
                     if (checkbox) {
                         checkbox.checked = true;
                     }
@@ -2044,7 +2229,10 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                 collapsedExpandBtn.addEventListener('click', toggleFilters);
             }
 
-            initializeGrid() {
+            
+
+
+initializeGrid() {
                 const columnDefs = [
                     {
                         headerName: "Date",
@@ -2060,6 +2248,7 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                             });
                         }
                     },
+                    
                     {
                         headerName: "Name",
                         field: "student_name",
@@ -2101,6 +2290,15 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                         }
                     },
                     {
+                        headerName: "Lead Quality",
+                        field: "lead_quality",
+                        width: 200,
+                        cellRenderer: (params) => {
+                            if (!params.value) return 'NA';
+                            return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+                        }
+                    },
+                    {
                         headerName: "Phone Number",
                         field: "phone_number",
                         width: 200,
@@ -2112,14 +2310,30 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                     {
                         headerName: "Courses",
                         field: "interested_courses",
-                        width: 200,
+                        width: 250,
                         cellRenderer: (params) => {
                             if (!params.value || params.value.length === 0) return 'None';
                             const courses = Array.isArray(params.value) ? params.value : [params.value];
-                            const firstCourse = courses[0];
-                            const moreCount = courses.length > 1 ? `+${courses.length - 1}` : '';
+                            
+                            // Convert underscore format to display names for grid
+                            const courseValueToName = {
+                                'data_science_ai': 'Data Science with AI',
+                                'python_fullstack_ai': 'Python Full Stack with AI',
+                                'digital_marketing_ai': 'Digital Marketing with AI',
+                                'cybersecurity': 'Cybersecurity',
+                                'java_fullstack_ai': 'Java Full Stack with AI',
+                                'data_analytics_ai': 'Data Analytics & Gen AI',
+                                'video_editing_graphic_design': 'Video Editing & Graphic Design'
+                            };
+                            
+                            const displayCourses = courses.map(course => 
+                                courseValueToName[course] || course
+                            );
+                            
+                            const firstCourse = displayCourses[0];
+                            const moreCount = displayCourses.length > 1 ? `+${displayCourses.length - 1}` : '';
                             return `
-                                <div title="${courses.join(', ')}">
+                                <div title="${displayCourses.join(', ')}">
                                     <span>${firstCourse}</span>
                                     ${moreCount ? `<span style="color: #0f62fe; font-weight: 500; margin-left: 0.25rem;">${moreCount}</span>` : ''}
                                 </div>
@@ -2155,15 +2369,7 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                             return params.value.charAt(0).toUpperCase() + params.value.slice(1);
                         }
                     },
-                    {
-                        headerName: "Lead Quality",
-                        field: "lead_quality",
-                        width: 100,
-                        cellRenderer: (params) => {
-                            if (!params.value) return 'NA';
-                            return params.value.charAt(0).toUpperCase() + params.value.slice(1);
-                        }
-                    },
+                    
                     {
                         headerName: "Urgency",
                         field: "urgency",
@@ -2184,9 +2390,22 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                         }
                     },
                     {
-                        headerName: "Comment",
-                        field: "comments",
+                        headerName: "Next Follow Up",
+                        field: "next_follow_up",
                         width: 150,
+                        cellRenderer: (params) => {
+                            if (!params.value) return '';
+                            const date = new Date(params.value);
+                            return date.toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric'
+                            });
+                        }
+                    },
+                    {
+                        headerName: "Last Comment",
+                        field: "comments",
+                        width: 350,
                         cellRenderer: (params) => {
                             if (!params.value) return 'NA';
                             return params.value.charAt(0).toUpperCase() + params.value.slice(1);
@@ -2220,6 +2439,7 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                 const gridDiv = document.querySelector('#leads-grid');
                 this.gridApi = agGrid.createGrid(gridDiv, gridOptions);
             }
+
 
             initializeMultiSelects() {
                 const multiSelects = document.querySelectorAll('.bx--multi-select');
@@ -2296,7 +2516,7 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                         tag.className = 'selected-tag';
                         tag.innerHTML = `
                             ${label.textContent}
-                            <span class="remove-tag">
+                            <span class="remove-tag" data-field="${field}">
                                 <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                 </svg>
@@ -2304,18 +2524,53 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                         `;
                         
                         tag.querySelector('.remove-tag').addEventListener('click', (e) => {
+                            console.log('=== REMOVE TAG CLICKED ===');
+                            console.log('Field:', field);
+                            console.log('this.isEditing:', this.isEditing);
+                            console.log('Dashboard instance:', window.leadsDashboard);
+                            console.log('Dashboard isEditing:', window.leadsDashboard ? window.leadsDashboard.isEditing : 'No dashboard');
+                            
+                            // For courses field, check edit mode
+                            if (field === 'interested_courses') {
+                                const editBtn = document.getElementById('edit-btn');
+                                const saveBtn = document.getElementById('save-btn');
+                                const isEditBtnVisible = editBtn && editBtn.style.display !== 'none';
+                                const isSaveBtnVisible = saveBtn && saveBtn.style.display !== 'none';
+                                
+                                console.log('Edit button visible:', isEditBtnVisible);
+                                console.log('Save button visible:', isSaveBtnVisible);
+                                console.log('Should be in edit mode:', !isEditBtnVisible && isSaveBtnVisible);
+                                
+                                // CRITICAL: Only allow removing courses tags in edit mode
+                                if (!this.isEditing || isEditBtnVisible) {
+                                    console.log('❌ COURSE TAG REMOVAL BLOCKED - NOT IN EDIT MODE');
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    return false;
+                                }
+                                
+                                console.log('✅ Course tag removal allowed - in edit mode');
+                            }
+                            
+                            console.log('Proceeding with tag removal...');
                             e.stopPropagation();
                             checkbox.checked = false;
                             this.updateSelectedItems(selectElement, field);
-                            this.handleFilterSubmit();
+                            
+                            // Also trigger change for filter multiselects if this is a filter
+                            if (field !== 'interested_courses') {
+                                this.handleFilterSubmit();
+                            }
                         });
                         
                         selectedContainer.appendChild(tag);
                     });
                 }
                 
-                // Update active filters count
-                this.updateActiveFiltersCount();
+                // Update active filters count for filter multiselects only
+                if (field !== 'interested_courses') {
+                    this.updateActiveFiltersCount();
+                }
             }
 
             updateActiveFiltersCount() {
@@ -2798,8 +3053,6 @@ document.getElementById('student-contact').textContent = desc || 'No contact inf
                 this.loadLeadsFromAPI(queryParams.toString());
             }
         }
-
-        
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', () => {
