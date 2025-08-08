@@ -1425,7 +1425,7 @@
                     const data = await response.json();
 
                     if (data.message === 'EXISTING_USER') {
-                        this.showAlert('User Already Exists, Opening Details...', 'success');
+                        this.showAlert('User Already Exists, Search In Leads List...', 'success');
                         this.resetButtonState('Send OTP');
                         // setTimeout(() => {
                         //     window.location.href = data.redirectUrl;
@@ -1476,7 +1476,7 @@
                     const data = await response.json();
 
                     if (data.message === 'EXISTING_USER') {
-                        this.showAlert('User Already Exists, Opening Details..', 'success');
+                        this.showAlert('User Already Exists, Search In Leads Page..', 'success');
                          this.resetButtonState('Send OTP');
                         setTimeout(() => {
                             window.location.href = data.redirectUrl;

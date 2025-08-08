@@ -26,7 +26,8 @@ async def student_skip_otp(request:Request, country_code:str, phone: str, db:Asy
                     status_code=200,
                     content={    
                     "message": 'EXISTING_USER',
-                    "redirectUrl": f"/{request.state.user_data.profile.get('role')}/student/leads?id={profile.data[0].get('user_id')}"
+                    # "redirectUrl": f"/{request.state.user_data.profile.get('role')}/student/leads?id={profile.data[0].get('user_id')}"
+                    "redirectUrl": f"/{request.state.user_data.profile.get('role')}/student-list"
                 })
         
         email = password = country_code + '-' + phone + "@met.com"
@@ -68,7 +69,8 @@ async def student_send_otp(request:Request, country_code:str, phone: str, db:Asy
                 status_code=200,
                 content={    
                 "message": 'EXISTING_USER',
-                "redirectUrl": f"/{request.state.user_data.profile.get('role')}/students?id={profile.data[0].get('user_id')}"
+                # "redirectUrl": f"/{request.state.user_data.profile.get('role')}/students?id={profile.data[0].get('user_id')}"
+                "redirectUrl": f"/{request.state.user_data.profile.get('role')}/student-list"
             })
 
         res = send_otp(country_code=country_code, phone=phone)
