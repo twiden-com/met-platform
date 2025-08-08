@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from src.routes.auth import router as auth_router
 from src.routes.counsellor import router as counsellor_router
 from src.routes.student import router as student_router
+from src.routes.batch import router as batch_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from src.config.settings import settings
@@ -39,6 +40,7 @@ def root(request: Request):
 app.include_router(auth_router)
 app.include_router(counsellor_router)
 app.include_router(student_router)
+app.include_router(batch_router)
 
 if __name__ == "__main__":
     uvicorn.run(

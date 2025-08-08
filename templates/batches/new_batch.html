@@ -352,11 +352,11 @@
     <!-- App Header -->
     <div class="app-header">
         <div class="header-left">
-            <a href="/counsellor/dashboard" class="back-link">
+            <a href="/batch/list" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
                 </svg>
-                Dashboard
+                Batches
             </a>
             <h1 class="page-title">New Batch</h1>
         </div>
@@ -447,9 +447,9 @@
                         <div class="bx--select">
                             <select id="trainer" name="trainer" class="bx--select-input" required>
                                 <option value="">Select trainer</option>
-                                <option value="Mrs. Mounika">Mrs. Mounika</option>
-                                <option value="Mr. Shahul">Mr. Shahul</option>
-                                <option value="Mr. Chaitanya Vaddi">Mr. Chaitanya Vaddi</option>
+                                {% for trainer in trainers %}
+                                    <option value="{{ trainer.id }}">{{ trainer.name }}</option>
+                                {% endfor %}
                             </select>
                             <svg class="bx--select__arrow" width="16" height="16" viewBox="0 0 16 16">
                                 <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"></path>
@@ -547,7 +547,7 @@
             </div>
             <h2 class="modal-title">Batch Created Successfully!</h2>
             <p class="modal-message">New batch has been created and is now available in the system.</p>
-            <button class="bx--btn bx--btn--primary" onclick="window.location.href='/admin/dashboard'">
+            <button class="bx--btn bx--btn--primary" onclick="window.location.href='/batch/list'">
                 OK
             </button>
         </div>
@@ -667,22 +667,21 @@
                 try {
                     const formData = new FormData(form);
                     
-                    // Simulate API call - replace with actual endpoint
                     const response = await fetch('/batch/create', {
                         method: 'POST',
                         body: formData
                     });
 
-                    // For demo purposes, simulate success after 2 seconds
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                    
-                    // Simulate successful response
-                    const data = { success: true, message: 'Batch created successfully' };
+                    // Parse the JSON response
+                    const data = await response.json();
 
-                    if (data.success) {
+                    if (response.ok && data.success) {
+                        // Success case
                         this.showSuccessModal();
                     } else {
-                        this.showAlert(data.message || 'Failed to create batch', 'error');
+                        // Error case - show the error message from server
+                        const errorMessage = data.message || 'Failed to create batch';
+                        this.showAlert(errorMessage, 'error');
                         this.scrollToError();
                     }
 
