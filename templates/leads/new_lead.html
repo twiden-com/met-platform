@@ -801,7 +801,7 @@
     <!-- App Header -->
     <div class="app-header">
         <div class="header-left">
-            <a href="/counsellor/dashboard" class="back-link">
+            <a href="/dashboard" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
                 </svg>
@@ -1306,7 +1306,7 @@
             </div>
             <h2 class="modal-title">Enquiry Created Successfully!</h2>
             <p class="modal-message">Student details have been saved and follow-up actions initiated.</p>
-            <button class="bx--btn bx--btn--primary" onclick="window.location.href='/counsellor/dashboard'">
+            <button class="bx--btn bx--btn--primary" onclick="window.location.href='/dashboard'">
                 OK
             </button>
         </div>
@@ -2012,14 +2012,14 @@
                     const okButton = modal.querySelector('.bx--btn--primary');
                     if (okButton) {
                         okButton.onclick = () => {
-                            window.location.href = '/counsellor/dashboard';
+                            window.location.href = '/dashboard';
                         };
                     }
                     
                     // Add click handler for overlay (close modal)
                     modal.onclick = (e) => {
                         if (e.target === modal) {
-                            window.location.href = '/counsellor/dashboard';
+                            window.location.href = '/dashboard';
                         }
                     };
                 }

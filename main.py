@@ -2,9 +2,11 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from src.routes.auth import router as auth_router
-from src.routes.counsellor import router as counsellor_router
+from src.routes.dashboard import router as dashboard_router
+from src.routes.leads import router as lead_router
 from src.routes.student import router as student_router
 from src.routes.batch import router as batch_router
+from src.routes.medha_code import router as medha_code_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from src.config.settings import settings
@@ -38,10 +40,11 @@ def root(request: Request):
     return RedirectResponse('/auth/login')
 
 app.include_router(auth_router)
-app.include_router(counsellor_router)
+app.include_router(dashboard_router)
 app.include_router(student_router)
 app.include_router(batch_router)
-
+app.include_router(lead_router)
+app.include_router(medha_code_router)
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",

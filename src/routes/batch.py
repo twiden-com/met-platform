@@ -7,7 +7,7 @@ from src.utils.auth_utils import auth_required
 from typing import Optional
 from datetime import date
 
-router = APIRouter(prefix='/batch', tags=["Admin"])
+router = APIRouter(prefix='/batches', tags=["Admin"])
 templates = Jinja2Templates(directory="templates", auto_reload=True)
 
 
@@ -19,7 +19,7 @@ async def show_new_batch_form(request: Request, db: AsyncClient = Depends(get_db
     return templates.TemplateResponse("batches/new_batch.html", {"request": request, "trainers": trainers})
 
 
-@router.get("/list", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 @auth_required(['counsellor'])
 async def show_all_batches(request: Request):
     return templates.TemplateResponse("batches/batch_list.html", {"request": request})
@@ -31,7 +31,7 @@ async def get_all_batches(request: Request, db: AsyncClient = Depends(get_db)):
     return JSONResponse(content=result.data)
 
 
-@router.post("/create")
+@router.post("/new")
 @auth_required(['counsellor'])
 async def create_batch(
     request: Request,

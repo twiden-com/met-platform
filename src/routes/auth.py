@@ -59,7 +59,7 @@ async def login_validate_otp(phone:str, country_code:str, otp: str, verification
                     content={
                         "success": True,
                         "redirect": True,
-                        "redirectUrl": f"/{profile.get('role')}/dashboard"
+                        "redirectUrl": "/dashboard"
                     }
                 )
 

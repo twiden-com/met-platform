@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha Code - Practice Coding</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+            --color-gray-bg: #f2f4f8;
+            --color-border: #e0e0e0;
+            --color-text-primary: #161616;
+            --color-text-secondary: #6f6f6f;
+            --color-blue: #0f62fe;
+            --color-green: #24a148;
+            --color-red: #da1e28;
+            --color-yellow: #f1c21b;
+            --color-purple: #8a3ffc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--color-gray-bg);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: var(--color-navy);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        /* Main Layout - Three Column Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 400px;
+            height: calc(100vh - 72px);
+            overflow: hidden;
+        }
+
+        /* Column 1: Questions List */
+        .questions-column {
+            background: white;
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .questions-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .questions-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 1rem 0;
+        }
+
+        .course-dropdown {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            background: white;
+            transition: all 0.15s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .course-dropdown:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.1);
+        }
+
+        .questions-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+        }
+
+        .question-card:hover {
+            border-color: var(--color-blue);
+            box-shadow: 0 2px 8px rgba(15, 98, 254, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .question-card.selected {
+            border-color: var(--color-blue);
+            background: rgba(15, 98, 254, 0.05);
+        }
+
+        .question-difficulty {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .difficulty-easy {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .difficulty-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .question-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 0.5rem 0;
+            padding-right: 4rem;
+        }
+
+        .question-description {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            line-height: 1.4;
+            margin: 0 0 0.75rem 0;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .question-tag {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 500;
+        }
+
+        /* Column 2: Code Editor */
+        .editor-column {
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .editor-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: #fafbfc;
+        }
+
+        .editor-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .notebook-input-section {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .notebook-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            background: white;
+            transition: all 0.15s ease;
+        }
+
+        .notebook-input:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.1);
+        }
+
+        .notebook-input::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .editor-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            background: white;
+            color: var(--color-text-primary);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .editor-btn:hover {
+            border-color: var(--color-blue);
+            color: var(--color-blue);
+        }
+
+        .editor-btn.primary {
+            background: var(--color-blue);
+            color: white;
+            border-color: var(--color-blue);
+        }
+
+        .editor-btn.primary:hover {
+            background: #0353e9;
+        }
+
+        .editor-container {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .editor-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid var(--color-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Column 3: ChatGPT */
+        .chat-column {
+            background: white;
+            border-left: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-blue), var(--color-purple));
+        }
+
+        .chat-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--color-blue);
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .chat-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 2rem;
+            text-align: center;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .empty-description {
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .main-container {
+                grid-template-columns: 320px 1fr 350px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 300px 1fr 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .questions-column, .chat-column {
+                display: none;
+            }
+            
+            .app-header {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="header-left">
+            <a href="/dashboard" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Dashboard
+            </a>
+            <h1 class="page-title">Medha Code</h1>
+        </div>
+        <div class="logo">
+            Medha<span class="logo-accent">EduTech</span>
+        </div>
+    </div>
+
+    <!-- Main Container - Three Column Layout -->
+    <div class="main-container">
+        <!-- Column 1: Questions List -->
+        <div class="questions-column">
+            <div class="questions-header">
+                <h2 class="questions-title">Coding Questions</h2>
+                <select class="course-dropdown" id="course-select">
+                    <option value="">Select a course</option>
+                    <option value="all">All Courses</option>
+                    <option value="digital_marketing">Digital Marketing</option>
+                    <option value="python_fullstack">Python Full Stack</option>
+                    <option value="cybersecurity">Cybersecurity</option>
+                    <option value="java_fullstack">Java Full Stack</option>
+                    <option value="data_science">Data Science</option>
+                    <option value="data_analytics">Data Analytics</option>
+                </select>
+            </div>
+            
+            <div class="questions-list" id="questions-list">
+                <div class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                    </svg>
+                    <h3 class="empty-title">Select a Course</h3>
+                    <p class="empty-description">Choose a course from the dropdown above to view coding questions and start practicing.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Code Editor -->
+        <div class="editor-column">
+            <div class="editor-header">
+                <div class="editor-title-row">
+                    <h3 class="editor-title">Python Notebook Editor</h3>
+                    <div class="editor-actions">
+                        <button class="editor-btn" onclick="resetEditor()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                            </svg>
+                            Reset
+                        </button>
+                        <button class="editor-btn primary" onclick="openNewNotebook()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            New Notebook
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="notebook-input-section">
+                    <input 
+                        type="url" 
+                        class="notebook-input" 
+                        id="notebook-url-input"
+                        placeholder="Paste your Kaggle or Google Colab notebook link here..."
+                        value="https://www.kaggle.com/code/chaitanyavaddi/python/edit"
+                    >
+                    <button class="editor-btn primary" onclick="loadNotebook()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z"/>
+                        </svg>
+                        Load Notebook
+                    </button>
+                </div>
+            </div>
+            
+            <div class="editor-container">
+                <div class="loading-overlay" id="editor-loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Loading Notebook...</div>
+                </div>
+                
+                <div class="empty-state" id="notebook-empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    <h3 class="empty-title">Load Your Notebook</h3>
+                    <p class="empty-description">
+                        Enter your Kaggle or Google Colab notebook URL above and click "Load Notebook" to start coding.<br><br>
+                        <strong>Supported platforms:</strong><br>
+                        • Kaggle Notebooks<br>
+                        • Google Colab<br>
+                        • Jupyter Notebooks
+                    </p>
+                    <button class="editor-btn primary" onclick="loadDefaultNotebook()" style="margin-top: 1rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        Load Sample Notebook
+                    </button>
+                </div>
+                
+                <iframe 
+                    id="notebook-iframe" 
+                    class="editor-iframe"
+                    style="display: none;"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Column 3: ChatGPT Assistant -->
+        <div class="chat-column">
+            <div class="chat-header">
+                <h3 class="chat-title">
+                    <svg class="chat-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    AI Assistant
+                </h3>
+            </div>
+            
+            <div class="chat-container">
+                <iframe 
+                    id="chatgpt-iframe" 
+                    class="chat-iframe"
+                    src="https://chat.openai.com"
+                    title="ChatGPT Assistant">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MedhaCode {
+            constructor() {
+                this.selectedQuestion = null;
+                this.questions = this.getSampleQuestions();
+                this.initializeEventListeners();
+                this.loadDefaultNotebook(); // Load sample notebook on startup
+            }
+
+            initializeEventListeners() {
+                const courseSelect = document.getElementById('course-select');
+                courseSelect.addEventListener('change', (e) => {
+                    this.loadQuestionsByCourse(e.target.value);
+                });
+
+                // Enter key listener for notebook URL input
+                const notebookInput = document.getElementById('notebook-url-input');
+                notebookInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.loadNotebook();
+                    }
+                });
+            }
+
+            loadNotebook() {
+                const input = document.getElementById('notebook-url-input');
+                const url = input.value.trim();
+                
+                if (!url) {
+                    this.showNotification('Please enter a notebook URL', 'error');
+                    return;
+                }
+
+                if (!this.isValidNotebookUrl(url)) {
+                    this.showNotification('Please enter a valid Kaggle or Google Colab URL', 'error');
+                    return;
+                }
+
+                this.embedNotebook(url);
+            }
+
+            loadDefaultNotebook() {
+                const defaultUrl = 'https://www.kaggle.com/code/chaitanyavaddi/python/edit';
+                document.getElementById('notebook-url-input').value = defaultUrl;
+                this.embedNotebook(defaultUrl);
+            }
+
+            isValidNotebookUrl(url) {
+                // Check for Kaggle or Google Colab URLs
+                const kagglePattern = /^https:\/\/(www\.)?kaggle\.com\/code\//;
+                const colabPattern = /^https:\/\/colab\.research\.google\.com\//;
+                const jupyterPattern = /jupyter/i;
+                
+                return kagglePattern.test(url) || colabPattern.test(url) || jupyterPattern.test(url);
+            }
+
+            embedNotebook(url) {
+                const iframe = document.getElementById('notebook-iframe');
+                const loading = document.getElementById('editor-loading');
+                const emptyState = document.getElementById('notebook-empty-state');
+                
+                // Show loading
+                loading.style.display = 'flex';
+                emptyState.style.display = 'none';
+                iframe.style.display = 'none';
+                
+                // Update title
+                this.updateEditorTitle('Loading Notebook...');
+                
+                try {
+                    // For Kaggle, we can embed directly
+                    if (url.includes('kaggle.com')) {
+                        iframe.src = url;
+                    }
+                    // For Google Colab, try to embed
+                    else if (url.includes('colab.research.google.com')) {
+                        iframe.src = url;
+                    }
+                    // For other Jupyter notebooks
+                    else {
+                        iframe.src = url;
+                    }
+                    
+                    // Show iframe after a delay
+                    setTimeout(() => {
+                        loading.style.display = 'none';
+                        iframe.style.display = 'block';
+                        this.updateEditorTitle('Notebook Editor');
+                        this.showNotification('Notebook loaded successfully!', 'success');
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Error loading notebook:', error);
+                    this.showLoadingError();
+                }
+            }
+
+            showLoadingError() {
+                const loading = document.getElementById('editor-loading');
+                const emptyState = document.getElementById('notebook-empty-state');
+                const iframe = document.getElementById('notebook-iframe');
+                
+                loading.style.display = 'none';
+                iframe.style.display = 'none';
+                emptyState.style.display = 'flex';
+                
+                this.updateEditorTitle('Error Loading Notebook');
+                this.showNotification('Failed to load notebook. Please check the URL and try again.', 'error');
+            }
+
+            showNotification(message, type = 'info') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 500;
+                    z-index: 10000;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                `;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Animate out and remove
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
+            updateEditorTitle(title) {
+                const editorTitle = document.querySelector('.editor-title');
+                editorTitle.textContent = title;
+            }
+
+            getSampleQuestions() {
+                return {
+                    python_fullstack: [
+                        {
+                            id: 1,
+                            title: "Two Sum Problem",
+                            description: "Given an array of integers and a target sum, return indices of two numbers that add up to the target.",
+                            difficulty: "easy",
+                            tags: ["Array", "Hash Table", "Two Pointers"],
+                            course: "python_fullstack"
+                        },
+                        {
+                            id: 2,
+                            title: "Flask API Creation",
+                            description: "Create a RESTful API using Flask with CRUD operations for a user management system.",
+                            difficulty: "medium",
+                            tags: ["Flask", "API", "REST", "Backend"],
+                            course: "python_fullstack"
+                        },
+                        {
+                            id: 3,
+                            title: "Database Optimization",
+                            description: "Optimize database queries and implement proper indexing for a high-traffic web application.",
+                            difficulty: "hard",
+                            tags: ["Database", "SQL", "Performance", "Optimization"],
+                            course: "python_fullstack"
+                        },
+                        {
+                            id: 4,
+                            title: "Django Models & ORM",
+                            description: "Design and implement Django models with complex relationships and custom managers.",
+                            difficulty: "medium",
+                            tags: ["Django", "ORM", "Models", "Database"],
+                            course: "python_fullstack"
+                        },
+                        {
+                            id: 5,
+                            title: "React Component Integration",
+                            description: "Integrate React frontend with Python backend API using proper state management.",
+                            difficulty: "medium",
+                            tags: ["React", "Frontend", "Integration", "State Management"],
+                            course: "python_fullstack"
+                        }
+                    ],
+                    digital_marketing: [
+                        {
+                            id: 6,
+                            title: "Google Analytics Dashboard",
+                            description: "Create a Python script to automate Google Analytics reporting and visualization.",
+                            difficulty: "easy",
+                            tags: ["Analytics", "Automation", "API", "Data Visualization"],
+                            course: "digital_marketing"
+                        },
+                        {
+                            id: 7,
+                            title: "Social Media Sentiment Analysis",
+                            description: "Build a tool to analyze sentiment of social media posts using Python and NLP libraries.",
+                            difficulty: "medium",
+                            tags: ["NLP", "Sentiment Analysis", "Social Media", "Machine Learning"],
+                            course: "digital_marketing"
+                        },
+                        {
+                            id: 8,
+                            title: "Campaign ROI Calculator",
+                            description: "Develop a comprehensive ROI calculator for digital marketing campaigns with multiple channels.",
+                            difficulty: "hard",
+                            tags: ["ROI", "Marketing Analytics", "Business Logic", "Calculations"],
+                            course: "digital_marketing"
+                        }
+                    ],
+                    cybersecurity: [
+                        {
+                            id: 9,
+                            title: "Password Strength Checker",
+                            description: "Implement a robust password strength checker with entropy calculation and common password detection.",
+                            difficulty: "easy",
+                            tags: ["Security", "Validation", "Cryptography", "Best Practices"],
+                            course: "cybersecurity"
+                        },
+                        {
+                            id: 10,
+                            title: "Network Traffic Analyzer",
+                            description: "Build a network traffic analyzer to detect suspicious patterns and potential security threats.",
+                            difficulty: "hard",
+                            tags: ["Network Security", "Traffic Analysis", "Threat Detection", "Monitoring"],
+                            course: "cybersecurity"
+                        },
+                        {
+                            id: 11,
+                            title: "Encryption/Decryption Tool",
+                            description: "Create a tool for file encryption and decryption using industry-standard algorithms.",
+                            difficulty: "medium",
+                            tags: ["Cryptography", "File Security", "Algorithms", "Data Protection"],
+                            course: "cybersecurity"
+                        }
+                    ],
+                    java_fullstack: [
+                        {
+                            id: 12,
+                            title: "Spring Boot REST API",
+                            description: "Develop a complete REST API using Spring Boot with authentication and authorization.",
+                            difficulty: "medium",
+                            tags: ["Spring Boot", "REST API", "Authentication", "Java"],
+                            course: "java_fullstack"
+                        },
+                        {
+                            id: 13,
+                            title: "Microservices Architecture",
+                            description: "Design and implement a microservices architecture with service discovery and load balancing.",
+                            difficulty: "hard",
+                            tags: ["Microservices", "Architecture", "Spring Cloud", "Distributed Systems"],
+                            course: "java_fullstack"
+                        },
+                        {
+                            id: 14,
+                            title: "JPA Query Optimization",
+                            description: "Optimize JPA queries and implement efficient data access patterns for large datasets.",
+                            difficulty: "medium",
+                            tags: ["JPA", "Hibernate", "Database", "Performance"],
+                            course: "java_fullstack"
+                        }
+                    ],
+                    data_science: [
+                        {
+                            id: 15,
+                            title: "Data Cleaning Pipeline",
+                            description: "Build an automated data cleaning pipeline for messy datasets with pandas and numpy.",
+                            difficulty: "easy",
+                            tags: ["Data Cleaning", "Pandas", "NumPy", "ETL"],
+                            course: "data_science"
+                        },
+                        {
+                            id: 16,
+                            title: "Machine Learning Model",
+                            description: "Implement and evaluate multiple ML models for a classification problem with proper validation.",
+                            difficulty: "hard",
+                            tags: ["Machine Learning", "Classification", "Model Evaluation", "Scikit-learn"],
+                            course: "data_science"
+                        },
+                        {
+                            id: 17,
+                            title: "Time Series Forecasting",
+                            description: "Develop a time series forecasting model using LSTM networks for stock price prediction.",
+                            difficulty: "hard",
+                            tags: ["Time Series", "LSTM", "Deep Learning", "Forecasting"],
+                            course: "data_science"
+                        }
+                    ],
+                    data_analytics: [
+                        {
+                            id: 18,
+                            title: "Sales Dashboard Creation",
+                            description: "Create an interactive sales dashboard using Plotly and Streamlit with real-time data updates.",
+                            difficulty: "medium",
+                            tags: ["Dashboard", "Plotly", "Streamlit", "Visualization"],
+                            course: "data_analytics"
+                        },
+                        {
+                            id: 19,
+                            title: "Customer Segmentation",
+                            description: "Perform customer segmentation analysis using clustering algorithms and create actionable insights.",
+                            difficulty: "medium",
+                            tags: ["Clustering", "Customer Analysis", "Segmentation", "Business Intelligence"],
+                            course: "data_analytics"
+                        },
+                        {
+                            id: 20,
+                            title: "A/B Test Analysis",
+                            description: "Design and analyze A/B tests with proper statistical significance testing and reporting.",
+                            difficulty: "hard",
+                            tags: ["A/B Testing", "Statistics", "Hypothesis Testing", "Experimentation"],
+                            course: "data_analytics"
+                        }
+                    ]
+                };
+            }
+
+            loadQuestionsByCourse(course) {
+                const questionsList = document.getElementById('questions-list');
+                
+                if (!course || course === '') {
+                    questionsList.innerHTML = `
+                        <div class="empty-state">
+                            <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                            </svg>
+                            <h3 class="empty-title">Select a Course</h3>
+                            <p class="empty-description">Choose a course from the dropdown above to view coding questions and start practicing.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let questionsToShow = [];
+                
+                if (course === 'all') {
+                    // Show all questions from all courses
+                    Object.values(this.questions).forEach(courseQuestions => {
+                        questionsToShow = questionsToShow.concat(courseQuestions);
+                    });
+                } else {
+                    // Show questions for specific course
+                    questionsToShow = this.questions[course] || [];
+                }
+
+                if (questionsToShow.length === 0) {
+                    questionsList.innerHTML = `
+                        <div class="empty-state">
+                            <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <h3 class="empty-title">No Questions Available</h3>
+                            <p class="empty-description">Questions for this course are coming soon. Check back later!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Render questions
+                questionsList.innerHTML = questionsToShow.map(question => `
+                    <div class="question-card" onclick="selectQuestion(${question.id})" data-question-id="${question.id}">
+                        <div class="question-difficulty difficulty-${question.difficulty}">
+                            ${question.difficulty}
+                        </div>
+                        <h4 class="question-title">${question.title}</h4>
+                        <p class="question-description">${question.description}</p>
+                        <div class="question-tags">
+                            ${question.tags.map(tag => `<span class="question-tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            selectQuestion(questionId) {
+                // Remove previous selection
+                document.querySelectorAll('.question-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+
+                // Add selection to clicked card
+                const selectedCard = document.querySelector(`[data-question-id="${questionId}"]`);
+                if (selectedCard) {
+                    selectedCard.classList.add('selected');
+                }
+
+                // Find the question data
+                let foundQuestion = null;
+                Object.values(this.questions).forEach(courseQuestions => {
+                    const question = courseQuestions.find(q => q.id === questionId);
+                    if (question) {
+                        foundQuestion = question;
+                    }
+                });
+
+                if (foundQuestion) {
+                    this.selectedQuestion = foundQuestion;
+                    this.updateEditorTitle(foundQuestion);
+                }
+            }
+
+            updateEditorTitle(question) {
+                const editorTitle = document.querySelector('.editor-title');
+                editorTitle.textContent = `Python Editor - ${question.title}`;
+            }
+        }
+
+        // Global functions
+        function selectQuestion(questionId) {
+            window.medhaCode.selectQuestion(questionId);
+        }
+
+        function hideEditorLoading() {
+            const loading = document.getElementById('editor-loading');
+            const iframe = document.getElementById('python-editor');
+            
+            setTimeout(() => {
+                loading.style.display = 'none';
+                iframe.style.display = 'block';
+            }, 1000); // Give it a moment to fully load
+        }
+
+        function resetEditor() {
+            const iframe = document.getElementById('python-editor');
+            const loading = document.getElementById('editor-loading');
+            
+            // Show loading
+            loading.style.display = 'flex';
+            iframe.style.display = 'none';
+            
+            // Reset to clean Python template using the same URL structure
+            const cleanPythonUrl = "https://godbolt.org/e?hideEditorToolbars=true#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:python,source:'%23+Type+your+Python+code+here,+or+load+an+example.%0Adef+square(num):%0A++++return+num+*+num%0A%0Aprint(square(5))'),l:'5',n:'0',o:'Python+source+%231',t:'0')),k:50,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:python311,filters:(b:'0',binary:'1',binaryObject:'1',commentOnly:'0',debugCalls:'1',demangle:'0',directives:'0',execute:'1',intel:'0',libraryCode:'0',trim:'1',verboseDemangling:'0'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:python,libs:!(),options:'',overrides:!(),selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1),l:'5',n:'0',o:'+Python+3.11+(Editor+%231)',t:'0')),k:50,l:'4',n:'0',o:'',s:0,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4";
+            iframe.src = cleanPythonUrl;
+        }
+
+        function openFullEditor() {
+            // Open Godbolt Python editor in new tab
+            window.open('https://godbolt.org/z/python', '_blank');
+        }
+
+        function openFullEditor() {
+            // Open Godbolt Python editor in new tab
+            window.open('https://godbolt.org/z/python', '_blank');
+        }
+
+        // Handle iframe loading errors and cross-origin issues
+        window.addEventListener('message', function(event) {
+            // Handle any messages from iframes if needed
+            console.log('Message from iframe:', event.data);
+        });
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            window.medhaCode = new MedhaCode();
+            
+            // Godbolt usually loads quickly, but give it a moment
+            setTimeout(() => {
+                const loading = document.getElementById('editor-loading');
+                const iframe = document.getElementById('python-editor');
+                if (loading && iframe) {
+                    loading.style.display = 'none';
+                    iframe.style.display = 'block';
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
