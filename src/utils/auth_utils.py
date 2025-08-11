@@ -147,6 +147,8 @@ def auth_required(roles: List[str] = None, signup_flow: bool = False):
             except Exception as e:
                 # Log error and redirect on any other failure
                 print(f"Auth error: {e}")
+                if 'Access denied' in str(e):
+                    return RedirectResponse('/auth/access-denied')
                 return _redirect_to_logout()
         
         return wrapper

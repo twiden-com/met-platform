@@ -115,3 +115,10 @@ async def logout_user(request: Request):
     response.delete_cookie("user_session")
     response.delete_cookie("refresh_token")
     return response
+
+
+
+
+@router.get("/access-denied")
+async def logout_user(request: Request):
+    return templates.TemplateResponse("access_denied.html", {'request': request})

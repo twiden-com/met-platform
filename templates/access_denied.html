@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha Edu Tech - Access Denied</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+            --color-gray-bg: #f2f4f8;
+            --color-red: #ef4444;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--color-gray-bg);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: var(--color-navy);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+        }
+
+        .access-denied-content {
+            text-align: center;
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: var(--color-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .error-code {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-red);
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #161616;
+            margin-bottom: 1rem;
+        }
+
+        .error-description {
+            color: #6f6f6f;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--color-navy);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-navy);
+            border: 1px solid var(--color-navy);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-navy);
+            color: white;
+        }
+
+        .contact-info {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.875rem;
+            color: #6f6f6f;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 1rem;
+            }
+            
+            .main-container {
+                padding: 2rem 1rem;
+            }
+            
+            .access-denied-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .error-code {
+                font-size: 2.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 200px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <div class="app-header">
+        <div class="brand-section">
+            <div class="logo">
+                Medha<span class="logo-accent">EduTech</span>
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="notification-btn" title="Go Home" onclick="goHome()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="access-denied-content">
+            <div class="error-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1 4h-2v-2h2v2z"/>
+                </svg>
+            </div>
+
+            <div class="error-code">403</div>
+            <h1 class="error-title">Access Denied</h1>
+            <p class="error-description">
+                You don't have permission to access this page. Please contact your administrator if you believe this is an error.
+            </p>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="goHome()">
+                    Go to Dashboard
+                </button>
+                <button class="btn btn-secondary" onclick="goBack()">
+                    Go Back
+                </button>
+            </div>
+
+            <div class="contact-info">
+                Need help? Contact support at <strong>info@medhaedutech.com</strong>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = '/dashboard';
+        }
+
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                goHome();
+            }
+        }
+    </script>
+</body>
+</html>

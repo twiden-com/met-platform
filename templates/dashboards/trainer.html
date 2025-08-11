@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medha Edu Tech - Student Dashboard</title>
+    <title>Medha Edu Tech - Trainer Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -202,41 +202,6 @@
             color: #6f6f6f;
             font-size: 0.875rem;
             line-height: 1.5;
-        }
-
-        /* Coming Soon Overlay */
-        .coming-soon-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .dashboard-card.coming-soon:hover .coming-soon-overlay {
-            opacity: 1;
-        }
-
-        .coming-soon-text {
-            background: var(--color-navy);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        /* Disabled state for coming soon cards */
-        .dashboard-card.coming-soon {
-            pointer-events: none;
-            opacity: 0.8;
         }
 
         /* Apple Intelligence-like effect for Medha AI card */
@@ -483,11 +448,11 @@
 
                 <div class="user-profile">
                     <div class="user-avatar">
-                        S
+                        T
                     </div>
                     <div class="user-info">
-                        <h4>Student Name</h4>
-                        <p>( Student )</p>
+                        <h4>Trainer Name</h4>
+                        <p>( Trainer )</p>
                     </div>
                 </div>
 
@@ -508,25 +473,27 @@
     <!-- Main Container -->
     <div class="main-container">
         <div class="dashboard-header">
-            <h1 class="dashboard-title">Student Dashboard</h1>
-            <p class="dashboard-subtitle">Access your coding platform, AI tools, resources, and support</p>
+            <h1 class="dashboard-title">Trainer Dashboard</h1>
+            <p class="dashboard-subtitle">Manage your batches, access tools, resources, and AI assistance for enhanced training experience</p>
         </div>
 
         <!-- Cards Grid -->
         <div class="cards-grid">
-            <!-- Medha Code Card -->
-            <a href="/medha_code" class="dashboard-card">
+            <!-- My Batches Card -->
+            <a href="/trainer/batches" class="dashboard-card">
                 <div class="card-icon">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                        <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A3.001 3.001 0 0 0 17 6.5h-2c-1.1 0-2 .9-2 2v7h-2v-3c0-1.1-.9-2-2-2H6.5A2.5 2.5 0 0 0 4 13v3H2v6h6v-6H6v-3h1v3H5v6h6v-6H9v-3h2v3h2v6h6v-6h-2v-3h1v3z"/>
+                        <circle cx="6" cy="4" r="2"/>
+                        <circle cx="12" cy="4" r="2"/>
                     </svg>
                 </div>
-                <h3 class="card-title">Medha 360</h3>
-                <p class="card-description">Access your coding platform with interactive lessons, practice problems, and project submissions</p>
+                <h3 class="card-title">My Batches</h3>
+                <p class="card-description">View and manage all your training batches, student progress, assignments, and class schedules</p>
             </a>
 
             <!-- Medha AI Card -->
-            <a href="/student/ai" class="dashboard-card medha-ai-card">
+            <a href="/trainer/ai" class="dashboard-card medha-ai-card">
                 <div class="sparkle"></div>
                 <div class="sparkle"></div>
                 <div class="sparkle"></div>
@@ -537,30 +504,30 @@
                     </svg>
                 </div>
                 <h3 class="card-title">Medha AI</h3>
-                <p class="card-description">Get AI-powered assistance for coding help, doubt resolution, and personalized learning guidance</p>
+                <p class="card-description">AI-powered assistance for curriculum planning, student evaluation, content creation, and training insights</p>
+            </a>
+
+            <!-- Medha 360 Card -->
+            <a href="/medha_code" class="dashboard-card">
+                <div class="card-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                    </svg>
+                </div>
+                <h3 class="card-title">Medha 360</h3>
+                <p class="card-description">Access the comprehensive training platform with course materials, assignments, and progress tracking tools</p>
             </a>
 
             <!-- Resources Card -->
-            <a href="/student/resources" class="dashboard-card">
+            <a href="/trainer/resources" class="dashboard-card">
                 <div class="card-icon">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                 </div>
                 <h3 class="card-title">Resources</h3>
-                <p class="card-description">Access study materials, video tutorials, documentation, and additional learning resources</p>
+                <p class="card-description">Access trainer guides, teaching materials, documentation, templates, and educational resources</p>
             </a>
-
-            <!-- Support Card -->
-            <div class="dashboard-card" onclick="openWhatsAppSupport()">
-                <div class="card-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                </div>
-                <h3 class="card-title">Support</h3>
-                <p class="card-description">Get instant help and support through WhatsApp for technical issues and course queries</p>
-            </div>
         </div>
     </div>
 
@@ -576,19 +543,10 @@
             document.body.appendChild(form);
             form.submit();
         }
-
-        function openWhatsAppSupport() {
-            // Replace with your actual WhatsApp support number
-            const phoneNumber = '+919876543210'; // Replace with your support number
-            const message = 'Hello! I need help with my Medha EduTech courses.';
-            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-        }
     </script>
-
-    <script>
+   <script>
   window.blandSettings = {
-    widget_id: "96491f3d-5fb4-49d4-b616-23fa85f9c594",
+    widget_id: "696f35bb-55c7-4d85-b9d0-fffe55c8406b",
   };
 </script>
 <script src="https://widget.bland.ai/loader.js" defer></script>

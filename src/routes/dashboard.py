@@ -17,8 +17,8 @@ async def show_dashboard(request: Request):
           return templates.TemplateResponse("dashboards/counsellor.html", {"request": request, "profile":profile})
      elif profile.get('role') == 'student':
           return templates.TemplateResponse("dashboards/student.html", {"request": request, "profile":profile})
-     elif profile.get('student') == 'trainer':
+     elif profile.get('role') == 'trainer':
           return templates.TemplateResponse("dashboards/trainer.html", {"request": request, "profile":profile})
-     elif profile.get('admin') == 'admin':
+     elif profile.get('role') == 'admin':
           return templates.TemplateResponse("dashboards/admin.html", {"request": request, "profile":profile})
 
