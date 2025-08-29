@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha AI - Interview Starting</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+            --color-gray-bg: #f2f4f8;
+            --color-success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: linear-gradient(135deg, var(--color-navy) 0%, #1e40af 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fixed Header */
+        .app-header {
+            background: var(--color-navy);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -8px;
+            width: 6px;
+            height: 6px;
+            background: var(--color-orange);
+            border-radius: 50%;
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes aiPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        /* Main Content Container */
+        .main-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(249, 115, 22, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(30, 58, 138, 0.08) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 24%, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.02) 75%, rgba(255, 255, 255, 0.02) 76%, transparent 77%);
+            background-size: 100px 100px;
+            animation: backgroundMove 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Main Container */
+        .container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* AI Magical Ball */
+        .ai-orb-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 3rem;
+        }
+
+        .ai-orb {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--color-orange) 0%, var(--color-navy) 70%, #1e40af 100%);
+            position: relative;
+            animation: orbFloat 4s ease-in-out infinite;
+            box-shadow: 
+                0 0 50px rgba(249, 115, 22, 0.4),
+                0 0 100px rgba(30, 58, 138, 0.3),
+                inset 0 0 50px rgba(255, 255, 255, 0.15);
+        }
+
+        .ai-orb::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 70%, transparent 100%);
+            animation: orbGlint 2s ease-in-out infinite;
+        }
+
+        .ai-orb::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, 
+                transparent 0deg,
+                rgba(249, 115, 22, 0.3) 90deg,
+                rgba(30, 58, 138, 0.3) 180deg,
+                rgba(16, 185, 129, 0.2) 270deg,
+                transparent 360deg
+            );
+            animation: orbRotate 8s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        @keyframes orbGlint {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes orbRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .particle-1 {
+            background: var(--color-orange);
+            top: 20%;
+            left: 10%;
+            animation: particleFloat1 6s ease-in-out infinite;
+        }
+
+        .particle-2 {
+            background: rgba(30, 58, 138, 0.8);
+            top: 60%;
+            right: 15%;
+            animation: particleFloat2 8s ease-in-out infinite;
+        }
+
+        .particle-3 {
+            background: var(--color-success);
+            bottom: 30%;
+            left: 20%;
+            animation: particleFloat3 7s ease-in-out infinite;
+        }
+
+        @keyframes particleFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            33% { transform: translate(30px, -40px) scale(1.5); opacity: 1; }
+            66% { transform: translate(-20px, -60px) scale(0.8); opacity: 0.8; }
+        }
+
+        @keyframes particleFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+            25% { transform: translate(-40px, 30px) scale(1.2); opacity: 1; }
+            75% { transform: translate(20px, -20px) scale(0.9); opacity: 0.9; }
+        }
+
+        @keyframes particleFloat3 {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            50% { transform: translate(50px, -30px) scale(1.3); opacity: 1; }
+        }
+
+        /* Text Content */
+        .interview-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-orange) 0%, white 50%, var(--color-navy) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .interview-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .status-message {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: white;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            background: rgba(30, 58, 138, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(30, 58, 138, 0.3);
+            transition: all 0.5s ease;
+            animation: messageGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes messageGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(30, 58, 138, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(30, 58, 138, 0.3); }
+        }
+
+        .status-message.call-progress {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }
+
+        /* Loading Dots */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: dotPulse 1.4s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotPulse {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Connection Status Indicator */
+        .connection-status {
+            position: absolute;
+            top: 100px;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 10;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-success);
+            animation: connectionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes connectionPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        /* Interview Info */
+        .interview-info {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            right: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .interview-details {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+
+            .main-content {
+                padding-top: 120px;
+            }
+
+            .ai-orb-container {
+                width: 150px;
+                height: 150px;
+                margin-bottom: 2rem;
+            }
+
+            .ai-orb {
+                width: 150px;
+                height: 150px;
+            }
+
+            .interview-title {
+                font-size: 1.5rem;
+            }
+
+            .status-message {
+                font-size: 1rem;
+                padding: 0.75rem 1.5rem;
+                margin: 2rem 1rem 0;
+            }
+
+            .connection-status {
+                position: static;
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
+
+            .interview-info {
+                position: static;
+                margin-top: 3rem;
+            }
+
+            .interview-details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .logo {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Grid -->
+    <div class="background-grid"></div>
+
+    <!-- Fixed Header -->
+    <div class="app-header">
+        <div class="header-left">
+            <a href="/student/ai" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                AI Interviews
+            </a>
+            <h1 class="page-title">Interview Starting</h1>
+        </div>
+        <div class="logo">
+            Medha<span class="logo-accent">AI</span>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="connection-status">
+        <div class="connection-dot"></div>
+        <span>Connected to AI Interview System</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+        <!-- AI Magical Orb -->
+        <div class="ai-orb-container">
+            <div class="ai-orb">
+                <div class="particle particle-1"></div>
+                <div class="particle particle-2"></div>
+                <div class="particle particle-3"></div>
+            </div>
+        </div>
+
+        <!-- Interview Content -->
+        <h1 class="interview-title">AI Interview Starting</h1>
+        <p class="interview-subtitle">{{ interview_details.interview_topic }}</p>
+
+        <!-- Dynamic Status Message -->
+        <div id="status-message" class="status-message">
+            You should receive call in few seconds<span class="loading-dots"><span></span><span></span><span></span></span>
+        </div>
+    </div>
+
+    <!-- Interview Info -->
+    <div class="interview-info">
+        <div>Medha AI will conduct your interview via phone call</div>
+        <div class="interview-details">
+            <div class="detail-item">
+                <div class="detail-label">Duration</div>
+                <div class="detail-value">7 minutes</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Questions</div>
+                <div class="detail-value">< 10 questions</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Trainer</div>
+                <div class="detail-value">{{ interview_details.trainer_name }}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class InterviewWaiting {
+            constructor() {
+                this.interviewId = this.getInterviewIdFromUrl();
+                this.statusMessage = document.getElementById('status-message');
+                this.checkInterval = null;
+                this.messagePhase = 1; // 1: waiting, 2: call in progress
+                
+                this.init();
+            }
+
+            getInterviewIdFromUrl() {
+                return "{{ call_id }}"
+            }
+
+            init() {
+                // Show initial message for 3-4 seconds, then change to "Call in progress"
+                setTimeout(() => {
+                    this.updateMessageToCallInProgress();
+                    this.startStatusChecking();
+                }, 4000);
+            }
+
+            updateMessageToCallInProgress() {
+                this.messagePhase = 2;
+                this.statusMessage.innerHTML = `
+                    Call in progress<span class="loading-dots"><span></span><span></span><span></span></span>
+                `;
+                this.statusMessage.classList.add('call-progress');
+            }
+
+            startStatusChecking() {
+                // Start checking status every 5 seconds
+                this.checkInterval = setInterval(() => {
+                    this.checkInterviewStatus();
+                }, 5000);
+
+                // Also check immediately
+                this.checkInterviewStatus();
+            }
+
+            async checkInterviewStatus() {
+                try {
+                    const response = await fetch(`/interviews/${this.interviewId}/status`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Check if interview is completed and queue status is completed
+                        if (data.completed === true) {
+                            this.redirectToResults();
+                        }
+                        
+                        console.log('Status check:', data);
+                    } else {
+                        console.error('Status check failed:', response.status);
+                    }
+                } catch (error) {
+                    console.error('Error checking interview status:', error);
+                }
+            }
+
+            redirectToResults() {
+                // Clear the interval
+                if (this.checkInterval) {
+                    clearInterval(this.checkInterval);
+                }
+
+                // Update message to show completion
+                this.statusMessage.innerHTML = 'Interview completed! Preparing result...';
+                this.statusMessage.style.background = 'rgba(16, 185, 129, 0.2)';
+                this.statusMessage.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                this.statusMessage.style.color = '#34d399';
+
+                // Redirect after a brief delay
+                setTimeout(() => {
+                    window.location.href = `/interviews/${this.interviewId}/result`;
+                }, 10000);
+            }
+
+            // Cleanup method
+            destroy() {
+                if (this.checkInterval) {
+                    clearInterval(this.checkInterval);
+                }
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.interviewWaiting = new InterviewWaiting();
+        });
+
+        // Cleanup when page unloads
+        window.addEventListener('beforeunload', () => {
+            if (window.interviewWaiting) {
+                window.interviewWaiting.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

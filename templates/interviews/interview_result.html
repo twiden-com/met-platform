@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha AI - Interview Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #1e3a8a;
+            --color-orange: #f97316;
+            --color-white: #ffffff;
+            --color-gray-bg: #f2f4f8;
+            --color-success: #10b981;
+            --color-excellent: #059669;
+            --color-good: #0891b2;
+            --color-average: #ca8a04;
+            --color-poor: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: linear-gradient(135deg, var(--color-navy) 0%, #1e40af 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fixed Header */
+        .app-header {
+            background: var(--color-navy);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .back-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -8px;
+            width: 6px;
+            height: 6px;
+            background: var(--color-orange);
+            border-radius: 50%;
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes aiPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .logo-accent {
+            color: var(--color-orange);
+        }
+
+        /* Animated Background */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(249, 115, 22, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(30, 58, 138, 0.05) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 24%, rgba(255, 255, 255, 0.01) 25%, rgba(255, 255, 255, 0.01) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.01) 75%, rgba(255, 255, 255, 0.01) 76%, transparent 77%);
+            background-size: 100px 100px;
+            animation: backgroundMove 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 100px;
+            padding-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        /* Results Header */
+        .results-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-orange) 0%, white 50%, var(--color-success) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .results-subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+        }
+
+        .interview-topic {
+            font-size: 1rem;
+            color: var(--color-orange);
+            font-weight: 600;
+        }
+
+        /* Score Overview */
+        .score-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .score-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .score-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-orange), var(--color-success));
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .score-description {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.4;
+        }
+
+        /* Performance Analysis */
+        .analysis-section {
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .section-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--color-orange);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .analysis-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .analysis-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--color-orange);
+        }
+
+        .analysis-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Recording Section */
+        .recording-section {
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .recording-player {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-orange) 0%, #f59e0b 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            transition: all 0.3s ease;
+            font-size: 2rem;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+        }
+
+        .recording-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .recording-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .recording-detail-label {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .recording-detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Transcript Section */
+        .transcript-section {
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+
+        .transcript-container {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transcript-message {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .transcript-message:last-child {
+            border-bottom: none;
+        }
+
+        .transcript-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .transcript-avatar.assistant {
+            background: linear-gradient(135deg, var(--color-orange), #f59e0b);
+            color: white;
+        }
+
+        .transcript-avatar.user {
+            background: linear-gradient(135deg, var(--color-success), #059669);
+            color: white;
+        }
+
+        .transcript-content {
+            flex: 1;
+            padding-top: 0.5rem;
+        }
+
+        .transcript-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 0.5rem;
+        }
+
+        .transcript-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Call Details */
+        .call-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 1s both;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Actions */
+        .actions-section {
+            text-align: center;
+            animation: fadeInUp 0.8s ease 1.2s both;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-button.primary {
+            background: linear-gradient(135deg, var(--color-orange), #f59e0b);
+            color: white;
+        }
+
+        .action-button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Score Colors */
+        .score-excellent {
+            color: var(--color-excellent);
+        }
+
+        .score-good {
+            color: var(--color-good);
+        }
+
+        .score-average {
+            color: var(--color-average);
+        }
+
+        .score-poor {
+            color: var(--color-poor);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+
+            .main-content {
+                padding-top: 120px;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .results-title {
+                font-size: 2rem;
+            }
+
+            .score-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recording-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .call-details {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .logo {
+                display: none;
+            }
+        }
+
+        /* Audio Element Styling */
+        audio {
+            width: 100%;
+            margin-top: 1rem;
+            border-radius: 8px;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom scrollbar for transcript */
+        .transcript-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .transcript-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .transcript-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .transcript-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Grid -->
+    <div class="background-grid"></div>
+
+    <!-- Fixed Header -->
+    <div class="app-header">
+        <div class="header-left">
+            <a href="/student/ai" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                AI Interviews
+            </a>
+            <h1 class="page-title">Interview Results</h1>
+        </div>
+        <div class="logo">
+            Medha<span class="logo-accent">AI</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Results Header -->
+        <div class="results-header">
+            <h1 class="results-title">🎉 Interview Complete!</h1>
+            <p class="results-subtitle">{{ interview_result.variables.metadata.user_id and 'User ID: ' + interview_result.variables.metadata.user_id|string or 'Great job on completing your interview!' }}</p>
+            <p class="interview-topic">Topic: {{ interview_result.variables.metadata.interview_topic or 'Technical Interview' }}</p>
+        </div>
+
+        <!-- Score Overview -->
+        <div class="score-overview">
+            <div class="score-card">
+                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10 >= 8) else 'good' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10 >= 6) else 'average' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10 >= 4) else 'poor' }}">
+                    {{ interview_result.analysis.overall_score_out_of_10 or 'N/A' }}<span style="font-size: 1.5rem; opacity: 0.7;">{{ '/10' if interview_result.analysis.overall_score_out_of_10 else '' }}</span>
+                </div>
+                <div class="score-label">Overall Score</div>
+                <div class="score-description">Your comprehensive performance rating</div>
+            </div>
+
+            <div class="score-card">
+                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10 >= 8) else 'good' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10 >= 6) else 'average' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10 >= 4) else 'poor' }}">
+                    {{ interview_result.analysis.knowledge_score_out_of_10 or 'N/A' }}<span style="font-size: 1.5rem; opacity: 0.7;">{{ '/10' if interview_result.analysis.knowledge_score_out_of_10 else '' }}</span>
+                </div>
+                <div class="score-label">Knowledge Score</div>
+                <div class="score-description">Technical understanding and accuracy</div>
+            </div>
+
+            <div class="score-card">
+                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10 >= 8) else 'good' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10 >= 6) else 'average' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10 >= 4) else 'poor' }}">
+                    {{ interview_result.analysis.communication_score_out_of_10 or 'N/A' }}<span style="font-size: 1.5rem; opacity: 0.7;">{{ '/10' if interview_result.analysis.communication_score_out_of_10 else '' }}</span>
+                </div>
+                <div class="score-label">Communication</div>
+                <div class="score-description">Clarity and articulation skills</div>
+            </div>
+        </div>
+
+        <!-- Performance Analysis -->
+        <div class="analysis-section">
+            <h2 class="section-header">
+                <div class="section-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 11H7v8h2v-8zm4-4h-2v12h2V7zm4-4h-2v16h2V3z"/>
+                    </svg>
+                </div>
+                Performance Analysis
+            </h2>
+
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <div class="analysis-title">📈 Performance Summary</div>
+                    <div class="analysis-content">{{ interview_result.analysis.performance_summary or 'Analysis not available yet.' }}</div>
+                </div>
+
+                <div class="analysis-card">
+                    <div class="analysis-title">💪 Key Strengths</div>
+                    <div class="analysis-content">{{ interview_result.analysis.strengths_of_candidate_summary or 'Strengths analysis not available yet.' }}</div>
+                </div>
+
+                <div class="analysis-card">
+                    <div class="analysis-title">🎯 Areas for Improvement</div>
+                    <div class="analysis-content">{{ interview_result.analysis.areas_of_improvement_summary or 'Improvement areas not available yet.' }}</div>
+                </div>
+
+                <div class="analysis-card">
+                    <div class="analysis-title">⚠️ Areas to Focus</div>
+                    <div class="analysis-content">{{ interview_result.analysis.weaknesses_of_candidate_summary or 'Focus areas not available yet.' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recording Section -->
+        {% if interview_result.recording_url %}
+        <div class="recording-section">
+            <h2 class="section-header">
+                <div class="section-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </div>
+                Interview Recording
+            </h2>
+
+            <div class="recording-player">
+                <button class="play-button" onclick="toggleRecording()">
+                    <svg id="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                </button>
+                
+                <audio id="interview-audio" controls style="display: none;">
+                    <source src="{{ interview_result.recording_url }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+
+                <div class="recording-info">
+                    <div class="recording-detail">
+                        <div class="recording-detail-label">Duration</div>
+                        <div class="recording-detail-value">{{ "%.1f"|format(interview_result.call_length) }} minutes</div>
+                    </div>
+                    <div class="recording-detail">
+                        <div class="recording-detail-label">Date</div>
+                        <div class="recording-detail-value">{{ interview_result.created_at[:10] }}</div>
+                    </div>
+                    <div class="recording-detail">
+                        <div class="recording-detail-label">Status</div>
+                        <div class="recording-detail-value">{{ interview_result.status.title() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Transcript Section -->
+        {% if interview_result.transcripts %}
+        <div class="transcript-section">
+            <h2 class="section-header">
+                <div class="section-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                </div>
+                Interview Transcript
+            </h2>
+
+            <div class="transcript-container">
+                {% for transcript in interview_result.transcripts %}
+                    {% if transcript.user in ['assistant', 'user'] %}
+                    <div class="transcript-message">
+                        <div class="transcript-avatar {{ transcript.user }}">
+                            {{ 'AI' if transcript.user == 'assistant' else 'YOU' }}
+                        </div>
+                        <div class="transcript-content">
+                            <div class="transcript-text">{{ transcript.text }}</div>
+                            <div class="transcript-time">{{ transcript.created_at[11:16] }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Call Details -->
+        <div class="call-details">
+            <div class="detail-card">
+                <div class="detail-label">Call ID</div>
+                <div class="detail-value">{{ interview_result.call_id[:8] }}...</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Phone Number</div>
+                <div class="detail-value">{{ interview_result.to }}</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Interview Duration</div>
+                <div class="detail-value">{{ "%.1f"|format(interview_result.call_length) }} min</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Country</div>
+                <div class="detail-value">{{ interview_result.variables.country }}</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Language</div>
+                <div class="detail-value">{{ interview_result.variables.language }}</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Call Cost</div>
+                <div class="detail-value">${{ "%.3f"|format(interview_result.price) }}</div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-section">
+            <div class="action-buttons">
+                <a href="/student/ai" class="action-button primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    Take Another Interview
+                </a>
+                {% if interview_result.recording_url %}
+                <a href="{{ interview_result.recording_url }}" target="_blank" class="action-button secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    Download Recording
+                </a>
+                {% endif %}
+                <button class="action-button secondary" onclick="window.print()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z"/>
+                    </svg>
+                    Print Results
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Audio player functionality
+        let isPlaying = false;
+        const audio = document.getElementById('interview-audio');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+
+        function toggleRecording() {
+            if (!audio) return;
+
+            if (isPlaying) {
+                audio.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                isPlaying = false;
+            } else {
+                audio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                isPlaying = true;
+            }
+        }
+
+        // Audio event listeners
+        if (audio) {
+            audio.addEventListener('ended', () => {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                isPlaying = false;
+            });
+
+            audio.addEventListener('pause', () => {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                isPlaying = false;
+            });
+
+            audio.addEventListener('play', () => {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                isPlaying = true;
+            });
+        }
+
+        // Smooth scroll for transcript
+        const transcriptContainer = document.querySelector('.transcript-container');
+        if (transcriptContainer) {
+            // Auto-scroll to bottom on load
+            setTimeout(() => {
+                transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
+            }, 500);
+        }
+
+        // Score color animation
+        function animateScores() {
+            const scoreValues = document.querySelectorAll('.score-value');
+            scoreValues.forEach((score, index) => {
+                const scoreText = score.textContent.split('/')[0]; // Get the number part before '/10'
+                const finalValue = parseInt(scoreText);
+                
+                // Skip animation if score is N/A or invalid
+                if (isNaN(finalValue)) return;
+                
+                let currentValue = 0;
+                const increment = finalValue / 30;
+                
+                const animation = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        currentValue = finalValue;
+                        clearInterval(animation);
+                    }
+                    const span = score.querySelector('span');
+                    if (span && span.previousSibling) {
+                        span.previousSibling.textContent = Math.floor(currentValue);
+                    }
+                }, 50);
+            });
+        }
+
+        // Start score animation after page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(animateScores, 800);
+        });
+
+        // Confetti effect for excellent scores
+        function createConfetti() {
+            const overallScore = {{ interview_result.analysis.overall_score_out_of_10 or 0 }};
+            if (overallScore >= 8) {
+                // Simple confetti effect
+                const colors = ['#f97316', '#10b981', '#3b82f6', '#8b5cf6'];
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.style.cssText = `
+                            position: fixed;
+                            top: -10px;
+                            left: ${Math.random() * 100}%;
+                            width: 8px;
+                            height: 8px;
+                            background: ${colors[Math.floor(Math.random() * colors.length)]};
+                            border-radius: 50%;
+                            animation: confettiFall 3s linear forwards;
+                            pointer-events: none;
+                            z-index: 9999;
+                        `;
+                        document.body.appendChild(confetti);
+                        
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 100);
+                }
+            }
+        }
+
+        // Add confetti CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confettiFall {
+                0% {
+                    transform: translateY(-10px) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Start confetti after animations
+        setTimeout(createConfetti, 2000);
+
+        // Share functionality
+        async function shareResults() {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'My Medha AI Interview Results',
+                        text: `I scored {{ interview_result.analysis.overall_score_out_of_10 }}/10 in my AI interview!`,
+                        url: window.location.href
+                    });
+                } catch (err) {
+                    console.log('Error sharing:', err);
+                }
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Results link copied to clipboard!');
+                });
+            }
+        }
+
+        // Performance badge logic
+        function getPerformanceBadge(score) {
+            if (score >= 9) return { text: '🏆 Outstanding', class: 'excellent' };
+            if (score >= 8) return { text: '⭐ Excellent', class: 'excellent' };
+            if (score >= 7) return { text: '👍 Good', class: 'good' };
+            if (score >= 6) return { text: '👌 Average', class: 'average' };
+            return { text: '📝 Needs Practice', class: 'poor' };
+        }
+
+        // Add performance badges
+        document.addEventListener('DOMContentLoaded', () => {
+            const overallScore = {{ interview_result.analysis.overall_score_out_of_10 or 0 }};
+            const badge = getPerformanceBadge(overallScore);
+            
+            // You can add this to the results header if needed
+            const subtitle = document.querySelector('.results-subtitle');
+            if (subtitle && overallScore >= 8) {
+                setTimeout(() => {
+                    subtitle.innerHTML += `<br><span style="color: var(--color-success); font-weight: 600;">${badge.text}</span>`;
+                }, 1500);
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' && audio) {
+                e.preventDefault();
+                toggleRecording();
+            }
+            if (e.key === 'p' && e.ctrlKey) {
+                e.preventDefault();
+                window.print();
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('[style*="animation"]');
+            animatedElements.forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+        });
+
+        // Auto-refresh for pending results (if needed)
+        const callStatus = '{{ interview_result.status }}';
+        if (callStatus !== 'completed') {
+            setTimeout(() => {
+                window.location.reload();
+            }, 10000); // Refresh every 10 seconds if not completed
+        }
+
+        // Error handling for audio
+        if (audio) {
+            audio.addEventListener('error', () => {
+                console.error('Error loading audio');
+                document.querySelector('.recording-player').innerHTML += 
+                    '<p style="color: rgba(255,255,255,0.6); margin-top: 1rem;">Audio recording unavailable</p>';
+            });
+        }
+    </script>
+</body>
+</html>

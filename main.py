@@ -8,6 +8,7 @@ from src.routes.student import router as student_router
 from src.routes.batch import router as batch_router
 from src.routes.medha_code import router as medha_code_router
 from src.routes.challenges import router as challenges_router
+from src.routes.interviews import router as interviews_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from src.config.settings import settings
@@ -47,6 +48,7 @@ app.include_router(batch_router)
 app.include_router(lead_router)
 app.include_router(medha_code_router)
 app.include_router(challenges_router)
+app.include_router(interviews_router)
 
 if __name__ == "__main__":
     uvicorn.run(

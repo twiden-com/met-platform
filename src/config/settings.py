@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     supabase_service_key: str        = Field(..., min_length=1) 
     message_central_header_key: str  = Field(..., min_length=1)
     message_central_customer_id: str = Field(..., min_length=1)
+    bland_ai_key: str                = Field(..., min_length=1)
     environment: str = "dev"
     port: int = 8000
     log_level: str = 'info'
