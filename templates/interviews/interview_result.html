@@ -603,7 +603,7 @@
     <!-- Fixed Header -->
     <div class="app-header">
         <div class="header-left">
-            <a href="/student/ai" class="back-link">
+            <a href="/interviews" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
                 </svg>
@@ -618,17 +618,45 @@
 
     <!-- Main Content -->
     <div class="main-content">
+
+        
         <!-- Results Header -->
         <div class="results-header">
-            <h1 class="results-title">🎉 Interview Complete!</h1>
+            <!-- <h1 class="results-title">🎉 Interview Complete!</h1> -->
             <p class="results-subtitle">{{ interview_result.variables.metadata.user_id and 'User ID: ' + interview_result.variables.metadata.user_id|string or 'Great job on completing your interview!' }}</p>
             <p class="interview-topic">Topic: {{ interview_result.variables.metadata.interview_topic or 'Technical Interview' }}</p>
+         <div class="call-details">
+            <div class="detail-card">
+                <div class="detail-label">Call ID</div>
+                <div class="detail-value">{{ interview_result.call_id[:8] }}...</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Phone Number</div>
+                <div class="detail-value">{{ interview_result.to }}</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Interview Duration</div>
+                <div class="detail-value">{{ "%.1f"|format(interview_result.call_length) }} min</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Country</div>
+                <div class="detail-value">{{ interview_result.variables.country }}</div>
+            </div>
+            <!-- <div class="detail-card">
+                <div class="detail-label">Language</div>
+                <div class="detail-value">{{ interview_result.variables.language }}</div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-label">Call Cost</div>
+                <div class="detail-value">${{ "%.3f"|format(interview_result.price) }}</div>
+            </div> -->
+        </div>
         </div>
 
         <!-- Score Overview -->
         <div class="score-overview">
             <div class="score-card">
-                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10 >= 8) else 'good' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10 >= 6) else 'average' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10 >= 4) else 'poor' }}">
+                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10|int >= 8) else 'good' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10|int >= 6) else 'average' if (interview_result.analysis.overall_score_out_of_10 and interview_result.analysis.overall_score_out_of_10|int >= 4) else 'poor' }}">
                     {{ interview_result.analysis.overall_score_out_of_10 or 'N/A' }}<span style="font-size: 1.5rem; opacity: 0.7;">{{ '/10' if interview_result.analysis.overall_score_out_of_10 else '' }}</span>
                 </div>
                 <div class="score-label">Overall Score</div>
@@ -636,7 +664,7 @@
             </div>
 
             <div class="score-card">
-                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10 >= 8) else 'good' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10 >= 6) else 'average' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10 >= 4) else 'poor' }}">
+                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10|int >= 8) else 'good' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10|int >= 6) else 'average' if (interview_result.analysis.knowledge_score_out_of_10 and interview_result.analysis.knowledge_score_out_of_10|int >= 4) else 'poor' }}">
                     {{ interview_result.analysis.knowledge_score_out_of_10 or 'N/A' }}<span style="font-size: 1.5rem; opacity: 0.7;">{{ '/10' if interview_result.analysis.knowledge_score_out_of_10 else '' }}</span>
                 </div>
                 <div class="score-label">Knowledge Score</div>
@@ -644,7 +672,7 @@
             </div>
 
             <div class="score-card">
-                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10 >= 8) else 'good' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10 >= 6) else 'average' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10 >= 4) else 'poor' }}">
+                <div class="score-value score-{{ 'excellent' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10| int >= 8) else 'good' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10|int >= 6) else 'average' if (interview_result.analysis.communication_score_out_of_10 and interview_result.analysis.communication_score_out_of_10|int >= 4) else 'poor' }}">
                     {{ interview_result.analysis.communication_score_out_of_10 or 'N/A' }}<span style="font-size: 1.5rem; opacity: 0.7;">{{ '/10' if interview_result.analysis.communication_score_out_of_10 else '' }}</span>
                 </div>
                 <div class="score-label">Communication</div>
@@ -762,49 +790,24 @@
         {% endif %}
 
         <!-- Call Details -->
-        <div class="call-details">
-            <div class="detail-card">
-                <div class="detail-label">Call ID</div>
-                <div class="detail-value">{{ interview_result.call_id[:8] }}...</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Phone Number</div>
-                <div class="detail-value">{{ interview_result.to }}</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Interview Duration</div>
-                <div class="detail-value">{{ "%.1f"|format(interview_result.call_length) }} min</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Country</div>
-                <div class="detail-value">{{ interview_result.variables.country }}</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Language</div>
-                <div class="detail-value">{{ interview_result.variables.language }}</div>
-            </div>
-            <div class="detail-card">
-                <div class="detail-label">Call Cost</div>
-                <div class="detail-value">${{ "%.3f"|format(interview_result.price) }}</div>
-            </div>
-        </div>
+       
 
         <!-- Actions -->
         <div class="actions-section">
             <div class="action-buttons">
-                <a href="/student/ai" class="action-button primary">
+                <a href="/interviews" class="action-button primary">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                     </svg>
                     Take Another Interview
                 </a>
                 {% if interview_result.recording_url %}
-                <a href="{{ interview_result.recording_url }}" target="_blank" class="action-button secondary">
+                <!-- <a href="{{ interview_result.recording_url }}" target="_blank" class="action-button secondary">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                     </svg>
                     Download Recording
-                </a>
+                </a> -->
                 {% endif %}
                 <button class="action-button secondary" onclick="window.print()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -903,7 +906,7 @@
 
         // Confetti effect for excellent scores
         function createConfetti() {
-            const overallScore = {{ interview_result.analysis.overall_score_out_of_10 or 0 }};
+            const overallScore = "{{ interview_result.analysis.overall_score_out_of_10 or 0 }}";
             if (overallScore >= 8) {
                 // Simple confetti effect
                 const colors = ['#f97316', '#10b981', '#3b82f6', '#8b5cf6'];
@@ -980,7 +983,7 @@
 
         // Add performance badges
         document.addEventListener('DOMContentLoaded', () => {
-            const overallScore = {{ interview_result.analysis.overall_score_out_of_10 or 0 }};
+            const overallScore = "{{ interview_result.analysis.overall_score_out_of_10 or 0 }}";
             const badge = getPerformanceBadge(overallScore);
             
             // You can add this to the results header if needed

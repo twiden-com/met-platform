@@ -7,7 +7,7 @@ from src.utils.auth_utils import auth_required
 from typing import Optional
 from datetime import date
 
-router = APIRouter(prefix='/batches', tags=["Admin"])
+router = APIRouter(prefix='/batches', tags=["Batches"])
 templates = Jinja2Templates(directory="templates", auto_reload=True)
 
 

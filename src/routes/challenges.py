@@ -7,7 +7,7 @@ from supabase import AsyncClient
 from src.config.database import get_db
 from src.utils.auth_utils import auth_required
 
-router    = APIRouter(prefix='/challenges', tags=["Admin"])
+router    = APIRouter(prefix='/challenges', tags=["Challenges"])
 templates = Jinja2Templates(directory="templates", auto_reload=True)
 
 

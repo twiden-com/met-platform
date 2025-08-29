@@ -103,7 +103,11 @@ def bland_start_interview(
         },
         "metadata": {
             "user_id": profile_id,
-            "interview_id": interview_id
+            "interview_id": interview_id,
+            "interview_topic": interview_topic,
+            "user_name": user_name,
+            "course_name": course_name,
+            "trainer_name": trainer_name
         }
     }
 

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medha AI - Available Interviews</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medha AI - Available Interviews</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Keep your existing CSS */
+    :root {
             --color-navy: #1e3a8a;
             --color-orange: #f97316;
             --color-white: #ffffff;
@@ -538,165 +539,225 @@
                 grid-template-columns: 1fr;
             }
         }
-    </style>
+    /* Add new styles for tabs */
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 2px solid #e5e5e5;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: #6f6f6f;
+      transition: all 0.2s ease;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-btn.active {
+      color: var(--color-navy);
+      border-bottom: 3px solid var(--color-navy);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-    <!-- AI Accent Line -->
-    <div class="ai-accent"></div>
-    
-    <!-- Fixed Header -->
-    <div class="app-header">
-        <div class="header-left">
-            <a href="/dashboard" class="back-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
-                </svg>
-                Dashboard
-            </a>
-            <h1 class="page-title">AI Interviews</h1>
-        </div>
-        <div class="logo">
-            Medha<span class="logo-accent">AI</span>
-        </div>
+  <!-- Accent Line + Header same as before -->
+
+  <div class="ai-accent"></div>
+  <div class="app-header">
+    <div class="header-left">
+      <a href="/dashboard" class="back-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+        </svg>
+        Dashboard
+      </a>
+      <h1 class="page-title">AI Interviews</h1>
     </div>
+    <div class="logo">
+      Medha<span class="logo-accent">AI</span>
+    </div>
+  </div>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-        <div class="content-container">
-            
-            <!-- Sticky Top Section -->
-            <div class="top-section">
-                <div class="content-header">
-                    <h2 class="content-title">Available Interviews</h2>
-                </div>
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <div class="content-container">
 
-                <!-- Metrics Cards -->
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-value">6</div>
-                        <div class="metric-label">Total Available</div>
-                    </div>
-                    <div class="metric-card completed">
-                        <div class="metric-value">3</div>
-                        <div class="metric-label">Completed</div>
-                    </div>
-                    <div class="metric-card average">
-                        <div class="metric-value">85%</div>
-                        <div class="metric-label">Average Score</div>
-                    </div>
-                    <div class="metric-card total">
-                        <div class="metric-value">52</div>
-                        <div class="metric-label">Total Minutes</div>
-                    </div>
+      <!-- Sticky Top Section -->
+      <div class="top-section">
+        <div class="content-header">
+          <h2 class="content-title">Available Interviews</h2>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">{{ stats.available }}</div>
+            <div class="metric-label">Total Available</div>
+          </div>
+          <div class="metric-card completed">
+            <div class="metric-value">{{ stats.completed }}</div>
+            <div class="metric-label">Completed</div>
+          </div>
+          <div class="metric-card average">
+            <div class="metric-value">{{ stats.avg_score }}</div>
+            <div class="metric-label">Average Score</div>
+          </div>
+          <div class="metric-card total">
+            <div class="metric-value">{{ stats.duration }}</div>
+            <div class="metric-label">Total Time</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="available">Available</button>
+          <button class="tab-btn" data-tab="results">Your Results</button>
+        </div>
+      </div>
+
+      <!-- Scrollable Interview List -->
+      <div class="interview-list-container">
+
+        <!-- Tab: Available -->
+        <div id="available" class="tab-content active">
+          <div class="interview-list">
+            {% for interview in interviews %}
+            <div class="interview-card">
+              <div class="interview-header">
+                <div>
+                  <h3 class="interview-title">{{ interview.interview_topic }}</h3>
+                  <div class="interview-id">{{ interview.id }}</div>
                 </div>
+                <div class="interview-status">
+                  <div class="status-badge status-available">{{ interview.course_name }}</div>
+                  <div class="score-text">Not attempted</div>
+                </div>
+              </div>
+
+              <div class="interview-meta">
+                <div class="meta-item">
+                  <div class="meta-label">Course</div>
+                  <div class="meta-value">{{ interview.course_name }}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Trainer</div>
+                  <div class="meta-value">{{ interview.trainer_name }}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Duration</div>
+                  <div class="meta-value">{{ interview.interview_max_duration }} minutes</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Questions</div>
+                  <div class="meta-value">< 10 questions</div>
+                </div>
+              </div>
+
+              <div class="interview-actions">
+                <a href="/interviews/start/{{ interview.id }}" class="action-btn primary">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                  Start Interview
+                </a>
+                <button class="action-btn">View Details</button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Tab: Your Results -->
+        <div id="results" class="tab-content">
+          <div class="interview-list">
+
+
+            {% for result in interview_results%}
+            <!-- Example Completed Interview Card -->
+            <div class="interview-card">
+              <div class="interview-header">
+                <div>
+                  <h3 class="interview-title">{{ result.topic }}</h3>
+                  <div class="interview-id">Phone Interview</div>
+                </div>
+                <div class="interview-status">
+                  <div class="status-badge status-completed">Completed</div>
+                  <div class="score-text">Score: {{result.score}}/10</div>
+                </div>
+              </div>
+
+              <div class="interview-meta">
+                <div class="meta-item">
+                  <div class="meta-label">Course</div>
+                  <div class="meta-value">{{ result.course_name}}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Date</div>
+                  <div class="meta-value">{{ result.created_at | isttime}}</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Duration</div>
+                  <div class="meta-value">{{ result.duration }}s</div>
+                </div>
+                <div class="meta-item">
+                  <div class="meta-label">Questions</div>
+                  <div class="meta-value">< 10 questions</div>
+                </div>
+              </div>
+
+              <div class="interview-actions">
+                <a href="/interviews/{{ result.call_id }}/result" class="action-btn success">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                  </svg>
+                  View Results
+                </a>
+                <a href="#" class="action-btn">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                  </svg>
+                  Retake
+                </a>
+              </div>
             </div>
 
-            <!-- Scrollable Interview List -->
-            <div class="interview-list-container">
-                <div class="interview-list">
+            {% endfor %}
 
-                    {% for interview in interviews %}
-                        <div class="interview-card">
-                        <div class="interview-header">
-                            <div>
-                                <h3 class="interview-title">{{ interview.interview_topic }}</h3>
-                                <div class="interview-id">{{ interview.id }}</div>
-                            </div>
-                            <div class="interview-status">
-                                <div class="status-badge status-available">{{ interview.course_name }}</div>
-                                <div class="score-text">Not attempted</div>
-                            </div>
-                        </div>
-                        
-                        <div class="interview-meta">
-                            <div class="meta-item">
-                                <div class="meta-label">Course</div>
-                                <div class="meta-value">{{ interview.course_name }}</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Trainer</div>
-                                <div class="meta-value">{{ interview.trainer_name }}</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Duration</div>
-                                <div class="meta-value">{{ interview.interview_max_duration }} minutes</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Questions</div>
-                                <div class="meta-value">< 10 questions</div>
-                            </div>
-                        </div>
-                        
-                        <div class="interview-actions">
-                            <a href="/interviews/start/{{ interview.id }}" class="action-btn primary">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M8 5v14l11-7z"/>
-                                </svg>
-                                Start Interview
-                            </a>
-                            <button class="action-btn">View Details</button>
-                        </div>
-                    </div>
-
-                    {% endfor %}
-                    
-                    <!-- Interview Card 1 - Available -->
-                    
-
-                    <!-- Interview Card 2 - Completed -->
-                    <!-- <div class="interview-card">
-                        <div class="interview-header">
-                            <div>
-                                <h3 class="interview-title">Control Structures & Loops</h3>
-                                <div class="interview-id">Interview #002</div>
-                            </div>
-                            <div class="interview-status">
-                                <div class="status-badge status-completed">Completed</div>
-                                <div class="score-text">Score: 92%</div>
-                            </div>
-                        </div>
-                        
-                        <div class="interview-meta">
-                            <div class="meta-item">
-                                <div class="meta-label">Course</div>
-                                <div class="meta-value">Python Full Stack</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Trainer</div>
-                                <div class="meta-value">Chaitanya Vaddi</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Duration</div>
-                                <div class="meta-value">10 minutes</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Questions</div>
-                                <div class="meta-value">8 questions</div>
-                            </div>
-                        </div>
-                        
-                        <div class="interview-actions">
-                            <a href="/interview/2/results" class="action-btn success">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                                </svg>
-                                View Results
-                            </a>
-                            <a href="/interview/2/retake" class="action-btn">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-                                </svg>
-                                Retake
-                            </a>
-                        </div>
-                    </div> -->
-
-
-
-                </div>
-            </div>
-
+          </div>
         </div>
+
+      </div>
     </div>
+  </div>
+
+  <script>
+    // Tab switching logic
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabBtns.forEach(b => b.classList.remove("active"));
+        tabContents.forEach(c => c.classList.remove("active"));
+
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+  </script>
 </body>
 </html>
