@@ -118,7 +118,6 @@ async def logout_user(request: Request):
 
 
 
-
 @router.get("/access-denied")
 async def logout_user(request: Request):
     return templates.TemplateResponse("access_denied.html", {'request': request})

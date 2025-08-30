@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from supabase import AsyncClient
+from src.config.database import get_db
 from src.utils.auth_utils import auth_required
 
 router    = APIRouter(prefix='/dashboard', tags=["Admin"])
@@ -22,3 +24,12 @@ async def show_dashboard(request: Request):
      elif profile.get('role') == 'admin':
           return templates.TemplateResponse("dashboards/admin.html", {"request": request, "profile":profile})
 
+@router.get("/switch")
+@auth_required(['counsellor', 'admin', 'student', 'trainer'])
+async def switch_role(request: Request, role, db: AsyncClient = Depends(get_db)):
+     profile = request.state.user_data.profile
+     res = await db.table('profiles').update({
+          'role': role
+     }).eq('id', profile['id']).execute()
+     if res.data:
+        return RedirectResponse('/dashboard', status_code=302)
