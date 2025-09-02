@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from supabase import AsyncClient
 from src.config.database import get_db
@@ -32,6 +32,7 @@ async def switch_role(request: Request, role, db: AsyncClient = Depends(get_db))
           'role': role
      }).eq('id', profile['id']).execute()
      if res.data:
-        base_url = str(request.base_url).replace('http://', 'https://')
-        redirect_url = f"{base_url}dashboard"
-        return RedirectResponse(redirect_url, status_code=302)
+     #    base_url = str(request.base_url).replace('http://', 'https://')
+     #    redirect_url = f"{base_url}dashboard"
+     #    return RedirectResponse(redirect_url, status_code=302)
+          return JSONResponse({'message': 'success'}, status_code=200)
