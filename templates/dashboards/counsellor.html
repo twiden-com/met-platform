@@ -577,7 +577,7 @@
                 }
             })
             .then(response => {
-                if (response.ok) {
+                if (response.ok || (response.status >= 300 && response.status < 400)) {
                     // Update UI to reflect role change
                     updateRoleUI(role);
                     currentRole = role;
