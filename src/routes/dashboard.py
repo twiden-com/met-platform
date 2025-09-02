@@ -32,4 +32,6 @@ async def switch_role(request: Request, role, db: AsyncClient = Depends(get_db))
           'role': role
      }).eq('id', profile['id']).execute()
      if res.data:
-        return RedirectResponse('/dashboard', status_code=302)
+        base_url = str(request.base_url).replace('http://', 'https://')
+        redirect_url = f"{base_url}dashboard"
+        return RedirectResponse(redirect_url, status_code=302)
