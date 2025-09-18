@@ -1,7 +1,7 @@
 import requests
 from src.config.settings import settings
 
-headers = {'authToken': settings.message_central_header_key}
+headers= {'authToken': settings.message_central_header_key}
 
 def send_otp(country_code:str, phone: str):
     url = f"https://cpaas.messagecentral.com/verification/v3/send?countryCode={country_code}&customerId={settings.message_central_customer_id}&flowType=SMS&mobileNumber={phone}"
