@@ -100,3 +100,4 @@ async def interview_result(request: Request, call_id: str):
    res = call_status(call_id=call_id)
    return templates.TemplateResponse("/interviews/interview_result.html", {'request': request, 'interview_result': res})
     
+
