@@ -1037,14 +1037,18 @@
                 <div class="form-group">
                     <div class="bx--select">
                         <select class="bx--select__input" id="course-select">
+
                             <option value="">All courses</option>
                             <option value="data_science_ai">Data Science with AI</option>
                             <option value="python_fullstack_ai">Python Full Stack with AI</option>
                             <option value="digital_marketing_ai">Digital Marketing with AI</option>
                             <option value="cybersecurity">Cybersecurity</option>
                             <option value="java_fullstack_ai">Java Full Stack with AI</option>
-                            <option value="data_analytics_ai">Data Analytics & Gen AI</option>
+                            <option value="data_analytics_ai">Data Analytics with AI</option>
+                            <option value="generative_ai">Generative AI</option>
                             <option value="video_editing_graphic_design">Video Editing & Graphic Design</option>
+                            <option value="multi_cloud_devops">Multi Cloud With DevOps</option>
+                            <option value="carer_guidance">Career Guidance</option>
                         </select>
                         <svg class="bx--select__menu-icon" width="16" height="16" viewBox="0 0 16 16">
                             <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
@@ -1065,17 +1069,37 @@
                                     <input type="checkbox" id="counsellor-not_yet" value="not_yet">
                                     <label for="counsellor-not_yet">Not Yet</label>
                                 </div>
-                                <div class="bx--multi-select__option" data-checkbox="counsellor-ushmika">
-                                    <input type="checkbox" id="counsellor-ushmika" value="ushmika">
-                                    <label for="counsellor-ushmika">Ushmika</label>
-                                </div>
                                 <div class="bx--multi-select__option" data-checkbox="counsellor-pallavi">
                                     <input type="checkbox" id="counsellor-pallavi" value="pallavi">
                                     <label for="counsellor-pallavi">Pallavi</label>
                                 </div>
-                                <div class="bx--multi-select__option" data-checkbox="counsellor-taniath">
-                                    <input type="checkbox" id="counsellor-taniath" value="taniath">
-                                    <label for="counsellor-taniath">Taniath</label>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-varun">
+                                    <input type="checkbox" id="counsellor-varun" value="varun">
+                                    <label for="counsellor-varun">Varun</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-sridurga">
+                                    <input type="checkbox" id="counsellor-sridurga" value="sridurga">
+                                    <label for="counsellor-sridurga">Sri Durga</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-khalid">
+                                    <input type="checkbox" id="counsellor-khalid" value="khalid">
+                                    <label for="counsellor-khalid">Khalid</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-prashanth">
+                                    <input type="checkbox" id="counsellor-prashanth" value="prashanth">
+                                    <label for="counsellor-prashanth">Prashanth</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-utkarsh">
+                                    <input type="checkbox" id="counsellor-utkarsh" value="utkarsh">
+                                    <label for="counsellor-utkarsh">Utkarsh</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-ShekarSir">
+                                    <input type="checkbox" id="counsellor-ShekarSir" value="ShekarSir">
+                                    <label for="counsellor-ShekarSir">Shekar Sir</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="counsellor-ushmika">
+                                    <input type="checkbox" id="counsellor-ushmika" value="ushmika">
+                                    <label for="counsellor-ushmika">Ushmika</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="counsellor-other">
                                     <input type="checkbox" id="counsellor-other" value="other">
@@ -1096,9 +1120,13 @@
                                 <path d="m8 11L3 6l.7-.7L8 9.6l4.3-4.3L13 6z"/>
                             </svg>
                             <div class="bx--multi-select__menu">
-                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ravi">
-                                    <input type="checkbox" id="source-marketing_ravi" value="marketing_ravi">
-                                    <label for="source-marketing_ravi">Marketing Ravi</label>
+                                <div class="bx--multi-select__option" data-checkbox="source-marketing_sohail">
+                                    <input type="checkbox" id="source-marketing_sohail" value="marketing_sohail">
+                                    <label for="source-marketing_sohail">Marketing - Suhail</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-marketing_shafi">
+                                    <input type="checkbox" id="source-marketing_shafi" value="marketing_shafi">
+                                    <label for="source-marketing_shafi">Marketing - Shafi</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="source-marketing_ashok">
                                     <input type="checkbox" id="source-marketing_ashok" value="marketing_ashok">
@@ -1127,6 +1155,10 @@
                                 <div class="bx--multi-select__option" data-checkbox="source-google_ads">
                                     <input type="checkbox" id="source-google_ads" value="google_ads">
                                     <label for="source-google_ads">Google Ads</label>
+                                </div>
+                                <div class="bx--multi-select__option" data-checkbox="source-marketing_ravi">
+                                    <input type="checkbox" id="source-marketing_ravi" value="marketing_ravi">
+                                    <label for="source-marketing_ravi">Marketing Ravi</label>
                                 </div>
                                 <div class="bx--multi-select__option" data-checkbox="source-other">
                                     <input type="checkbox" id="source-other" value="other">
@@ -1330,11 +1362,23 @@
                                             </div>
                                             <div class="bx--multi-select__option" data-checkbox="course-data_analytics_ai">
                                                 <input type="checkbox" id="course-data_analytics_ai" value="data_analytics_ai">
-                                                <label for="course-data_analytics_ai">Data Analytics & Gen AI</label>
+                                                <label for="course-data_analytics_ai">Data Analytics with AI</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-generative_ai">
+                                                <input type="checkbox" id="course-generative_ai" value="generative_ai">
+                                                <label for="course-generative_ai">Generative AI</label>
                                             </div>
                                             <div class="bx--multi-select__option" data-checkbox="course-video_editing_graphic_design">
                                                 <input type="checkbox" id="course-video_editing_graphic_design" value="video_editing_graphic_design">
                                                 <label for="course-video_editing_graphic_design">Video Editing & Graphic Design</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-multi_cloud_devops">
+                                                <input type="checkbox" id="course-multi_cloud_devops" value="multi_cloud_devops">
+                                                <label for="course-multi_cloud_devops">Multi Cloud With DevOps</label>
+                                            </div>
+                                            <div class="bx--multi-select__option" data-checkbox="course-carer_guidance">
+                                                <input type="checkbox" id="course-carer_guidance" value="carer_guidance">
+                                                <label for="course-carer_guidance">Career Guidance</label>
                                             </div>
                                         </div>
                                     </div>
@@ -1376,7 +1420,8 @@
                                 <label class="field-label">Lead Source</label>
                                 <select class="field-input field-select" id="edit-lead-source" disabled>
                                     <option value="">Select source</option>
-                                    <option value="marketing_ravi">Marketing Ravi</option>
+                                     <option value="marketing_sohail">Marketing - Suhail</option>
+                                    <option value="marketing_shafi">Marketing - Shafi</option>
                                     <option value="marketing_ashok">Marketing Ashok</option>
                                     <option value="google_maps">Google Maps (GMB)</option>
                                     <option value="social_media">Social Media</option>
@@ -1384,6 +1429,7 @@
                                     <option value="direct_walkin">Direct Walk-in</option>
                                     <option value="website">Website</option>
                                     <option value="google_ads">Google Ads</option>
+                                     <option value="marketing_ravi">Marketing Ravi</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
@@ -1392,9 +1438,14 @@
                                 <select class="field-input field-select" id="edit-counselled-by" disabled>
                                     <option value="">Select counsellor</option>
                                     <option value="not_yet">Not Yet</option>
-                                    <option value="ushmika">Ushmika</option>
                                     <option value="pallavi">Pallavi</option>
-                                    <option value="taniath">Taniath</option>
+                                    <option value="varun">Varun</option>
+                                    <option value="sridurga">Sri Durga</option>
+                                    <option value="khalid">Khalid</option>
+                                    <option value="prashanth">Prashanth</option>
+                                    <option value="utkarsh">Utkarsh</option>
+                                    <option value="ShekarSir">Shekar Sir</option>
+                                    <option value="ushmika">Ushmika</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
@@ -2003,8 +2054,9 @@
                 document.getElementById('student-name').innerHTML = `
                     ${lead.student_name || 'Unknown'}
                     ${this.getVerifiedBadge(lead.is_verified)}
+                     
                 `;
-                document.getElementById('student-contact').textContent = lead.phone_number || 'No contact info';
+                document.getElementById('student-contact').textContent = `${lead.phone_number} (${lead.place})`;
 
                 // Populate basic form fields
                 document.getElementById('edit-student-name').value = lead.student_name || '';
@@ -2242,20 +2294,25 @@ initializeGrid() {
                         cellRenderer: (params) => {
                             if (!params.value) return '';
                             const date = new Date(params.value);
-                            return date.toLocaleDateString('en-US', { 
+                            return date.toLocaleString('en-IN', { 
                                 month: 'short', 
-                                day: 'numeric'
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                hour12: true,
+                                timeZone: 'Asia/Kolkata'
                             });
                         }
                     },
                     
-                    {
+                   {
                         headerName: "Name",
                         field: "student_name",
                         width: 180,
                         pinned: 'left',
                         cellRenderer: (params) => {
-                            const additionalPeople = params.data.additional_people || 0;
+                            // Convert to number to handle string values
+                            const additionalPeople = parseInt(params.data.additional_people) || 0;
                             const additionalLabel = additionalPeople > 0 ? `+${additionalPeople}` : '';
                             const isVerified = params.data.is_verified;
                             
@@ -2648,9 +2705,10 @@ initializeGrid() {
                         // Calculate lead source counts
                         const leadSourceCounts = {};
                         const leadSourceLabels = {
-                            'marketing_ravi': 'Ravi',
+                            'marketing_sohail': 'Suhail',
+                            'marketing_shafi': 'Shafi',
                             'marketing_ashok': 'Ashok',
-                            'marketing_kumar': 'Kumar',
+                            'marketing_ravi': 'Ravi',
                             'google_maps': 'GMB',
                             'social_media': 'Social Media',
                             'referral': 'Referral',
@@ -2669,7 +2727,7 @@ initializeGrid() {
                         
                         // Update grid title
                         const gridTitle = document.querySelector('.grid-title');
-                        gridTitle.textContent = `All Leads (${data.total})`;
+                        gridTitle.textContent = `All Leads: ${data.total + data.additional} (${data.total} + ${data.additional})`;
                         
                         // Create or update stat cards container
                         this.updateStatsCards(leadSourceCounts, leadSourceLabels);

@@ -61,7 +61,8 @@ class StudentEnquiryRequest(BaseModel):
         valid_courses = [
             'data_science_ai', 'python_fullstack_ai', 'digital_marketing_ai',
             'cybersecurity', 'java_fullstack_ai', 'data_analytics_ai',
-            'generative_ai', 'video_editing_graphic_design', 'multi_cloud_devops'
+            'generative_ai', 'video_editing_graphic_design', 'multi_cloud_devops',
+            'carer_guidance'
         ]
         for course in v:
             if course not in valid_courses:
@@ -100,7 +101,7 @@ class StudentEnquiryRequest(BaseModel):
     def validate_lead_source(cls, v):
         if v is None:
             return v
-        valid_options = ['marketing_ravi', 'marketing_ashok', 'google_maps', 'social_media',
+        valid_options = ['marketing_ravi', 'marketing_ashok', 'marketing_shafi', 'marketing_sohail', 'google_maps', 'social_media',
                         'referral', 'direct_walkin', 'website', 'google_ads', 'other']
         if v not in valid_options:
             raise ValueError(f'Invalid lead_source: {v}')
@@ -131,7 +132,8 @@ class StudentEnquiryRequest(BaseModel):
     def validate_counselled_by(cls, v):
         if v is None:
             return v
-        valid_options = ['not_yet', 'ushmika', 'pallavi', 'taniath', 'other']
+        valid_options = ['not_yet', 'ushmika', 'pallavi', 'other', 'ShekarSir', 
+                         'varun', 'sridurga', 'khalid', 'prashanth', 'utkarsh']
         if v not in valid_options:
             raise ValueError(f'Invalid counselled_by: {v}')
         return v

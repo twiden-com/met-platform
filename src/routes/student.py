@@ -391,11 +391,13 @@ async def get_student_leads(
             }
             formatted_data.append(formatted_lead)
         
+        total_additional = sum(lead.get('additional_people', 0) for lead in result.data)
         return JSONResponse(
             content={
                 "success": True,
                 "data": formatted_data,
                 "total": len(formatted_data),
+                "additional": total_additional,
                 "filters_applied": {
                     "counsellor": counsellor.split(',') if counsellor else [],
                     "lead_source": lead_source.split(',') if lead_source else [],
