@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medha Edu Tech - Course Brochures</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #101C4E;
+            --color-orange: #f97316;
+            --color-gold: #FFD700;
+            --color-dark-gold: #B8860B;
+            --color-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #101C4E 100%);
+            min-height: 100vh;
+            padding: 3rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(249, 115, 22, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--color-white);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .logo-accent {
+            background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.5rem;
+        }
+
+        .brochures-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .brochure-card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .brochure-card.disabled:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 215, 0, 0.1);
+            box-shadow: none;
+        }
+
+        .brochure-card.disabled .card-title {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 215, 0, 0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brochure-card.disabled .card-description::after {
+            content: ' • Coming Soon';
+            color: rgba(255, 215, 0, 0.6);
+            font-weight: 500;
+        }
+
+        .btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .brochure-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .brochure-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 215, 0, 0.05) 50%, 
+                transparent 100%);
+            transition: left 0.6s ease;
+        }
+
+        .brochure-card:hover::before {
+            left: 100%;
+        }
+
+        .brochure-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.3) 0%, 
+                rgba(249, 115, 22, 0.2) 50%,
+                rgba(255, 215, 0, 0.3) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .brochure-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(255, 215, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .brochure-card:hover::after {
+            opacity: 1;
+        }
+
+        .card-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-white);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 215, 0, 0.9) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.5;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: 'IBM Plex Sans', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.2) 0%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-dark-gold) 100%);
+            color: var(--color-navy);
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 2rem 1rem;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .header-title {
+                font-size: 1.25rem;
+            }
+
+            .brochure-card {
+                padding: 1.5rem;
+            }
+
+            .card-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .card-actions {
+                width: 100%;
+                flex-direction: row;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 0.875rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1.5rem 0.75rem;
+            }
+
+            .header {
+                margin-bottom: 3rem;
+            }
+
+            .logo {
+                font-size: 1.75rem;
+            }
+
+            .header-title {
+                font-size: 1.125rem;
+            }
+
+            .brochure-card {
+                padding: 1.25rem;
+            }
+
+            .card-title {
+                font-size: 1.125rem;
+            }
+
+            .card-description {
+                font-size: 0.8125rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 0.875rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                Medha<span class="logo-accent">EduTech</span>
+            </div>
+            <h1 class="header-title">Course Brochures</h1>
+            <p class="header-subtitle">Download or view detailed information about our courses</p>
+        </div>
+
+        <div class="brochures-list">
+            {% set courses = [
+                {
+                    'name': 'Full Stack Python With AI',
+                    'description': 'Master Python development with modern AI integration',
+                    'filename': 'Python Brochure.pdf',
+                    'available': true
+                },
+                {
+                    'name': 'Data Science with Generative AI',
+                    'description': 'Explore data science enhanced with generative AI capabilities',
+                    'filename': 'Data Science Brochure.pdf',
+                    'available': true
+                },
+                {
+                    'name': 'Cybersecurity',
+                    'description': 'Comprehensive cybersecurity training for modern threats',
+                    'filename': 'Cybersecurity brochure.pdf',
+                    'available': true
+                },
+                {
+                    'name': 'Full Stack Java',
+                    'description': 'Complete Java development from frontend to backend',
+                    'filename': 'Java Brochure.pdf',
+                    'available': true
+                },
+                {
+                    'name': 'Data Analytics with Gen AI',
+                    'description': 'Advanced analytics powered by generative AI tools',
+                    'filename': 'Data Analytics Brochure.pdf',
+                    'available': true
+                },
+                {
+                    'name': 'Generative AI & Machine Learning',
+                    'description': 'Deep dive into AI and ML technologies',
+                    'filename': 'Gen AI Brochure.pdf',
+                    'available': true
+                },
+                {
+                    'name': 'DevOps With MultiCloud',
+                    'description': 'Modern DevOps practices across multiple cloud platforms',
+                    'filename': '',
+                    'available': false
+                },
+                {
+                    'name': 'Digital Marketing With AI',
+                    'description': 'AI-driven strategies for digital marketing success',
+                    'filename': '',
+                    'available': false
+                },
+                {
+                    'name': 'Graphic Designing & Video Editing',
+                    'description': 'Creative design and video production mastery',
+                    'filename': '',
+                    'available': false
+                }
+            ] %}
+
+            {% for course in courses %}
+            <div class="brochure-card {% if not course.available %}disabled{% endif %}">
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3 class="card-title">{{ course.name }}</h3>
+                        <p class="card-description">{{ course.description }}</p>
+                    </div>
+                    <div class="card-actions">
+                        {% if course.available %}
+                        <a href="{{ url_for('static', path='brochures/' + course.filename) }}" 
+                           class="btn btn-primary" 
+                           download>
+                            Download
+                        </a>
+                        <a href="{{ url_for('static', path='brochures/' + course.filename) }}" 
+                           class="btn btn-secondary" 
+                           target="_blank">
+                            View
+                        </a>
+                        {% else %}
+                        <button class="btn btn-primary disabled" disabled>
+                            Download
+                        </button>
+                        <button class="btn btn-secondary disabled" disabled>
+                            View
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>

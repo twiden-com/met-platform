@@ -8,6 +8,7 @@ from supabase import Client, AsyncClient
 from src.external.messagecentral import send_otp, verify_otp
 import json
 from typing import Optional, List, Callable, Any
+from src.external.vyapar import send_brochure
 from src.schemas.new_enquiry_schema import StudentEnquiryRequest
 from src.utils.auth_utils import auth_required
 
@@ -232,10 +233,23 @@ async def create_student_enquiry(
         if existing.data:
             # Update existing profile
             result = await db.table('profiles').update(profile_data).eq('user_id', existing.data[0]['user_id']).execute()
+            if result.data:
+                details = result.data[0]
+                phn     =  f"+{details['phone_number'].replace('-','')}"
+                courses = json.loads(details['interested_courses'])
+                courses = " & ".join(courses)
+                send_brochure(details['name'], phn, courses)
             action = "updated"
         else:
             # Insert new profile
             result = await db.table('profiles').insert(profile_data).execute()
+
+            if result.data:
+                details = result.data[0]
+                phn     =  f"+{details['phone_number'].replace('-','')}"
+                courses = " & ".join(list(details['interested_courses']))
+                send_brochure(details['name'], phn, courses)
+            
             action = "created"
         
         if not result.data:
@@ -246,6 +260,8 @@ async def create_student_enquiry(
                     "message": "Failed to save profile"
                 }
             )
+        
+        
         
         return JSONResponse(
             content={
